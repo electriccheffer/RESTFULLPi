@@ -1,0 +1,14 @@
+info:
+    title: RESTFULPi
+    summary: An API for maintaining, collecting, and exporting GPS data from a RaspberryPi.
+    description: |
+        Provides collection of GPS data on the Raspberry Pi using a web interface.  
+        The Pi provides a Wireless Access Point with a backend for manipulating the
+        collection of GPS data and exporting GPS data to the client such that it may
+        be read and visualized in QGIS.  Useful features include starting and stopping 
+        data collection, device status, exporting GPS data, and tagging landmark locations.
+    contact:
+        name: Ryan Mccaffery
+        url: https://github.com/electriccheffer/RESTFULLPi
+        email: electriccheff@gmail.com
+    version: 0.1.0
