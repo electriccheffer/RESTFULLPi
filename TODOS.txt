@@ -1,0 +1,2 @@
+-Write out API specification for /status request/response
+-Start frontend Angular developement. 
