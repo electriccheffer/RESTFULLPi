@@ -1,2 +1,5 @@
--Write out API specification for /status request/response
 -Start frontend Angular developement. 
+	- Read Angular stuff :(
+ 		- Deployment, cli stuff etc. 
+		- Testing
+	- Test endpoint
