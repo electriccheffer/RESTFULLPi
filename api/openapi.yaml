@@ -14,11 +14,25 @@ info:
         email: electriccheff@gmail.com
     version: 0.1.0
 
+components:
+    schemas:
+        Status:
+            type: object
+            properties:
+                device:
+                    type: string
+                status:
+                    type: string
+
 paths:
     /status:
         get:
             summary: Get device status
             description: Returns current status of the Raspberry Pi device.  
             responses:
-              "200":
-                description: Health Status returned successfully.
+                "200":
+                    description: Health Status returned successfully.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
