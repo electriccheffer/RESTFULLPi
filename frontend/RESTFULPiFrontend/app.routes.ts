@@ -1,4 +1,4 @@
-import {Routes} from '@angular/router';
+ import {Routes} from '@angular/router';
 import {StatusComponent} from './components/status/status'; 
 export const routes:Routes =[ 
 {
