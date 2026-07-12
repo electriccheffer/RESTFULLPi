@@ -2,4 +2,4 @@
 	- Read Angular stuff :(
  		- Deployment, cli stuff etc. 
 		- Testing
-	- Test endpoint
+	- Test Status Component 
