@@ -1,10 +1,19 @@
 import { Observable } from "rxjs"; 
 import { Status } from "../generated/model/status";
-import { inject } from "@angular/core";
+import { inject, Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 
-export abstract class StatusService{
+@Injectable({
+    providedIn:'root',
+})
+export class StatusService{
 
-    abstract getStatus():Observable<Status>;
+    constructor(private http:HttpClient){}
+
+    getStatus():Observable<Status>{
+
+        return this.http.get("https://restfulpi.com/status");
+
+    }
 
 }

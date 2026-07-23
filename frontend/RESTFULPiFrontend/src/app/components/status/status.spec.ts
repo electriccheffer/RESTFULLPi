@@ -3,7 +3,9 @@ import {StatusService} from '../../services/status.service';
 import { StatusComponent} from './status';
 import {Status} from '../../generated/model/status';
 import { Observable,of } from 'rxjs';
+import { Injectable } from '@angular/core';
 
+@Injectable()
 class MockStatusService extends StatusService{
 
   private status: Status = {
