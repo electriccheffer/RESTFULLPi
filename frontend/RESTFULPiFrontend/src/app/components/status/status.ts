@@ -15,11 +15,17 @@ export class StatusComponent {
   constructor(private statusService:StatusService){}
 
   ngOnInit():void{
-    this.statusService.getStatus().subscribe(data => {
+    this.statusService.getStatus().subscribe({
+      next: (data) => {
+        this.device = data.device ?? ''; 
+        this.status = data.status ?? ''; 
+      },
+      error:() => {
 
-      this.device = data.device ?? ''; 
-      this.status = data.status ?? ''; 
+        this.device = 'RESTFULPi';
+        this.status = 'Server Unavailable, Unknown Status';         
 
+      },
     });
     
 
