@@ -1,5 +1,7 @@
 -Start frontend Angular developement. 
-	- Read Angular stuff :(
- 		- Deployment, cli stuff etc. 
-		- Testing
-	- Test Status Component 
+	+ Alter the interface for the abstract StatusService class 
+	+ Alter the interface for the MockStatusService class 
+	+ Adjust the tests into a passing state
+	+ Write StatusService tests
+	+ Make the StatusService concrete. 
+	+ Integration test for StatusComponent and StatusService

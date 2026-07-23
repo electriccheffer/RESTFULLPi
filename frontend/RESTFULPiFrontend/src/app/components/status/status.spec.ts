@@ -1,24 +1,26 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import {StatusService} from '../../services/status.service';
-
 import { StatusComponent} from './status';
+import {Status} from '../../generated/model/status';
+import { Observable,of } from 'rxjs';
 
 class MockStatusService extends StatusService{
 
-  status = {
+  private status: Status = {
 
     device: 'RESTFULPi',
     status: 'Online'
   }
 
-  getStatus(){
+  setStatus(newStatus:Status):void{
 
-    return {
+    this.status = newStatus; 
+    
+  }
+  
+  override getStatus():Observable<Status>{
 
-      device:this.status.device, 
-      status:this.status.status
-
-    } 
+    return of(this.status); 
 
   }
 
@@ -27,7 +29,7 @@ class MockStatusService extends StatusService{
 describe('Status', () => {
   let component: StatusComponent;
   let fixture: ComponentFixture<StatusComponent>;
-  let mockStatusServer:StatusService;
+  let mockStatusServer:MockStatusService;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -42,7 +44,7 @@ describe('Status', () => {
 
     fixture = TestBed.createComponent(StatusComponent);
     component = fixture.componentInstance;
-    mockStatusServer = TestBed.inject(StatusService);
+    mockStatusServer = TestBed.inject(StatusService) as MockStatusService;
     await fixture.whenStable();
   });
 
@@ -57,4 +59,17 @@ describe('Status', () => {
     expect(component.status).toBe('Online');    
   })
 
+  it('non-successful service', () => {
+    const nonSuccessStatus: Status = {
+      device:'RESTFULPi', 
+      status:'Offline'
+
+    }
+    mockStatusServer.setStatus(nonSuccessStatus);
+    fixture = TestBed.createComponent(StatusComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+    expect(component.device).toBe('RESTFULPi');
+    expect(component.status).toBe('Offline');
+  })
 });

@@ -14,10 +14,14 @@ export class StatusComponent {
 
   constructor(private statusService:StatusService){}
 
-  ngOnInit(){
-    const data = this.statusService.getStatus();
-    this.device = data.device; 
-    this.status = data.status; 
+  ngOnInit():void{
+    this.statusService.getStatus().subscribe(data => {
+
+      this.device = data.device ?? ''; 
+      this.status = data.status ?? ''; 
+
+    });
+    
 
   }
 }

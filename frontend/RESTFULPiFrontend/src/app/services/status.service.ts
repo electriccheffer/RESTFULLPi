@@ -1,10 +1,10 @@
+import { Observable } from "rxjs"; 
+import { Status } from "../generated/model/status";
+import { inject } from "@angular/core";
+import { HttpClient } from "@angular/common/http";
+
 export abstract class StatusService{
 
-    abstract getStatus():{
-
-        device:string,
-        status:string
-
-    };
+    abstract getStatus():Observable<Status>;
 
 }
