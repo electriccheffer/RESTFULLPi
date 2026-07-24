@@ -1,7 +1,7 @@
--Start frontend Angular developement. 
-	+ Alter the interface for the abstract StatusService class 
-	+ Alter the interface for the MockStatusService class 
-	+ Adjust the tests into a passing state
-	+ Write StatusService tests
-	+ Make the StatusService concrete. 
-	+ Integration test for StatusComponent and StatusService
+-Implement Backend
+	+Implement and test frontend download
+	+Implement and test /status endpoint 
+	
+-Check ssh on RaspberryPi 
+-Configure RaspberryPi into Wireless access network 
+-Web host the application
