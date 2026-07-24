@@ -17,8 +17,7 @@ func NewFrontendHandler(path string) *FrontendHandler {
 
 func (fh *FrontendHandler) ServeHTTP(response http.ResponseWriter,request*http.Request) {
 	
-	//check that the file exists 
-	_,err := os.Stat(fh.filePath)
+	exists,err := os.Stat(fh.filePath)
 	if err != nil{
 		
 		if errors.Is(err,os.ErrNotExist){
@@ -28,10 +27,15 @@ func (fh *FrontendHandler) ServeHTTP(response http.ResponseWriter,request*http.R
 		}
 	
 	}
-	//check for read errors 
+	if exists.IsDir() {
+		response.WriteHeader(http.StatusNotAcceptable)
+		errorMessage := "file was directory"
+		http.Error(response,errorMessage,http.StatusNotAcceptable)
+		return	
+	}
 	application,err := os.ReadFile(fh.filePath)
 	if err != nil {
-		
+		response.WriteHeader(http.StatusInternalServerError)	
 		http.Error(response,err.Error(),http.StatusInternalServerError)
 		return
 	}

@@ -55,3 +55,17 @@ func TestAngularAppDeliveryFileNotFound(t *testing.T){
 	}
 
 }
+
+func TestAngularAppDeliveryFileIsDirectory(t *testing.T){
+
+	buildPath := filepath.Join("..","handler")
+	handler := NewFrontendHandler(buildPath)	
+	router := router.NewRouter(handler);
+	
+	request := httptest.NewRequest(http.MethodGet,"/",nil)
+	response := httptest.NewRecorder()
+	router.ServeHTTP(response,request)
+	if response.Code != http.StatusNotAcceptable{
+		t.Errorf("Expected: %d, Got: %d",http.StatusNotAcceptable,response.Code)
+	}
+}
