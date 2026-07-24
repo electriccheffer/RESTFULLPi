@@ -39,3 +39,19 @@ func TestAngularAppDelivery(t *testing.T){
 		t.Errorf("the files were not the same")
 	}	
 }
+
+func TestAngularAppDeliveryFileNotFound(t *testing.T){
+
+	buildPath := filepath.Join("..","NotReal.php")
+	handler := NewFrontendHandler(buildPath)
+	router := router.NewRouter(handler)
+	
+	request := httptest.NewRequest(http.MethodGet,"/",nil)
+	response := httptest.NewRecorder()
+	router.ServeHTTP(response,request)
+	if response.Code != http.StatusNotFound{
+			
+		t.Errorf("Expected: %d, Got: %d",http.StatusNotFound,response.Code)
+	}
+
+}
