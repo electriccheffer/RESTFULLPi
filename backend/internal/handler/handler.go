@@ -15,7 +15,7 @@ func NewFrontendHandler(path string) *FrontendHandler {
 	
 }
 
-func (fh *FrontendHandler) ServeHTTP(response http.ResponseWriter,request*http.Request) {
+func (fh *FrontendHandler) ServeHTTP(response http.ResponseWriter,request *http.Request) {
 	
 	exists,err := os.Stat(fh.filePath)
 	if err != nil{
@@ -40,5 +40,20 @@ func (fh *FrontendHandler) ServeHTTP(response http.ResponseWriter,request*http.R
 		return
 	}
 	response.WriteHeader(http.StatusOK)
-	response.Write(application);
+	response.Write(application)
+}
+
+type StatusHandler struct{}
+
+func NewStatusHandler() *StatusHandler{
+	
+	sh := &StatusHandler{}
+	return sh
+	
+}
+
+func (sh *StatusHandler) ServeHTTP(response http.ResponseWriter,request *http.Request){
+
+	return
+
 }

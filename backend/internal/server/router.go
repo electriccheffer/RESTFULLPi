@@ -2,9 +2,10 @@ package router
 
 import "net/http"
 
-func NewRouter(handler http.Handler) http.Handler {
+func NewRouter(frontendHandler http.Handler,statusHandler http.Handler) http.Handler {
 
 	mux := http.NewServeMux()
-	mux.Handle("GET /", handler)
+	mux.Handle("GET /", frontendHandler)
+	mux.Handle("GET /status",statusHandler);
 	return mux	
 }

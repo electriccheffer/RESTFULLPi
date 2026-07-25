@@ -22,12 +22,16 @@ func TestRouterCallsHandler(t *testing.T){
 				writer.Write([]byte("Not the app"))	
 
 			})
-	
-	router := NewRouter(handler)
+	otherHandler := http.HandlerFunc(
+			func(writer http.ResponseWriter,request *http.Request){
+				writer.WriteHeader(http.StatusOK)
+				writer.Write([]byte("Not the app"))
+			})	
+	router := NewRouter(handler,otherHandler)
 	request := httptest.NewRequest(http.MethodGet,"/",nil)
 	response := httptest.NewRecorder()
 	router.ServeHTTP(response,request)
-
+	
 	if response.Code != http.StatusOK {
 		
 		t.Errorf("status: %d want %d",response.Code,http.StatusOK)

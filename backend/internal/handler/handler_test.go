@@ -13,7 +13,9 @@ func TestAngularAppDelivery(t *testing.T){
 	
 	buildPath := filepath.Join("..","..","testData","browser","index.html")
 	handler := NewFrontendHandler(buildPath)
-	router := router.NewRouter(handler)
+	statusHandler := NewStatusHandler() 
+	
+	router := router.NewRouter(handler,statusHandler)
 	
 	expected,err := os.ReadFile(buildPath)
 	if err != nil {
@@ -44,7 +46,8 @@ func TestAngularAppDeliveryFileNotFound(t *testing.T){
 
 	buildPath := filepath.Join("..","NotReal.php")
 	handler := NewFrontendHandler(buildPath)
-	router := router.NewRouter(handler)
+	statusHandler := NewStatusHandler()
+	router := router.NewRouter(handler,statusHandler)
 	
 	request := httptest.NewRequest(http.MethodGet,"/",nil)
 	response := httptest.NewRecorder()
@@ -60,7 +63,8 @@ func TestAngularAppDeliveryFileIsDirectory(t *testing.T){
 
 	buildPath := filepath.Join("..","handler")
 	handler := NewFrontendHandler(buildPath)	
-	router := router.NewRouter(handler);
+	statusHandler := NewStatusHandler()
+	router := router.NewRouter(handler,statusHandler)
 	
 	request := httptest.NewRequest(http.MethodGet,"/",nil)
 	response := httptest.NewRecorder()
