@@ -2,6 +2,9 @@ package handler
 import "net/http"
 import "os"
 import "errors"
+import "encoding/json"
+
+import "restfulpi/internal/models"
 
 type FrontendHandler struct{
 		
@@ -53,7 +56,13 @@ func NewStatusHandler() *StatusHandler{
 }
 
 func (sh *StatusHandler) ServeHTTP(response http.ResponseWriter,request *http.Request){
-
+	
+	status := models.Status{Device:"RESTFULPi",Status:"Online"}
+	encodedStatus,_ := json.Marshal(status)
+					
+	response.WriteHeader(http.StatusOK);
+	response.Write(encodedStatus); 
+		
 	return
 
 }

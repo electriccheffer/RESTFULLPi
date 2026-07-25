@@ -7,6 +7,9 @@ import "net/http/httptest"
 import "os"
 import "io"
 import "bytes"
+import "encoding/json"
+
+import "restfulpi/internal/models"
 import "restfulpi/internal/server"
 
 func TestAngularAppDelivery(t *testing.T){
@@ -72,4 +75,41 @@ func TestAngularAppDeliveryFileIsDirectory(t *testing.T){
 	if response.Code != http.StatusNotAcceptable{
 		t.Errorf("Expected: %d, Got: %d",http.StatusNotAcceptable,response.Code)
 	}
+}
+
+func TestStatusHandler(t *testing.T){
+
+	buildPath := filepath.Join("..","handler")
+	frontendHandler := NewFrontendHandler(buildPath)			
+	statusHandler := NewStatusHandler() 
+	router := router.NewRouter(frontendHandler,statusHandler)
+	
+	request := httptest.NewRequest(http.MethodGet,"/status",nil)
+	response := httptest.NewRecorder()
+	router.ServeHTTP(response,request)
+	
+	expectedStatus := models.Status{Device:"RESTFULPi",Status:"Online"}
+	expectedJson,err := json.Marshal(expectedStatus)
+	if err != nil{
+	
+		t.Errorf("Error with encoding expected response " + err.Error())
+
+	}	
+
+
+	if response.Code != http.StatusOK {
+	
+		t.Errorf("Expected: %d , Got: %d",http.StatusOK,response.Code )
+	}	
+	
+	got,err := io.ReadAll(response.Body)
+	if err != nil{
+		
+		t.Errorf("Error reading response: " + err.Error())
+	
+	}
+	if !bytes.Equal(expectedJson,got){
+
+		t.Errorf("Expected json was not returned")
+	}	
 }
