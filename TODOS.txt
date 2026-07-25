@@ -5,3 +5,4 @@
 -Check ssh on RaspberryPi 
 -Configure RaspberryPi into Wireless access network 
 -Web host the application
+-Live test /status endpoint
