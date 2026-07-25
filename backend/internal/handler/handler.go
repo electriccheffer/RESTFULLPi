@@ -58,10 +58,14 @@ func NewStatusHandler() *StatusHandler{
 func (sh *StatusHandler) ServeHTTP(response http.ResponseWriter,request *http.Request){
 	
 	status := models.Status{Device:"RESTFULPi",Status:"Online"}
-	encodedStatus,_ := json.Marshal(status)
-					
-	response.WriteHeader(http.StatusOK);
-	response.Write(encodedStatus); 
+	encodedStatus,err := json.Marshal(status)
+	if err != nil{
+		response.WriteHeader(http.StatusInternalServerError)
+		http.Error(response,err.Error(),http.StatusInternalServerError)
+		return
+	}		
+	response.WriteHeader(http.StatusOK)
+	response.Write(encodedStatus)
 		
 	return
 
