@@ -22,6 +22,14 @@ components:
                     type: string
                 status:
                     type: string
+        Log:
+            type: object
+            properties:
+                name:
+                    type: string
+                date:
+                    type: string
+                    format: date-time
 
 paths:
     /status:
@@ -35,3 +43,15 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/Status'
+    /logs:
+        get:
+            summary: Get the current available logs
+            description: |
+                Contains the name of a log file and the time it was made.  
+            responses:
+                "200":
+                    description: Logs were successfully located.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Log' 
