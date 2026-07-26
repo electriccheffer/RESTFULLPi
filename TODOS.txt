@@ -1,8 +1,6 @@
--Implement Backend
-	+Implement and test frontend download
-	+Implement and test /status endpoint 
-	
--Check ssh on RaspberryPi 
--Configure RaspberryPi into Wireless access network 
 -Web host the application
 -Live test /status endpoint
+-Implement /logs frontend
+-Implement /logs backend 
+-CI/CD Pipeline for piThree
+-Git CI/CD Pipeline
