@@ -54,4 +54,6 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Log' 
+                                type: array
+                                items:
+                                    $ref: '#/components/schemas/Log' 
