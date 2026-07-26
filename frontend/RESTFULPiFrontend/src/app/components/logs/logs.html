@@ -1,1 +1,23 @@
-<p>logs works!</p>
+<table>
+    <thead>
+        <tr>
+        <th>Log Name</th>
+        <th>Creation Date</th>
+        </tr>
+    </thead>
+    
+    <tbody>
+        @if (logs.length === 0) {
+          <tr>
+            <td class='empty-log-list'>There are no current logs</td>
+          </tr>
+        } @else {
+          @for (log of logs; track log.name) {
+            <tr>
+              <td [attr.data-testid]="'logName-' + log.name">{{ log.name }}</td>
+              <td>{{ log.date }}</td>
+            </tr>
+          }
+        }
+      </tbody>
+</table>
