@@ -3,7 +3,12 @@ import {LogService} from '../../services/log.service';
 import { Logs } from './logs';
 import { Observable,of } from 'rxjs';
 import {Log} from '../../generated/model/log';
+import { Injectable } from '@angular/core';
+@Injectable({
 
+  providedIn:'root',
+
+})
 class MockLogService extends LogService{
 
   private logs:Log[] = [];
@@ -13,7 +18,7 @@ class MockLogService extends LogService{
     this.logs = newLogs;
   }
 
-  getLogs():Observable<Log[]>{
+  override getLogs():Observable<Log[]>{
 
     return of(this.logs); 
   }
