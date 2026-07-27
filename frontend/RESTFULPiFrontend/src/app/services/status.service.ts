@@ -1,6 +1,6 @@
 import { Observable } from "rxjs"; 
 import { Status } from "../generated/model/status";
-import { inject, Injectable } from "@angular/core";
+import {Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 
 @Injectable({
@@ -12,7 +12,7 @@ export class StatusService{
 
     getStatus():Observable<Status>{
 
-        return this.http.get("https://restfulpi.com/status");
+        return this.http.get<Status>("https://restfulpi.com/status");
 
     }
 
