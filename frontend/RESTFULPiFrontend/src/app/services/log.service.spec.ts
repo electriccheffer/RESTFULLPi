@@ -46,14 +46,26 @@ describe('LogService',()=>{
 
     it('returns a list with one log',()=>{
 
+        const log:Log = {
+            name:"firstLog",
+            date:'2026-07-26T11:18:29Z'
+        }
+        const logs:Log[] = [log]; 
 
+        logService.getLogs().subscribe(returnStatus=>{
 
+            expect(returnStatus.length).toBe(1);
+            expect(returnStatus[0].name).toBe("firstLog");
+        });
+        const request = httpTesting.expectOne('http://192.168.4.1/logs');
+        expect(request.request.method).toBe("GET");
+        request.flush(logs);
 
     });
 
     it('returns a list with two logs',()=>{
 
-
+        
 
     });
 });
