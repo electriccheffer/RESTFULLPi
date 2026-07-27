@@ -1,9 +1,12 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, tick } from '@angular/core/testing';
 import {LogService} from '../../services/log.service';
 import { Logs } from './logs';
 import { Observable,of } from 'rxjs';
 import {Log} from '../../generated/model/log';
-import { Injectable } from '@angular/core';
+import { ChangeDetectorRef, Injectable } from '@angular/core';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideHttpClient } from '@angular/common/http';
+
 @Injectable({
 
   providedIn:'root',
@@ -95,3 +98,108 @@ describe('Logs', () => {
   })
 
 });
+
+describe("Logs Component LogService Integration test",() => {
+
+  let component:Logs;
+  let logService:LogService; 
+  let fixture:ComponentFixture<Logs>; 
+  let httpTesting: HttpTestingController; 
+
+  beforeEach(async() => {
+
+    await TestBed.configureTestingModule({
+      imports:[Logs],
+      providers:[
+        LogService,
+        provideHttpClient(),
+        provideHttpClientTesting()
+      ],
+
+    }).compileComponents();
+
+    httpTesting = TestBed.inject(HttpTestingController);
+    fixture = TestBed.createComponent(Logs);
+    component = fixture.componentInstance;
+  }); 
+
+  afterEach(() => {
+
+    httpTesting.verify();
+
+  });
+
+  it('Integration Test for displaying empty logs',()=>{
+
+    const apiResponse:Log[] = []; 
+
+    fixture.detectChanges();
+    
+    const request = httpTesting.expectOne('http://192.168.4.1/logs');
+    expect(request.request.method).toBe("GET");
+    request.flush(apiResponse);
+
+    fixture.detectChanges();
+    const compiled = fixture.nativeElement as HTMLElement; 
+    const rows = compiled.querySelector('.empty-log-list');
+    expect(rows).not.toBeNull();
+    expect(rows?.textContent).toBe('There are no current logs'); 
+  });
+  
+  it('Integration Test for displaying one log',async()=>{
+    const log:Log = {
+      name:'logOne',
+      date: '2026-07-26T11:18:29Z',
+    }
+    const apiResponse:Log[] = [log]; 
+
+    fixture.detectChanges();
+
+    const request = httpTesting.expectOne('http://192.168.4.1/logs');
+    expect(request.request.method).toBe("GET");
+    request.flush(apiResponse);
+    
+    fixture.debugElement.injector.get(ChangeDetectorRef).detectChanges();
+    fixture.detectChanges();
+    
+    const compiled = fixture.nativeElement as HTMLElement; 
+    const rows = compiled.querySelector(`[data-testid="logName-${log.name}"]`);
+    expect(rows).not.toBeNull();
+    expect(rows?.textContent?.trim()).toBe(log.name);
+  });
+
+  it('Integration Test for displaying two logs',()=>{
+
+    const log:Log = {
+      name:'logOne',
+      date: '2026-07-26T11:18:29Z',
+    }
+
+    const logTwo:Log = {
+
+      name:'logTwo',
+      date: '2026-07-26T11:18:29Z',
+
+    }
+    const apiResponse:Log[] = [log,logTwo]; 
+
+    fixture.detectChanges();
+
+    const request = httpTesting.expectOne('http://192.168.4.1/logs');
+    expect(request.request.method).toBe("GET");
+    request.flush(apiResponse);
+    
+    fixture.debugElement.injector.get(ChangeDetectorRef).detectChanges();
+    fixture.detectChanges();
+    
+    const compiled = fixture.nativeElement as HTMLElement; 
+    const rows = compiled.querySelector(`[data-testid="logName-${log.name}"]`);
+    expect(rows).not.toBeNull();
+    expect(rows?.textContent?.trim()).toBe(log.name);
+
+    const rowsTwo = compiled.querySelector(`[data-testid="logName-${logTwo.name}"]`);
+    expect(rowsTwo).not.toBeNull();
+    expect(rowsTwo?.textContent?.trim()).toBe(logTwo.name);
+  });
+
+}); 
