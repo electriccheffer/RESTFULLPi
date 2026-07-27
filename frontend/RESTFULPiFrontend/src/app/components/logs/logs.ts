@@ -1,12 +1,14 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Log } from '../../generated/model/log';
 import { LogService } from '../../services/log.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-logs',
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './logs.html',
   styleUrl: './logs.css',
+  
 })
 export class Logs {
 
