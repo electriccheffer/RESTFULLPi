@@ -1,4 +1,4 @@
-package handler
+package handler_test
 
 import "testing"
 import "path/filepath"
@@ -15,10 +15,8 @@ import "restfulpi/internal/server"
 func TestAngularAppDelivery(t *testing.T){
 	
 	buildPath := filepath.Join("..","..","testData","browser","index.html")
-	handler := NewFrontendHandler(buildPath)
-	statusHandler := NewStatusHandler() 
 	
-	router := router.NewRouter(handler,statusHandler)
+	router := router.NewRouter(buildPath)
 	
 	expected,err := os.ReadFile(buildPath)
 	if err != nil {
@@ -48,9 +46,7 @@ func TestAngularAppDelivery(t *testing.T){
 func TestAngularAppDeliveryFileNotFound(t *testing.T){
 
 	buildPath := filepath.Join("..","NotReal.php")
-	handler := NewFrontendHandler(buildPath)
-	statusHandler := NewStatusHandler()
-	router := router.NewRouter(handler,statusHandler)
+	router := router.NewRouter(buildPath)
 	
 	request := httptest.NewRequest(http.MethodGet,"/",nil)
 	response := httptest.NewRecorder()
@@ -65,9 +61,7 @@ func TestAngularAppDeliveryFileNotFound(t *testing.T){
 func TestAngularAppDeliveryFileIsDirectory(t *testing.T){
 
 	buildPath := filepath.Join("..","handler")
-	handler := NewFrontendHandler(buildPath)	
-	statusHandler := NewStatusHandler()
-	router := router.NewRouter(handler,statusHandler)
+	router := router.NewRouter(buildPath)
 	
 	request := httptest.NewRequest(http.MethodGet,"/",nil)
 	response := httptest.NewRecorder()
@@ -80,9 +74,7 @@ func TestAngularAppDeliveryFileIsDirectory(t *testing.T){
 func TestStatusHandler(t *testing.T){
 
 	buildPath := filepath.Join("..","handler")
-	frontendHandler := NewFrontendHandler(buildPath)			
-	statusHandler := NewStatusHandler() 
-	router := router.NewRouter(frontendHandler,statusHandler)
+	router := router.NewRouter(buildPath)
 	
 	request := httptest.NewRequest(http.MethodGet,"/status",nil)
 	response := httptest.NewRecorder()
@@ -113,3 +105,29 @@ func TestStatusHandler(t *testing.T){
 		t.Errorf("Expected json was not returned")
 	}	
 }
+
+func TestGetLogsHandlerSuccessEmpty(t *testing.T){
+	
+}
+
+func TestGetLogsHandlerSuccessOneFile(t *testing.T){
+
+
+}
+
+func TestGetLogsHandlerSuccessTwoFiles(t *testing.T){
+
+
+}
+
+func TestGetLogsHandlerFailNoExist(t *testing.T){
+
+
+}
+
+func TestGetLogsHandlerFailNotDirectory(t *testing.T){
+
+
+
+}
+
