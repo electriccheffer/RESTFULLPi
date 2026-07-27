@@ -4,6 +4,8 @@ import { Logs } from './logs';
 import { Observable,of } from 'rxjs';
 import {Log} from '../../generated/model/log';
 import { Injectable } from '@angular/core';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideHttpClient } from '@angular/common/http';
 @Injectable({
 
   providedIn:'root',
@@ -95,3 +97,65 @@ describe('Logs', () => {
   })
 
 });
+
+describe("Logs Component LogService Integration test",() => {
+
+  let component:Logs;
+  let logService:LogService; 
+  let fixture:ComponentFixture<Logs>; 
+  let httpTesting: HttpTestingController; 
+
+  beforeEach(async() => {
+
+    await TestBed.configureTestingModule({
+      imports:[Logs],
+      providers:[
+        LogService,
+        provideHttpClient(),
+        provideHttpClientTesting()
+      ],
+
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(Logs); 
+    component = fixture.componentInstance;
+    httpTesting = TestBed.inject(HttpTestingController);
+
+  }); 
+
+  afterEach(() => {
+
+    httpTesting.verify();
+
+  });
+
+  it('Integration Test for displaying empty logs',()=>{
+
+    const apiResponse:Log[] = []; 
+
+    fixture.detectChanges(); 
+    
+    const request = httpTesting.expectOne('http://192.168.4.1/logs');
+    expect(request.request.method).toBe("GET");
+    request.flush(apiResponse);
+
+    fixture.detectChanges();
+    const compiled = fixture.nativeElement as HTMLElement; 
+    const rows = compiled.querySelector('.empty-log-list');
+    expect(rows).not.toBeNull();
+    expect(rows?.textContent).toBe('There are no current logs'); 
+  });
+  
+  it('Integration Test for displaying one log',()=>{
+
+
+
+  });
+
+  it('Integration Test for displaying two logs',()=>{
+
+
+
+  });
+
+}); 
