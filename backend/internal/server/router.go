@@ -3,12 +3,12 @@ package router
 import "net/http"
 import "restfulpi/internal/handler"
 
-func NewRouter(filePath string) http.Handler {
+func NewRouter(appPath string,logsPath string) http.Handler {
 
 	mux := http.NewServeMux()
-	frontendHandler := handler.NewFrontendHandler(filePath)
+	frontendHandler := handler.NewFrontendHandler(appPath)
 	statusHandler := handler.NewStatusHandler()
-	getLogsHandler := handler.NewGetLogsHandler()
+	getLogsHandler := handler.NewGetLogsHandler(logsPath)
  	 
 	mux.Handle("GET /", frontendHandler)
 	mux.Handle("GET /status",statusHandler)

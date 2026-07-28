@@ -16,7 +16,7 @@ func TestAngularAppDelivery(t *testing.T){
 	
 	buildPath := filepath.Join("..","..","testData","browser","index.html")
 	
-	router := router.NewRouter(buildPath)
+	router := router.NewRouter(buildPath,buildPath)
 	
 	expected,err := os.ReadFile(buildPath)
 	if err != nil {
@@ -46,7 +46,7 @@ func TestAngularAppDelivery(t *testing.T){
 func TestAngularAppDeliveryFileNotFound(t *testing.T){
 
 	buildPath := filepath.Join("..","NotReal.php")
-	router := router.NewRouter(buildPath)
+	router := router.NewRouter(buildPath,buildPath)
 	
 	request := httptest.NewRequest(http.MethodGet,"/",nil)
 	response := httptest.NewRecorder()
@@ -61,7 +61,7 @@ func TestAngularAppDeliveryFileNotFound(t *testing.T){
 func TestAngularAppDeliveryFileIsDirectory(t *testing.T){
 
 	buildPath := filepath.Join("..","handler")
-	router := router.NewRouter(buildPath)
+	router := router.NewRouter(buildPath,buildPath)
 	
 	request := httptest.NewRequest(http.MethodGet,"/",nil)
 	response := httptest.NewRecorder()
@@ -74,7 +74,7 @@ func TestAngularAppDeliveryFileIsDirectory(t *testing.T){
 func TestStatusHandler(t *testing.T){
 
 	buildPath := filepath.Join("..","handler")
-	router := router.NewRouter(buildPath)
+	router := router.NewRouter(buildPath,buildPath)
 	
 	request := httptest.NewRequest(http.MethodGet,"/status",nil)
 	response := httptest.NewRecorder()
@@ -108,26 +108,148 @@ func TestStatusHandler(t *testing.T){
 
 func TestGetLogsHandlerSuccessEmpty(t *testing.T){
 	
+	path := filepath.Join("..","..","testData","EmptyDirectory")
+	router := router.NewRouter(path,path)
+	
+	request := httptest.NewRequest(http.MethodGet,"/logs",nil)
+	response := httptest.NewRecorder()
+	router.ServeHTTP(response,request)
+	
+	got,err := io.ReadAll(response.Body)
+	if err != nil{
+		t.Errorf("Error reading response: " + err.Error())
+	}
+	
+	var gotArray []models.Logs
+	err = json.Unmarshal(got,&gotArray)
+	if err != nil{
+		t.Errorf("Error Unmarshling response: %s",err.Error())
+	}
+	if len(gotArray) != 0 {
+		t.Errorf("Length of array response was not zero")
+	}
 }
 
 func TestGetLogsHandlerSuccessOneFile(t *testing.T){
-
-
+	
+	path := filepath.Join("..","..","testData","OneFileDirectory")
+	router := router.NewRouter(path,path)
+	
+	request := httptest.NewRequest(http.MethodGet,"/logs",nil)
+	response := httptest.NewRecorder()
+	router.ServeHTTP(response,request)
+		
+	got,err := io.ReadAll(response.Body)
+	if err != nil{
+		t.Errorf("Error reading response: " + err.Error())
+	}	
+	
+	expectedName := "2006-01-02.gpx" 
+	expectedLog :=  models.Logs{expectedName}
+	expectedLogArray := []models.Logs{expectedLog}
+	expectedMarshal, err := json.Marshal(expectedLogArray)
+	if err != nil{
+		t.Errorf("Difficulty with marshaling expected log")
+	}
+	if !bytes.Equal(expectedMarshal,got){
+		t.Errorf("Incorrect data returned from one file")
+	}
 }
 
 func TestGetLogsHandlerSuccessTwoFiles(t *testing.T){
+	
+	path := filepath.Join("..","..","testData","DirectoryWithTwoFiles")
+	router := router.NewRouter(path,path)
+	
+	request := httptest.NewRequest(http.MethodGet,"/logs",nil)
+	response := httptest.NewRecorder()
+	router.ServeHTTP(response,request)
+	
+	got,err := io.ReadAll(response.Body)
+	if err != nil{
+		t.Errorf("Error reading response: " + err.Error())
+	}
 
+	expectedName := "2006-01-02.gpx" 
+	expectedLog := models.Logs{expectedName}
+	expectedSecondName := "2006.gpx"
+	expectedSecondLog := models.Logs{expectedSecondName}
+	expectedLogArray := []models.Logs{expectedLog,expectedSecondLog}
+	expectedMarshal, err := json.Marshal(expectedLogArray)
+	if err != nil{
+		t.Errorf("Dirriculty with marshaling expected log")
+	}
+	if !bytes.Equal(expectedMarshal,got){
+		t.Errorf("Incorrect data returned from file")
+	}
+}
 
+func TestGetLogsHandlerSuccessFilesWithDirectory(t *testing.T){
+
+	path := filepath.Join("..","..","testData","DirectoryWithTwoFilesAndDirectory")
+	router := router.NewRouter(path,path)
+	
+	request := httptest.NewRequest(http.MethodGet,"/logs",nil)
+	response := httptest.NewRecorder()
+	router.ServeHTTP(response,request)
+	
+	got,err := io.ReadAll(response.Body)
+	if err != nil{
+		t.Errorf("Error reading response: " + err.Error())
+	}
+
+	expectedName := "2006-01-02.gpx" 
+	expectedLog := models.Logs{expectedName}
+	expectedSecondName := "2006.gpx"
+	expectedSecondLog := models.Logs{expectedSecondName}
+	expectedLogArray := []models.Logs{expectedLog,expectedSecondLog}
+	expectedMarshal, err := json.Marshal(expectedLogArray)
+	if err != nil{
+		t.Errorf("Dirriculty with marshaling expected log")
+	}
+	if !bytes.Equal(expectedMarshal,got){
+		t.Errorf("Incorrect data returned from file")
+	}
+	
 }
 
 func TestGetLogsHandlerFailNoExist(t *testing.T){
+	
+	path := filepath.Join(".","NoExist")
+	router := router.NewRouter(path,path)
+	
+	request := httptest.NewRequest(http.MethodGet,"/logs",nil)
+	response := httptest.NewRecorder()
+	router.ServeHTTP(response,request)
 
-
+	_,err := io.ReadAll(response.Body)
+	if err != nil {
+		t.Errorf("Error reading response: " + err.Error())
+	}
+	
+	if response.Code != http.StatusNotFound{
+		t.Errorf("Expected:%d Got:%d",http.StatusNotFound,response.Code)
+	}	
+	
 }
 
 func TestGetLogsHandlerFailNotDirectory(t *testing.T){
 
+	path := filepath.Join(".","handler_test.go")
+	router := router.NewRouter(path,path)
+	
+	request := httptest.NewRequest(http.MethodGet,"/logs",nil)
+	response := httptest.NewRecorder()
+	router.ServeHTTP(response,request)
 
+	_,err := io.ReadAll(response.Body)
+	if err != nil {
+		t.Errorf("Error reading response: " + err.Error())
+	}
+	
+	if response.Code != http.StatusNotFound{
+		t.Errorf("Expected:%d Got:%d",http.StatusNotFound,response.Code)
+	}
 
 }
 

@@ -1,10 +1,14 @@
 package handler
+
 import "net/http"
 import "os"
 import "errors"
 import "encoding/json"
+import "fmt"
 
 import "restfulpi/internal/models"
+import "restfulpi/internal/file_operations"
+
 
 type FrontendHandler struct{
 		
@@ -71,14 +75,41 @@ func (sh *StatusHandler) ServeHTTP(response http.ResponseWriter,request *http.Re
 
 }
 
-type GetLogsHandler struct{}
+type GetLogsHandler struct{
+	path string
+}
 
-func NewGetLogsHandler() *GetLogsHandler{
-	lh := &GetLogsHandler{}
+func NewGetLogsHandler(path string) *GetLogsHandler{
+	lh := &GetLogsHandler{path}
 	return lh 
 }
 
 func (glh *GetLogsHandler) ServeHTTP(response http.ResponseWriter,request *http.Request){
 	
+	directoryReader := file_operations.NewDirectoryRead(glh.path)
+	logFiles, err := directoryReader.GetFiles()		
+	if err != nil {
+		response.Header().Set("Content-Type","application/json")
+		response.Header().Set("X-Content-Type-Options","nosniff")
+		response.WriteHeader(http.StatusNotFound)
+		return	
+	}	
+	
+	var logs []models.Logs	
+	for _, entry := range logFiles{		
+		if entry.IsDir(){
+			continue
+		}
+		log := models.Logs{entry.Name()}
+		logs = append(logs,log)
+	}
+
+	jsonLogs,err := json.Marshal(logs)
+	if err != nil{
+		fmt.Print("error in ServeHTTP marshaling")
+	
+	}
+	response.WriteHeader(http.StatusOK)
+	response.Write(jsonLogs)		
 	return
 }
