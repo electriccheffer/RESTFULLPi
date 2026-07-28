@@ -70,3 +70,15 @@ func (sh *StatusHandler) ServeHTTP(response http.ResponseWriter,request *http.Re
 	return
 
 }
+
+type GetLogsHandler struct{}
+
+func NewGetLogsHandler() *GetLogsHandler{
+	lh := &GetLogsHandler{}
+	return lh 
+}
+
+func (glh *GetLogsHandler) ServeHTTP(response http.ResponseWriter,request *http.Request){
+	
+	return
+}

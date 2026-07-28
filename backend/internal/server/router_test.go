@@ -1,8 +1,11 @@
-package router 
+package router_test
 
 import "testing"
 import "net/http"
 import "net/http/httptest"
+import "path/filepath"
+
+import "restfulpi/internal/server"
 
 func TestAlwaysTrue(t *testing.T) {
 
@@ -13,25 +16,11 @@ func TestAlwaysTrue(t *testing.T) {
 }
 
 func TestRouterCallsHandler(t *testing.T){
-
-	
-	handler := http.HandlerFunc(
-			func(writer http.ResponseWriter,request *http.Request){
-
-				writer.WriteHeader(http.StatusOK)
-				writer.Write([]byte("Not the app"))	
-
-			})
-	otherHandler := http.HandlerFunc(
-			func(writer http.ResponseWriter,request *http.Request){
-				writer.WriteHeader(http.StatusOK)
-				writer.Write([]byte("Not the app"))
-			})	
-	router := NewRouter(handler,otherHandler)
+	testPath := filepath.Join("..","..","testData","browser","index.html");	
+	router := router.NewRouter(testPath)
 	request := httptest.NewRequest(http.MethodGet,"/",nil)
 	response := httptest.NewRecorder()
 	router.ServeHTTP(response,request)
-	
 	if response.Code != http.StatusOK {
 		
 		t.Errorf("status: %d want %d",response.Code,http.StatusOK)
