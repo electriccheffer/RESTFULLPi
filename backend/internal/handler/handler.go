@@ -94,6 +94,9 @@ func (glh *GetLogsHandler) ServeHTTP(response http.ResponseWriter,request *http.
 	
 	var logs []models.Logs	
 	for _, entry := range logFiles{		
+		if entry.IsDir(){
+			continue
+		}
 		log := models.Logs{entry.Name()}
 		logs = append(logs,log)
 	}
