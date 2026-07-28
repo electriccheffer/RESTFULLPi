@@ -94,12 +94,13 @@ func (glh *GetLogsHandler) ServeHTTP(response http.ResponseWriter,request *http.
 	
 	var logs []models.Logs	
 	for _, entry := range logFiles{		
-		fmt.Printf("looping over files: %s",entry.Name())	
+		log := models.Logs{entry.Name()}
+		logs = append(logs,log)
 	}
 
 	jsonLogs,err := json.Marshal(logs)
 	if err != nil{
-
+		fmt.Print("error in ServeHTTP marshaling")
 	
 	}
 	response.WriteHeader(http.StatusOK)

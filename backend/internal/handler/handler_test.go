@@ -131,8 +131,29 @@ func TestGetLogsHandlerSuccessEmpty(t *testing.T){
 }
 
 func TestGetLogsHandlerSuccessOneFile(t *testing.T){
-
-
+	
+	path := filepath.Join("..","..","testData","OneFileDirectory")
+	router := router.NewRouter(path,path)
+	
+	request := httptest.NewRequest(http.MethodGet,"/logs",nil)
+	response := httptest.NewRecorder()
+	router.ServeHTTP(response,request)
+		
+	got,err := io.ReadAll(response.Body)
+	if err != nil{
+		t.Errorf("Error reading response: " + err.Error())
+	}	
+	
+	expectedName := "2006-01-02.gpx" 
+	expectedLog :=  models.Logs{expectedName}
+	expectedLogArray := []models.Logs{expectedLog}
+	expectedMarshal, err := json.Marshal(expectedLogArray)
+	if err != nil{
+		t.Errorf("Difficulty with marshaling expected log")
+	}
+	if !bytes.Equal(expectedMarshal,got){
+		t.Errorf("Incorrect data returned from one file")
+	}
 }
 
 func TestGetLogsHandlerSuccessTwoFiles(t *testing.T){
