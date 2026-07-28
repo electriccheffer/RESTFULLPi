@@ -3,6 +3,7 @@ package file_operations_test
 import  "path/filepath"
 import  "restfulpi/internal/file_operations"
 import "testing"
+
 func TestDirectoryReadSuccess(t *testing.T){
 			
 	path := filepath.Join("..","..","testData","DirectoryWithFiles")
@@ -44,4 +45,13 @@ func TestDirectoryReadSuccess(t *testing.T){
 	
 }
 
+func TestDirectoryReadFailureIsFile(t *testing.T){
 
+	path := filepath.Join(".","file_operations.go")
+	directoryReader := file_operations.NewDirectoryRead(path)
+	
+	_,err := directoryReader.GetFiles()
+	if err == nil {
+		t.Errorf("Should throw error directory is file")
+	}
+}
