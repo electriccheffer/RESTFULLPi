@@ -214,12 +214,28 @@ func TestGetLogsHandlerSuccessFilesWithDirectory(t *testing.T){
 }
 
 func TestGetLogsHandlerFailNoExist(t *testing.T){
+	
+	path := filepath.Join(".","NoExist")
+	router := router.NewRouter(path,path)
+	
+	request := httptest.NewRequest(http.MethodGet,"/logs",nil)
+	response := httptest.NewRecorder()
+	router.ServeHTTP(response,request)
 
+	_,err := io.ReadAll(response.Body)
+	if err != nil {
+		t.Errorf("Error reading response: " + err.Error())
+	}
+	
+	if response.Code != http.StatusNotFound{
+		t.Errorf("Expected:%d Got:%d",http.StatusNotFound,response.Code)
+	}	
+	
 }
 
 func TestGetLogsHandlerFailNotDirectory(t *testing.T){
 
-
+	
 
 }
 

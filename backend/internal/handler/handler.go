@@ -87,9 +87,12 @@ func NewGetLogsHandler(path string) *GetLogsHandler{
 func (glh *GetLogsHandler) ServeHTTP(response http.ResponseWriter,request *http.Request){
 	
 	directoryReader := file_operations.NewDirectoryRead(glh.path)
-	logFiles, err := directoryReader.GetFiles()
+	logFiles, err := directoryReader.GetFiles()		
 	if err != nil {
-		//Handle error 
+		response.Header().Set("Content-Type","application/json")
+		response.Header().Set("X-Content-Type-Options","nosniff")
+		response.WriteHeader(http.StatusNotFound)
+		return	
 	}	
 	
 	var logs []models.Logs	
