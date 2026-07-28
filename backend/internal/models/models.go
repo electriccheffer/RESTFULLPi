@@ -7,8 +7,5 @@ type Status struct{
 }
 
 type Logs struct{
-
 	Name string `json:"Name"`
-	Date string `json:"Date"`
-	
 }
