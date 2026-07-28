@@ -55,3 +55,26 @@ func TestDirectoryReadFailureIsFile(t *testing.T){
 		t.Errorf("Should throw error directory is file")
 	}
 }
+
+func TestDirectoryReadEmptyDirectory(t *testing.T){
+
+	path := filepath.Join("..","..","testData","EmptyDirectory")
+	directoryReader := file_operations.NewDirectoryRead(path)
+	files,err := directoryReader.GetFiles()
+	if err != nil{
+		t.Errorf("Should not throw error. Error is:%s ", err.Error())	
+	}
+	if len(files) != 0{
+		t.Errorf("The directory is not empty")
+	}	
+}
+
+func TestDirectoryReadDirectoryDoesNotExist(t *testing.T){
+
+	path := filepath.Join(".","DoesntExist")
+	directoryReader := file_operations.NewDirectoryRead(path)
+	_,err := directoryReader.GetFiles()
+	if err == nil {
+		t.Errorf("Directory does not exist. Should throw error")
+	}
+}
