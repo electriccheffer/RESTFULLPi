@@ -1,10 +1,14 @@
 package handler
+
 import "net/http"
 import "os"
 import "errors"
 import "encoding/json"
+import "fmt"
 
 import "restfulpi/internal/models"
+import "restfulpi/internal/file_operations"
+
 
 type FrontendHandler struct{
 		
@@ -71,14 +75,34 @@ func (sh *StatusHandler) ServeHTTP(response http.ResponseWriter,request *http.Re
 
 }
 
-type GetLogsHandler struct{}
+type GetLogsHandler struct{
+	path string
+}
 
-func NewGetLogsHandler() *GetLogsHandler{
-	lh := &GetLogsHandler{}
+func NewGetLogsHandler(path string) *GetLogsHandler{
+	lh := &GetLogsHandler{path}
 	return lh 
 }
 
 func (glh *GetLogsHandler) ServeHTTP(response http.ResponseWriter,request *http.Request){
 	
+	directoryReader := file_operations.NewDirectoryRead(glh.path)
+	logFiles, err := directoryReader.GetFiles()
+	if err != nil {
+		//Handle error 
+	}	
+	
+	var logs []models.Logs	
+	for _, entry := range logFiles{		
+		fmt.Printf("looping over files: %s",entry.Name())	
+	}
+
+	jsonLogs,err := json.Marshal(logs)
+	if err != nil{
+
+	
+	}
+	response.WriteHeader(http.StatusOK)
+	response.Write(jsonLogs)		
 	return
 }
