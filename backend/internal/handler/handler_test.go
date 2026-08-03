@@ -14,7 +14,7 @@ import "restfulpi/internal/server"
 
 func TestAngularAppDelivery(t *testing.T){
 	
-	buildPath := filepath.Join("..","..","testData","browser","index.html")
+	buildPath := filepath.Join("index.html")
 	
 	router := router.NewRouter(buildPath,buildPath)
 	
