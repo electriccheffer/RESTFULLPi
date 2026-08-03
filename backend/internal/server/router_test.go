@@ -17,7 +17,7 @@ func TestAlwaysTrue(t *testing.T) {
 
 func TestRouterCallsHandler(t *testing.T){
 	testPath := filepath.Join("..","..","testData","browser","index.html");	
-	router := router.NewRouter(testPath,testPath)
+	router := router.NewRouter(testPath)
 	request := httptest.NewRequest(http.MethodGet,"/",nil)
 	response := httptest.NewRecorder()
 	router.ServeHTTP(response,request)

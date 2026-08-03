@@ -5,49 +5,45 @@ import "os"
 import "errors"
 import "encoding/json"
 import "fmt"
-
+import "io/fs"
 import "restfulpi/internal/models"
 import "restfulpi/internal/file_operations"
 
 
 type FrontendHandler struct{
-		
-	filePath string	
+
+	fileServer: http.Handler,
+	fileSystem: fs.FS		
 
 } 
 
-func NewFrontendHandler(path string) *FrontendHandler {
-	frontHandler := &FrontendHandler{filePath:path}
+func NewFrontendHandler(fileSystem fs.FS) *FrontendHandler {
+	
+	fileServer := http.FileServer(http.FS(fileSystem))
+	frontHandler := &FrontendHandler{fileServer:fileServer,fileSystemfileSystem}
 	return frontHandler 
 	
 }
 
 func (fh *FrontendHandler) ServeHTTP(response http.ResponseWriter,request *http.Request) {
 	
-	exists,err := os.Stat(fh.filePath)
-	if err != nil{
+	path := request.URL.Path
+	if path != "/"{
 		
-		if errors.Is(err,os.ErrNotExist){
-			response.WriteHeader(http.StatusNotFound)
-			http.Error(response,err.Error(),http.StatusNotFound)
-			return
-		}
+		if file,err := fh.fileSystem.Open(path[1:]) ; err != nil{
 	
-	}
-	if exists.IsDir() {
-		response.WriteHeader(http.StatusNotAcceptable)
-		errorMessage := "file was directory"
-		http.Error(response,errorMessage,http.StatusNotAcceptable)
-		return	
-	}
-	application,err := os.ReadFile(fh.filePath)
-	if err != nil {
-		response.WriteHeader(http.StatusInternalServerError)	
-		http.Error(response,err.Error(),http.StatusInternalServerError)
-		return
-	}
-	response.WriteHeader(http.StatusOK)
-	response.Write(application)
+			request.URL.Path = "/"
+		} else{
+				
+			stat, err := file.Stat()
+			if err != nil || stat.IsDir() {
+				request.URL.Path = "/"
+			}
+			_ = file.Close()  
+		}
+	}	
+	
+	fh.fileServer.ServeHTTP(response,request)
 }
 
 type StatusHandler struct{}
