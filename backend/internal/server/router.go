@@ -2,7 +2,6 @@ package router
 
 import "net/http"
 import "restfulpi/internal/handler"
-import "path/filepath"
 import "embed"
 import "io/fs"
 

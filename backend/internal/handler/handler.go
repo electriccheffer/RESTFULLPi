@@ -1,8 +1,6 @@
 package handler
 
 import "net/http"
-import "os"
-import "errors"
 import "encoding/json"
 import "fmt"
 import "io/fs"
@@ -12,15 +10,15 @@ import "restfulpi/internal/file_operations"
 
 type FrontendHandler struct{
 
-	fileServer: http.Handler,
-	fileSystem: fs.FS		
+	fileServer http.Handler
+	fileSystem fs.FS		
 
 } 
 
 func NewFrontendHandler(fileSystem fs.FS) *FrontendHandler {
 	
 	fileServer := http.FileServer(http.FS(fileSystem))
-	frontHandler := &FrontendHandler{fileServer:fileServer,fileSystemfileSystem}
+	frontHandler := &FrontendHandler{fileServer,fileSystem}
 	return frontHandler 
 	
 }

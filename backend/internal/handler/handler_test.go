@@ -14,7 +14,7 @@ import "restfulpi/internal/server"
 
 func TestAngularAppDelivery(t *testing.T){
 	
-	buildPath := filepath.Join("index.html")
+	buildPath := filepath.Join("..","server","dist","browser","index.html")
 	
 	router := router.NewRouter(buildPath)
 	
@@ -45,29 +45,58 @@ func TestAngularAppDelivery(t *testing.T){
 
 func TestAngularAppDeliveryFileNotFound(t *testing.T){
 
-	buildPath := filepath.Join("..","NotReal.php")
+	buildPath := filepath.Join("..","server","dist","browser","index.html")
 	router := router.NewRouter(buildPath)
-	
-	request := httptest.NewRequest(http.MethodGet,"/",nil)
+	expected,err := os.ReadFile(buildPath)
+	if err != nil {
+		t.Errorf("error reading file:" + err.Error())
+	}
+	expectedSlice := expected[1:20] 
+
+	request := httptest.NewRequest(http.MethodGet,"/noexist",nil)
 	response := httptest.NewRecorder()
 	router.ServeHTTP(response,request)
-	if response.Code != http.StatusNotFound{
+	if response.Code != http.StatusOK{
 			
-		t.Errorf("Expected: %d, Got: %d",http.StatusNotFound,response.Code)
+		t.Errorf("Expected: %d, Got: %d",http.StatusOK,response.Code)
 	}
+	got, err := io.ReadAll(response.Body)
+	if err != nil {
+		t.Errorf("error reading body " + err.Error())
+	} 					
+	gotSlice := got[1:20]
+	if !bytes.Equal(expectedSlice,gotSlice) {
 
+		t.Errorf("the files were not the same")
+	}
 }
 
 func TestAngularAppDeliveryFileIsDirectory(t *testing.T){
 
-	buildPath := filepath.Join("..","handler")
+	buildPath := filepath.Join("..","server","dist","browser","index.html")
 	router := router.NewRouter(buildPath)
-	
-	request := httptest.NewRequest(http.MethodGet,"/",nil)
+	expected,err := os.ReadFile(buildPath)
+	if err != nil {
+		t.Errorf("error reading file:" + err.Error())
+	}
+	expectedSlice := expected[1:20] 
+
+
+	request := httptest.NewRequest(http.MethodGet,"/dist",nil)
 	response := httptest.NewRecorder()
 	router.ServeHTTP(response,request)
-	if response.Code != http.StatusNotAcceptable{
-		t.Errorf("Expected: %d, Got: %d",http.StatusNotAcceptable,response.Code)
+	if response.Code != http.StatusOK{
+		t.Errorf("Expected: %d, Got: %d",http.StatusOK,response.Code)
+	}
+
+	got, err := io.ReadAll(response.Body)
+	if err != nil {
+		t.Errorf("error reading body " + err.Error())
+	} 					
+	gotSlice := got[1:20]
+	if !bytes.Equal(expectedSlice,gotSlice) {
+
+		t.Errorf("the files were not the same")
 	}
 }
 
