@@ -15,7 +15,7 @@
           @for (log of logs; track log.name) {
             <tr>
               <td [attr.data-testid]="'logName-' + log.name">{{ log.name }}</td>
-              <td>{{ log.date }}</td>
+              
             </tr>
           }
         }

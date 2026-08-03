@@ -48,7 +48,7 @@ describe('LogService',()=>{
 
         const log:Log = {
             name:"firstLog",
-            date:'2026-07-26T11:18:29Z'
+            
         };
         const logs:Log[] = [log]; 
 
@@ -67,12 +67,10 @@ describe('LogService',()=>{
 
         const logOne:Log = {
             name:"firstLog",
-            date:'2026-07-26T11:18:29Z'
         };
 
         const logTwo:Log = {
             name:"secondLog",
-            date:'2026-07-26T11:18:29Z'
 
         }; 
 
