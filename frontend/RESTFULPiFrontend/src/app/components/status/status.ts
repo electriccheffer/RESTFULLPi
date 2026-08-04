@@ -9,16 +9,16 @@ import { StatusService } from '../../services/status.service';
 })
 export class StatusComponent {
   
-  device = ''; 
-  status = ''; 
+  device = 'RESTFULPi'; 
+  status = 'Server Unavailable, Unknown Status'; 
 
   constructor(private statusService:StatusService){}
 
   ngOnInit():void{
     this.statusService.getStatus().subscribe({
       next: (data) => {
-        this.device = data.device ?? ''; 
-        this.status = data.status ?? ''; 
+        this.device = data?.device || 'RESTFULPi'; 
+        this.status = data?.status || 'Server Unavailable, Unknown Status'; 
       },
       error:() => {
 

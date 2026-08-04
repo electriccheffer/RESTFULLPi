@@ -21,6 +21,10 @@ export class Logs {
     this.logService.getLogs().subscribe({
       next:(data)=>{
         this.logs = data; 
+      }, error: () => {
+          
+          this.logs = []; 
+
       }
 
     });

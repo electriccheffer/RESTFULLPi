@@ -1,10 +1,10 @@
 import {Routes} from '@angular/router';
-import {StatusComponent} from './components/status/status'; 
+import { HomePage } from './components/home-page/home-page';
 export const routes:Routes =[ 
 {
 
-	path: 'status', 
-	component: StatusComponent, 
+	path: '', 
+	component: HomePage, 
 
 }
 ];

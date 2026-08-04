@@ -1,4 +1,3 @@
--Implement /logs backend 
 -Web host the application
 -Live test /status endpoint
 -Live test /logs endpoint
