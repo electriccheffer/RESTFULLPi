@@ -8,7 +8,7 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { provideHttpClient } from '@angular/common/http';
 
 @Injectable()
-class MockStatusService extends StatusService{
+export class MockStatusService extends StatusService{
 
   private status: Status = {
 

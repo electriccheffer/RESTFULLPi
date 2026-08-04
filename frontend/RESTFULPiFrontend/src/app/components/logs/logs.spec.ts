@@ -12,7 +12,7 @@ import { provideHttpClient } from '@angular/common/http';
   providedIn:'root',
 
 })
-class MockLogService extends LogService{
+export class MockLogService extends LogService{
 
   private logs:Log[] = [];
 
