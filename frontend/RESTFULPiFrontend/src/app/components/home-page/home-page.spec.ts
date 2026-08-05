@@ -156,4 +156,33 @@ describe("HomePage Component Integration Test",() => {
 
   });
 
+  it('Integration Test with logs for homepage component',() => {
+
+    const log:Log = {name:"logOne"}; 
+    const logTwo:Log = {name:"logTwo"}; 
+    const logs:Log[] = [log,logTwo];
+
+    fixture.detectChanges(); 
+    
+    const logsRequest = httpTesting.expectOne('http://192.168.4.1/logs');
+    expect(logsRequest.request.method).toBe("GET"); 
+    logsRequest.flush(logs);
+
+    const statusRequest = httpTesting.expectOne('http://192.168.4.1/status'); 
+    expect(statusRequest.request.method).toBe("GET"); 
+    statusRequest.flush({device:"RESTFULPi",status:"Online"});
+
+    fixture.detectChanges();
+    
+    const compiled = fixture.nativeElement as HTMLElement;
+    const statusRows = compiled.querySelector('status')?.textContent; 
+    expect(statusRows).not.toBeNull(); 
+    console.log(statusRows); 
+    expect(statusRows).toContain("RESTFULPi");
+    expect(statusRows).toContain("Online"); 
+    
+    const logsRows = compiled.querySelector(`[data-testid="logName-${log.name}"]`)?.textContent; 
+    expect(logsRows).not.toBeNull();
+    expect(logsRows).toBe(log.name); 
+  });
 }); 
