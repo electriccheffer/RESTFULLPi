@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { StatusComponent } from '../status/status';
 import { Logs } from '../logs/logs';
 
@@ -7,5 +7,6 @@ import { Logs } from '../logs/logs';
   imports: [StatusComponent,Logs],
   templateUrl: './home-page.html',
   styleUrl: './home-page.css',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HomePage {}
