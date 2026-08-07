@@ -1,5 +1,0 @@
--Web host the application
--Live test /status endpoint
--Live test /logs endpoint
--CI/CD Pipeline for piThree
--Git CI/CD Pipeline

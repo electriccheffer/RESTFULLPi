@@ -25,15 +25,16 @@ connect:
 	networksetup -setairportnetwork en0 "$(PI_NETWORK)" "$(PI_PASSWORD)"
 send:
 	@echo "🚀 Sending RestfulPi binary to server 🚀"
+	ssh piThree "sudo systemctl stop $(SERVICE_NAME)"
 	scp ./bin/restfulPi piThree:~/
 
 service:
 	@echo "🚚 RESTARTING SERVICE 🚚"
-	ssh piThree "sudo systemctl restart $(SERVICE_NAME)"	
+	ssh piThree "sudo systemctl daemon-reload && sudo systemctl restart $(SERVICE_NAME)"	
 
 browser:
 	@echo "🦁 OPENING SAFARI 🦁"
-	open http://$(PI_HOST)
+	open http://$(PI_HOST):8080
 	
 switch:
 	@echo "🛜 CONNECTING TO PalmyraCatColony 🛜"
