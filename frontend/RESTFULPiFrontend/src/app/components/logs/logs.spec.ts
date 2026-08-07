@@ -12,7 +12,7 @@ import { provideHttpClient } from '@angular/common/http';
   providedIn:'root',
 
 })
-class MockLogService extends LogService{
+export class MockLogService extends LogService{
 
   private logs:Log[] = [];
 
@@ -64,7 +64,7 @@ describe('Logs', () => {
 
   it('list with one value', () => {
     
-    const log: Log = { name: 'firstLog', date: '2026-07-26T11:18:29Z' };
+    const log: Log = { name: 'firstLog' };
     mockLogService.setLogs([log]);
     fixture = TestBed.createComponent(Logs); 
     component = fixture.componentInstance;
@@ -80,8 +80,8 @@ describe('Logs', () => {
 
   it('list with multiple values',() => {
 
-    const log: Log = { name: 'firstLog', date: '2026-07-26T11:18:29Z' };
-    const logTwo: Log = {name:'secondLog', date:'2026-07-26T11:18:29Z'}
+    const log: Log = { name: 'firstLog' };
+    const logTwo: Log = {name:'secondLog'}
     mockLogService.setLogs([log,logTwo]);
     fixture = TestBed.createComponent(Logs); 
     component = fixture.componentInstance;
@@ -149,7 +149,6 @@ describe("Logs Component LogService Integration test",() => {
   it('Integration Test for displaying one log',async()=>{
     const log:Log = {
       name:'logOne',
-      date: '2026-07-26T11:18:29Z',
     }
     const apiResponse:Log[] = [log]; 
 
@@ -172,13 +171,11 @@ describe("Logs Component LogService Integration test",() => {
 
     const log:Log = {
       name:'logOne',
-      date: '2026-07-26T11:18:29Z',
     }
 
     const logTwo:Log = {
 
       name:'logTwo',
-      date: '2026-07-26T11:18:29Z',
 
     }
     const apiResponse:Log[] = [log,logTwo]; 

@@ -14,9 +14,9 @@ import "restfulpi/internal/server"
 
 func TestAngularAppDelivery(t *testing.T){
 	
-	buildPath := filepath.Join("..","..","testData","browser","index.html")
+	buildPath := filepath.Join("..","server","dist","browser","index.html")
 	
-	router := router.NewRouter(buildPath,buildPath)
+	router := router.NewRouter(buildPath)
 	
 	expected,err := os.ReadFile(buildPath)
 	if err != nil {
@@ -45,36 +45,65 @@ func TestAngularAppDelivery(t *testing.T){
 
 func TestAngularAppDeliveryFileNotFound(t *testing.T){
 
-	buildPath := filepath.Join("..","NotReal.php")
-	router := router.NewRouter(buildPath,buildPath)
-	
-	request := httptest.NewRequest(http.MethodGet,"/",nil)
+	buildPath := filepath.Join("..","server","dist","browser","index.html")
+	router := router.NewRouter(buildPath)
+	expected,err := os.ReadFile(buildPath)
+	if err != nil {
+		t.Errorf("error reading file:" + err.Error())
+	}
+	expectedSlice := expected[1:20] 
+
+	request := httptest.NewRequest(http.MethodGet,"/noexist",nil)
 	response := httptest.NewRecorder()
 	router.ServeHTTP(response,request)
-	if response.Code != http.StatusNotFound{
+	if response.Code != http.StatusOK{
 			
-		t.Errorf("Expected: %d, Got: %d",http.StatusNotFound,response.Code)
+		t.Errorf("Expected: %d, Got: %d",http.StatusOK,response.Code)
 	}
+	got, err := io.ReadAll(response.Body)
+	if err != nil {
+		t.Errorf("error reading body " + err.Error())
+	} 					
+	gotSlice := got[1:20]
+	if !bytes.Equal(expectedSlice,gotSlice) {
 
+		t.Errorf("the files were not the same")
+	}
 }
 
 func TestAngularAppDeliveryFileIsDirectory(t *testing.T){
 
-	buildPath := filepath.Join("..","handler")
-	router := router.NewRouter(buildPath,buildPath)
-	
-	request := httptest.NewRequest(http.MethodGet,"/",nil)
+	buildPath := filepath.Join("..","server","dist","browser","index.html")
+	router := router.NewRouter(buildPath)
+	expected,err := os.ReadFile(buildPath)
+	if err != nil {
+		t.Errorf("error reading file:" + err.Error())
+	}
+	expectedSlice := expected[1:20] 
+
+
+	request := httptest.NewRequest(http.MethodGet,"/dist",nil)
 	response := httptest.NewRecorder()
 	router.ServeHTTP(response,request)
-	if response.Code != http.StatusNotAcceptable{
-		t.Errorf("Expected: %d, Got: %d",http.StatusNotAcceptable,response.Code)
+	if response.Code != http.StatusOK{
+		t.Errorf("Expected: %d, Got: %d",http.StatusOK,response.Code)
+	}
+
+	got, err := io.ReadAll(response.Body)
+	if err != nil {
+		t.Errorf("error reading body " + err.Error())
+	} 					
+	gotSlice := got[1:20]
+	if !bytes.Equal(expectedSlice,gotSlice) {
+
+		t.Errorf("the files were not the same")
 	}
 }
 
 func TestStatusHandler(t *testing.T){
 
 	buildPath := filepath.Join("..","handler")
-	router := router.NewRouter(buildPath,buildPath)
+	router := router.NewRouter(buildPath)
 	
 	request := httptest.NewRequest(http.MethodGet,"/status",nil)
 	response := httptest.NewRecorder()
@@ -109,7 +138,7 @@ func TestStatusHandler(t *testing.T){
 func TestGetLogsHandlerSuccessEmpty(t *testing.T){
 	
 	path := filepath.Join("..","..","testData","EmptyDirectory")
-	router := router.NewRouter(path,path)
+	router := router.NewRouter(path)
 	
 	request := httptest.NewRequest(http.MethodGet,"/logs",nil)
 	response := httptest.NewRecorder()
@@ -133,7 +162,7 @@ func TestGetLogsHandlerSuccessEmpty(t *testing.T){
 func TestGetLogsHandlerSuccessOneFile(t *testing.T){
 	
 	path := filepath.Join("..","..","testData","OneFileDirectory")
-	router := router.NewRouter(path,path)
+	router := router.NewRouter(path)
 	
 	request := httptest.NewRequest(http.MethodGet,"/logs",nil)
 	response := httptest.NewRecorder()
@@ -159,7 +188,7 @@ func TestGetLogsHandlerSuccessOneFile(t *testing.T){
 func TestGetLogsHandlerSuccessTwoFiles(t *testing.T){
 	
 	path := filepath.Join("..","..","testData","DirectoryWithTwoFiles")
-	router := router.NewRouter(path,path)
+	router := router.NewRouter(path)
 	
 	request := httptest.NewRequest(http.MethodGet,"/logs",nil)
 	response := httptest.NewRecorder()
@@ -187,7 +216,7 @@ func TestGetLogsHandlerSuccessTwoFiles(t *testing.T){
 func TestGetLogsHandlerSuccessFilesWithDirectory(t *testing.T){
 
 	path := filepath.Join("..","..","testData","DirectoryWithTwoFilesAndDirectory")
-	router := router.NewRouter(path,path)
+	router := router.NewRouter(path)
 	
 	request := httptest.NewRequest(http.MethodGet,"/logs",nil)
 	response := httptest.NewRecorder()
@@ -216,7 +245,7 @@ func TestGetLogsHandlerSuccessFilesWithDirectory(t *testing.T){
 func TestGetLogsHandlerFailNoExist(t *testing.T){
 	
 	path := filepath.Join(".","NoExist")
-	router := router.NewRouter(path,path)
+	router := router.NewRouter(path)
 	
 	request := httptest.NewRequest(http.MethodGet,"/logs",nil)
 	response := httptest.NewRecorder()
@@ -236,7 +265,7 @@ func TestGetLogsHandlerFailNoExist(t *testing.T){
 func TestGetLogsHandlerFailNotDirectory(t *testing.T){
 
 	path := filepath.Join(".","handler_test.go")
-	router := router.NewRouter(path,path)
+	router := router.NewRouter(path)
 	
 	request := httptest.NewRequest(http.MethodGet,"/logs",nil)
 	response := httptest.NewRecorder()

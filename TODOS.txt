@@ -1,8 +1,1 @@
--Implement /logs backend 
--Implement /logs backend 
--Web host the application
--Live test /status endpoint
--Live test /logs endpoint
->>>>>>> API
--CI/CD Pipeline for piThree
--Git CI/CD Pipeline
+

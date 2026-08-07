@@ -8,7 +8,7 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { provideHttpClient } from '@angular/common/http';
 
 @Injectable()
-class MockStatusService extends StatusService{
+export class MockStatusService extends StatusService{
 
   private status: Status = {
 
@@ -59,8 +59,8 @@ describe('Status', () => {
 
   it('successful service', () => {
 
-    expect(component.device).toBe('RESTFULPi');
-    expect(component.status).toBe('Online');    
+    expect(component.device()).toBe('RESTFULPi');
+    expect(component.status()).toBe('Online');    
   })
 
   it('non-successful service', () => {
@@ -73,8 +73,8 @@ describe('Status', () => {
     fixture = TestBed.createComponent(StatusComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
-    expect(component.device).toBe('RESTFULPi');
-    expect(component.status).toBe('Offline');
+    expect(component.device()).toBe('RESTFULPi');
+    expect(component.status()).toBe('Offline');
   })
 });
 
@@ -111,7 +111,7 @@ describe('StatusIntegrationTest',() =>{
   it('Integration Test Displays online through StatusServer',()=>{
 
     fixture.detectChanges(); 
-    const request = httpTesting.expectOne('https://restfulpi.com/status');
+    const request = httpTesting.expectOne('http://192.168.4.1/status');
     expect(request.request.method).toBe('GET');
     const apiResponse : Status = {
         device:'RESTFULPi',
@@ -122,15 +122,15 @@ describe('StatusIntegrationTest',() =>{
     request.flush(apiResponse);
     fixture.detectChanges();
 
-    expect(component.device).toBe('RESTFULPi');
-    expect(component.status).toBe('Online');
+    expect(component.device()).toBe('RESTFULPi');
+    expect(component.status()).toBe('Online');
 
   });
 
   it('Integration Test Shows offline when server not reachable',()=>{
 
     fixture.detectChanges();
-    const request = httpTesting.expectOne('https://restfulpi.com/status');
+    const request = httpTesting.expectOne('http://192.168.4.1/status');
     expect(request.request.method).toBe('GET');
     request.error(new ProgressEvent('error'),{
 
@@ -138,7 +138,7 @@ describe('StatusIntegrationTest',() =>{
       statusText: 'Unknown Error', 
     }); 
     fixture.detectChanges(); 
-    expect(component.device).toBe('RESTFULPi');
-    expect(component.status).toBe('Server Unavailable, Unknown Status');
+    expect(component.device()).toBe('RESTFULPi');
+    expect(component.status()).toBe('Server Unavailable, Unknown Status');
   }); 
 }); 

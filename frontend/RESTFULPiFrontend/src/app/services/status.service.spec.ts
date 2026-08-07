@@ -44,7 +44,7 @@ describe('StatusService' ,() => {
             expect(returnStatus.status).toBe('Online'); 
         }); 
 
-        const request = httpTesting.expectOne('https://restfulpi.com/status'); 
+        const request = httpTesting.expectOne('http://192.168.4.1/status'); 
         expect(request.request.method).toBe('GET');
         request.flush(backendStatus);
 

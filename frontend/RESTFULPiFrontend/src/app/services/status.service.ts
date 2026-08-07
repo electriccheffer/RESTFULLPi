@@ -12,7 +12,7 @@ export class StatusService{
 
     getStatus():Observable<Status>{
 
-        return this.http.get<Status>("https://restfulpi.com/status");
+        return this.http.get<Status>("http://192.168.4.1/status");
 
     }
 

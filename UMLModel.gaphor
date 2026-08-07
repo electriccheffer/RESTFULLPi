@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<gaphor xmlns="https://gaphor.org/model" xmlns:Core="https://gaphor.org/modelinglanguage/Core" xmlns:UML="https://gaphor.org/modelinglanguage/UML" version="4" gaphor-version="3.3.2">
+<model>
+<Core:StyleSheet id="58d6989a-66f8-11ec-b4c8-0456e5e540ed"/>
+<UML:Package id="58d6c2e8-66f8-11ec-b4c8-0456e5e540ed">
+<name>
+<val>New model</val>
+</name>
+<ownedDiagram>
+<reflist>
+<ref refid="58d6c536-66f8-11ec-b4c8-0456e5e540ed"/>
+</reflist>
+</ownedDiagram>
+</UML:Package>
+<UML:Diagram id="58d6c536-66f8-11ec-b4c8-0456e5e540ed">
+<element>
+<ref refid="58d6c2e8-66f8-11ec-b4c8-0456e5e540ed"/>
+</element>
+<name>
+<val>New Diagram</val>
+</name>
+</UML:Diagram>
+<UML:DeploymentDiagram id="2f41eda8-8af3-11f1-8373-6a5bc92b8b0f">
+<name>
+<val>Deployment</val>
+</name>
+<ownedPresentation>
+<reflist>
+<ref refid="394e7924-8af3-11f1-8373-6a5bc92b8b0f"/>
+<ref refid="3a6d1d9c-8af3-11f1-8373-6a5bc92b8b0f"/>
+</reflist>
+</ownedPresentation>
+</UML:DeploymentDiagram>
+<UML:Device id="394dd62c-8af3-11f1-8373-6a5bc92b8b0f">
+<name>
+<val>Client Web Browser</val>
+</name>
+<presentation>
+<reflist>
+<ref refid="394e7924-8af3-11f1-8373-6a5bc92b8b0f"/>
+</reflist>
+</presentation>
+</UML:Device>
+<UML:NodeItem id="394e7924-8af3-11f1-8373-6a5bc92b8b0f">
+<matrix>
+<val>(1.0, 0.0, 0.0, 1.0, 57.30078125, 213.2109375)</val>
+</matrix>
+<top-left>
+<val>(0.0, 0.0)</val>
+</top-left>
+<width>
+<val>100.0</val>
+</width>
+<height>
+<val>69.0</val>
+</height>
+<diagram>
+<ref refid="2f41eda8-8af3-11f1-8373-6a5bc92b8b0f"/>
+</diagram>
+<subject>
+<ref refid="394dd62c-8af3-11f1-8373-6a5bc92b8b0f"/>
+</subject>
+</UML:NodeItem>
+<UML:Device id="3a6c98b8-8af3-11f1-8373-6a5bc92b8b0f">
+<name>
+<val>Raspberry Pi Server</val>
+</name>
+<presentation>
+<reflist>
+<ref refid="3a6d1d9c-8af3-11f1-8373-6a5bc92b8b0f"/>
+</reflist>
+</presentation>
+</UML:Device>
+<UML:NodeItem id="3a6d1d9c-8af3-11f1-8373-6a5bc92b8b0f">
+<matrix>
+<val>(1.0, 0.0, 0.0, 1.0, 536.24609375, 228.2109375)</val>
+</matrix>
+<top-left>
+<val>(0.0, -15.0)</val>
+</top-left>
+<width>
+<val>130.578125</val>
+</width>
+<height>
+<val>69.0</val>
+</height>
+<diagram>
+<ref refid="2f41eda8-8af3-11f1-8373-6a5bc92b8b0f"/>
+</diagram>
+<subject>
+<ref refid="3a6c98b8-8af3-11f1-8373-6a5bc92b8b0f"/>
+</subject>
+</UML:NodeItem>
+<UML:Activity id="6e470b14-8af3-11f1-8373-6a5bc92b8b0f">
+<name>
+<val>Activity</val>
+</name>
+</UML:Activity>
+</model>
+</gaphor>

@@ -16,6 +16,9 @@
         "build": {
           "builder": "@angular/build:application",
           "options": {
+            "outputPath": {
+             "base":"../../backend/internal/server/dist"
+            },
             "browser": "src/main.ts",
             "tsConfig": "tsconfig.app.json",
             "assets": [

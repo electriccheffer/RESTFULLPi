@@ -1,7 +1,8 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { Log } from '../../generated/model/log';
 import { LogService } from '../../services/log.service';
 import { CommonModule } from '@angular/common';
+import { single } from 'rxjs';
 
 @Component({
   selector: 'app-logs',
@@ -12,7 +13,7 @@ import { CommonModule } from '@angular/common';
 })
 export class Logs {
 
-  logs:Log[] = []; 
+  logs = signal<Log[]>([]); 
 
   constructor(private logService:LogService){}
 
@@ -20,7 +21,11 @@ export class Logs {
 
     this.logService.getLogs().subscribe({
       next:(data)=>{
-        this.logs = data; 
+        this.logs.set(data); 
+      }, error: () => {
+          
+          this.logs = signal<Log[]>([]); 
+
       }
 
     });
