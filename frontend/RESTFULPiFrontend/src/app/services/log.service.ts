@@ -1,5 +1,5 @@
 import { Observable } from "rxjs";
-import { Log } from "../generated/model/log";
+import { Log } from "../generated/models/log";
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 

@@ -2,7 +2,7 @@ import { TestBed } from "@angular/core/testing";
 import { provideHttpClient } from "@angular/common/http";
 import { HttpTestingController,provideHttpClientTesting } from "@angular/common/http/testing";
 import { StatusService } from "./status.service";
-import {Status} from "../generated/model/status";
+import {Status} from "../generated/models/status";
 
 describe('StatusService' ,() => {
 

@@ -30,7 +30,12 @@ components:
                 date:
                     type: string
                     format: date-time
-
+        StartStatus:
+            type: object
+            properties:
+                name:
+                    type: string
+                   
 paths:
     /status:
         get:
@@ -57,3 +62,16 @@ paths:
                                 type: array
                                 items:
                                     $ref: '#/components/schemas/Log' 
+    /logs/sessions:
+        post:
+            summary: Create a gps log on the server.
+            description: |
+                Creates a log file on the raspberry pi and begins logging gps coordinates.
+                Reports back the name of the file created where the logging takes place. 
+            responses:
+                "200":
+                    description: Log file was created and reading from the sensor is working.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/StartStatus'

@@ -1,5 +1,5 @@
 import { Observable } from "rxjs"; 
-import { Status } from "../generated/model/status";
+import { Status } from "../generated/models/status";
 import {Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 

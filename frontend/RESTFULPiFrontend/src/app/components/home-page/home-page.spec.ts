@@ -4,8 +4,8 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { HomePage } from './home-page';
 import {MockStatusService} from '../status/status.spec';
 import {MockLogService} from '../logs/logs.spec'; 
-import { Status } from '../../generated/model/status';
-import { Log } from '../../generated/model/log';
+import { Status } from '../../generated/models/status';
+import { Log } from '../../generated/models/log';
 import { StatusService } from '../../services/status.service';
 import { LogService } from '../../services/log.service';
 import { ChangeDetectorRef } from '@angular/core';

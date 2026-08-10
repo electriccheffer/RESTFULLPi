@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
-import { Log } from '../../generated/model/log';
+import { Log } from '../../generated/models/log';
 import { LogService } from '../../services/log.service';
 import { CommonModule } from '@angular/common';
 import { single } from 'rxjs';

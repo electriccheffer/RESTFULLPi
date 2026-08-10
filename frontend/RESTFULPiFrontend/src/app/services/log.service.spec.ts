@@ -2,7 +2,7 @@ import { HttpTestingController, provideHttpClientTesting } from "@angular/common
 import { LogService } from "./log.service";
 import { TestBed } from "@angular/core/testing";
 import { provideHttpClient } from "@angular/common/http";
-import { Log } from "../generated/model/log";
+import { Log } from "../generated/models/log";
 
 describe('LogService',()=>{
 

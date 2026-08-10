@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import {StatusService} from '../../services/status.service';
 import { StatusComponent} from './status';
-import {Status} from '../../generated/model/status';
+import {Status} from '../../generated/models/status';
 import { Observable,of } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';

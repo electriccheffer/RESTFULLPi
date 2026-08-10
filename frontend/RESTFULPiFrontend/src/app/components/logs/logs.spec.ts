@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed, tick } from '@angular/core/testing';
 import {LogService} from '../../services/log.service';
 import { Logs } from './logs';
 import { Observable,of } from 'rxjs';
-import {Log} from '../../generated/model/log';
+import {Log} from '../../generated/models/log';
 import { ChangeDetectorRef, Injectable } from '@angular/core';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideHttpClient } from '@angular/common/http';
