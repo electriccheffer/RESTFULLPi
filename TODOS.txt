@@ -1,1 +1,17 @@
-
++ Practice Soldering 
+	- Use some protoboard to solder 40 pins 
+	- Evaluate quality
+	- Repeat
++ Frontend developement for POST /logs/sessions
++ Backend developement for POST /logs/sessions 
++ Frontend developement for DELETE /logs/sessions/active
++ Backend developement for DELETE /logs/sessions/active
++ Frontend developement for GET /logs/{id}
++ Backend developement for GET /logs/{id}
++ Frontend developement for DELETE /logs/{id}
++ Backend developement for DELETE /logs/{id}
++ Solder Board 
++ Configure pi for reading gps data
++ Battery for pi 
++ Active logging test
++ Put into QGIS

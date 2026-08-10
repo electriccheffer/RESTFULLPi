@@ -14,7 +14,7 @@ export class LogService{
 
     getLogs():Observable<Log[]>{
 
-        return this.http.get<Log[]>("http://192.168.4.1/logs");
+        return this.http.get<Log[]>("http://192.168.4.1:8080/logs");
 
     } 
 

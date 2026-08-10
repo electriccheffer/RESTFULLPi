@@ -133,11 +133,11 @@ describe("HomePage Component Integration Test",() => {
 
     fixture.detectChanges();
 
-    const logsRequest = httpTesting.expectOne('http://192.168.4.1/logs');
+    const logsRequest = httpTesting.expectOne('http://192.168.4.1:8080/logs');
     expect(logsRequest.request.method).toBe("GET"); 
     logsRequest.flush(logs);
 
-    const statusRequest = httpTesting.expectOne('http://192.168.4.1/status'); 
+    const statusRequest = httpTesting.expectOne('http://192.168.4.1:8080/status'); 
     expect(statusRequest.request.method).toBe("GET"); 
     statusRequest.flush({device:"RESTFULPi",status:"Online"});
 
@@ -164,11 +164,11 @@ describe("HomePage Component Integration Test",() => {
 
     fixture.detectChanges(); 
     
-    const logsRequest = httpTesting.expectOne('http://192.168.4.1/logs');
+    const logsRequest = httpTesting.expectOne('http://192.168.4.1:8080/logs');
     expect(logsRequest.request.method).toBe("GET"); 
     logsRequest.flush(logs);
 
-    const statusRequest = httpTesting.expectOne('http://192.168.4.1/status'); 
+    const statusRequest = httpTesting.expectOne('http://192.168.4.1:8080/status'); 
     expect(statusRequest.request.method).toBe("GET"); 
     statusRequest.flush({device:"RESTFULPi",status:"Online"});
 

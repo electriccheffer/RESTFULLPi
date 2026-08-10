@@ -12,7 +12,11 @@ import "restfulpi/internal/server"
 
 func main(){
 	
-	gpsLoggingPath := filepath.Join("/","var","lib","restfulpi","/gpsLogs")
+	homeDir,err := os.UserHomeDir()
+	if err != nil {
+		log.Fatalf("Failed to get user home directory: %v", err)
+	}
+	gpsLoggingPath := filepath.Join(homeDir, "gpsLogs")
 	router := router.NewRouter(gpsLoggingPath)
 	port := "8080" 
 	httpServer := &http.Server{
