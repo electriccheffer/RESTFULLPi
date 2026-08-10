@@ -135,7 +135,7 @@ describe("Logs Component LogService Integration test",() => {
 
     fixture.detectChanges();
     
-    const request = httpTesting.expectOne('http://192.168.4.1/logs');
+    const request = httpTesting.expectOne('http://192.168.4.1:8080/logs');
     expect(request.request.method).toBe("GET");
     request.flush(apiResponse);
 
@@ -154,7 +154,7 @@ describe("Logs Component LogService Integration test",() => {
 
     fixture.detectChanges();
 
-    const request = httpTesting.expectOne('http://192.168.4.1/logs');
+    const request = httpTesting.expectOne('http://192.168.4.1:8080/logs');
     expect(request.request.method).toBe("GET");
     request.flush(apiResponse);
     
@@ -182,7 +182,7 @@ describe("Logs Component LogService Integration test",() => {
 
     fixture.detectChanges();
 
-    const request = httpTesting.expectOne('http://192.168.4.1/logs');
+    const request = httpTesting.expectOne('http://192.168.4.1:8080/logs');
     expect(request.request.method).toBe("GET");
     request.flush(apiResponse);
     

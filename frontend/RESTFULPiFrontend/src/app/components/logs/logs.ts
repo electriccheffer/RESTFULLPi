@@ -21,7 +21,7 @@ export class Logs {
 
     this.logService.getLogs().subscribe({
       next:(data)=>{
-        this.logs.set(data); 
+        this.logs.set(data ?? []); 
       }, error: () => {
           
           this.logs = signal<Log[]>([]); 

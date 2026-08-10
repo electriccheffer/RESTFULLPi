@@ -38,7 +38,7 @@ describe('LogService',()=>{
             expect(returnStatus).toEqual([]); 
             
         });
-        const request = httpTesting.expectOne('http://192.168.4.1/logs');
+        const request = httpTesting.expectOne('http://192.168.4.1:8080/logs');
         expect(request.request.method).toBe("GET");
         request.flush(logs);
 
@@ -57,7 +57,7 @@ describe('LogService',()=>{
             expect(returnStatus.length).toBe(1);
             expect(returnStatus[0].name).toBe("firstLog");
         });
-        const request = httpTesting.expectOne('http://192.168.4.1/logs');
+        const request = httpTesting.expectOne('http://192.168.4.1:8080/logs');
         expect(request.request.method).toBe("GET");
         request.flush(logs);
 
@@ -83,7 +83,7 @@ describe('LogService',()=>{
             expect(returnStatus[1].name).toBe("secondLog"); 
         }); 
 
-        const request = httpTesting.expectOne('http://192.168.4.1/logs');
+        const request = httpTesting.expectOne('http://192.168.4.1:8080/logs');
         expect(request.request.method).toBe("GET");
         request.flush(logs); 
 

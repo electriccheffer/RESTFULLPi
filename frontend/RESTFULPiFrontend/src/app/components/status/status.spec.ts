@@ -111,7 +111,7 @@ describe('StatusIntegrationTest',() =>{
   it('Integration Test Displays online through StatusServer',()=>{
 
     fixture.detectChanges(); 
-    const request = httpTesting.expectOne('http://192.168.4.1/status');
+    const request = httpTesting.expectOne('http://192.168.4.1:8080/status');
     expect(request.request.method).toBe('GET');
     const apiResponse : Status = {
         device:'RESTFULPi',
@@ -130,7 +130,7 @@ describe('StatusIntegrationTest',() =>{
   it('Integration Test Shows offline when server not reachable',()=>{
 
     fixture.detectChanges();
-    const request = httpTesting.expectOne('http://192.168.4.1/status');
+    const request = httpTesting.expectOne('http://192.168.4.1:8080/status');
     expect(request.request.method).toBe('GET');
     request.error(new ProgressEvent('error'),{
 

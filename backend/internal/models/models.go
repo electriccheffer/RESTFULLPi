@@ -2,10 +2,10 @@ package models
 
 type Status struct{
 	
-	Device string `json:"Device"`
-	Status string `json:"Status"`
+	Device string `json:"device"`
+	Status string `json:"status"`
 }
 
 type Logs struct{
-	Name string `json:"Name"`
+	Name string `json:"name"`
 }
