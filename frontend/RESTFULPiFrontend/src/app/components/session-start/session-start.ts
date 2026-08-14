@@ -6,4 +6,13 @@ import { Component } from '@angular/core';
   templateUrl: './session-start.html',
   styleUrl: './session-start.css',
 })
-export class SessionStart {}
+export class SessionStart {
+
+
+  ngOnInit():void{
+
+    
+
+  }
+
+}
