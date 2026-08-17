@@ -12,6 +12,7 @@ import { SessionStartService } from '../../services/session-start.service';
 export class SessionStart {
 
   startStatus?:StartStatus; 
+  errorMessage?:string; 
 
   constructor(private startSessionService:SessionStartService){}
 
@@ -22,12 +23,15 @@ export class SessionStart {
   }
 
   startLogging():void{
+    this.startStatus = undefined;
+    this.errorMessage = undefined; 
     this.startSessionService.startSession().subscribe({
       next:(data)=>{
         this.startStatus = data; 
       },
-      error: () => {
+      error: (err) => {
         
+        this.errorMessage = 'Error starting file check the pi';
 
       }
 
