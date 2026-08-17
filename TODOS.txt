@@ -1,7 +1,7 @@
 + Frontend developement for POST /logs/sessions
 + Backend developement for POST /logs/sessions 
-+ Frontend developement for POST /logs/sessions/{id}
-+ Backend developement for DELETE /logs/sessions/{id}
++ Frontend developement for PATCH /logs/sessions/{id}
++ Backend developement for PATCH /logs/sessions/{id}
 + Frontend developement for GET /logs/{id}
 + Backend developement for GET /logs/{id}
 + Frontend developement for DELETE /logs/{id}

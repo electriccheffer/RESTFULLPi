@@ -1,1 +1,13 @@
-<button>start-logging</button>
+<button class="start-session-button" (click)="startLogging()">
+    start-logging
+</button>
+
+@if (startStatus) {
+    <div class="session-info">
+
+        <p>Logging started!</p>
+        <p class="file-name-display">Log file: {{startStatus.name}}</p>
+
+    </div>
+
+}

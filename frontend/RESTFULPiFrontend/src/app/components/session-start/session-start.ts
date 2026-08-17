@@ -1,4 +1,7 @@
 import { Component } from '@angular/core';
+import { Observable, of } from 'rxjs';
+import { StartStatus } from '../../generated/models';
+import { SessionStartService } from '../../services/session-start.service';
 
 @Component({
   selector: 'app-session-start',
@@ -8,6 +11,9 @@ import { Component } from '@angular/core';
 })
 export class SessionStart {
 
+  startStatus?:StartStatus; 
+
+  constructor(private startSessionService:SessionStartService){}
 
   ngOnInit():void{
 
@@ -15,4 +21,18 @@ export class SessionStart {
 
   }
 
+  startLogging():void{
+    this.startSessionService.startSession().subscribe({
+      next:(data)=>{
+        this.startStatus = data; 
+      },
+      error: () => {
+        
+
+      }
+
+    });
+    
+
+  }
 }

@@ -4,9 +4,9 @@ import { SessionStart } from './session-start';
 import { Observable, of } from 'rxjs';
 import {StartStatus} from '../../generated/models/start-status'
 
-class MockSessionStartService extends SessionStartService{
+export class MockSessionStartService extends SessionStartService{
 
-  status:StartStatus = {name:'1234'}
+  status:StartStatus = {name:''};
 
   setSession(status:StartStatus){
 
@@ -23,10 +23,16 @@ class MockSessionStartService extends SessionStartService{
 describe('SessionStart', () => {
   let component: SessionStart;
   let fixture: ComponentFixture<SessionStart>;
+  let mockSessionStartService:MockSessionStartService = new MockSessionStartService();
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [SessionStart],
+      providers: [
+
+        {provide: SessionStartService, useValue:mockSessionStartService}
+
+      ]
     }).compileComponents();
 
     fixture = TestBed.createComponent(SessionStart);
@@ -52,16 +58,27 @@ describe('SessionStart', () => {
     const min = pad(now.getMinutes());
     const ss = pad(now.getSeconds());
     
-    const filename = `gps_log_${mm}-${dd}-${yy}_${hh}-${min}-${ss}.log`;
+    const expectedFilename = `gps_log_${mm}-${dd}-${yy}_${hh}-${min}-${ss}.log`;
 
-    const startSessionStatus:MockSessionStartService = new MockSessionStartService();
-    const startStatus:StartStatus = {name:filename};
-    startSessionStatus.setSession(startStatus);
+    const startStatus:StartStatus = {name:expectedFilename};
+    mockSessionStartService.setSession(startStatus);
     
     fixture.detectChanges(); 
     
+    // check for button 
+    const compiled = fixture.nativeElement as HTMLElement; 
+    const button = compiled.querySelector('button');
+    const emptyName = compiled.querySelector('p.file-name-display'); 
+    expect(emptyName).toBeNull(); 
+    expect(button).not.toBeNull();
+    
+    // press button check for file name 
+    button?.click(); 
 
-
+    fixture.detectChanges(); 
+    const fileName = compiled.querySelector('p.file-name-display');
+    expect(fileName).not.toBeNull();
+    expect(fileName?.textContent?.trim()).toContain(expectedFilename);   
   });
   
   
