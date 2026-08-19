@@ -1,8 +1,8 @@
-import { Observable, of } from "rxjs";
+import { Observable, of, throwError } from "rxjs";
 import { StartStatus } from "../generated/models";
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpErrorResponse, HttpResponse } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-
+import { catchError } from "rxjs";
 
 @Injectable({
 
@@ -18,8 +18,14 @@ export class SessionStartService{
 
     startSession():Observable<StartStatus>{
 
-        return this.http.post<StartStatus>(this.requestUrl,{}); 
+        return this.http.post<StartStatus>(this.requestUrl,{}).pipe(catchError(this.handleError)); 
 
     };
+
+    private handleError(error:HttpErrorResponse):Observable<never>{
+        
+        return throwError(() => error); 
+
+    }
 
 }

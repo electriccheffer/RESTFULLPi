@@ -50,5 +50,24 @@ describe('SessionStartService',() => {
         request.flush(expected); 
     }); 
 
+    it('Should return error 500 POST /logs/sessions',()=>{
+
+        service.startSession().subscribe({
+
+            next: () => expect.fail('Expected Bad Request'),
+            error: (error) =>{
+                expect(error.status).toBe(500); 
+                expect(error.statusText).toBe('Internal Server Error');
+
+            }
+
+        });
+
+        const request = httpMock.expectOne('http://192.168.4.1:8080/logs/sessions'); 
+        request.flush('',{status:500,statusText:'Internal Server Error'});
+
+
+    });
+
 });
 
