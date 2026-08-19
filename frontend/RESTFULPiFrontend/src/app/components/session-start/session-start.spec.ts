@@ -8,6 +8,12 @@ export class MockSessionStartService extends SessionStartService{
 
   status:StartStatus = {name:''};
   errorMessage:string = ''; 
+  
+  constructor(){
+
+    super(null!);
+
+  }
 
   setSession(status:StartStatus):void{
 
