@@ -3,6 +3,8 @@ import {SessionStartService} from '../../services/session-start.service';
 import { SessionStart } from './session-start';
 import { Observable, of,throwError } from 'rxjs';
 import {StartStatus} from '../../generated/models/start-status'
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideHttpClient } from '@angular/common/http';
 
 export class MockSessionStartService extends SessionStartService{
 
@@ -121,3 +123,57 @@ describe('SessionStart', () => {
 
 
 });
+
+
+describe('SessionStart service integration test',() => {
+
+  let component: SessionStart; 
+  let fixture: ComponentFixture<SessionStart>; 
+  let httpTesting: HttpTestingController; 
+
+  beforeEach(async() => {
+
+    await TestBed.configureTestingModule({
+
+      imports:[SessionStart],
+      providers: [
+        SessionStartService,
+        provideHttpClient(),
+        provideHttpClientTesting()
+      ]
+
+    }).compileComponents(); 
+
+    httpTesting = TestBed.inject(HttpTestingController); 
+    fixture = TestBed.createComponent(SessionStart);
+    component = fixture.componentInstance; 
+  }); 
+
+  afterEach(() => {
+
+    httpTesting.verify(); 
+
+  }); 
+
+  it('Integration test of SessionStart ', () => {
+    
+    const fileName = '25_09_26.gpx';
+    const apiResponse:StartStatus = {name:fileName};
+
+    const button = fixture.nativeElement.querySelector('.start-session-button');
+    expect(button).toBeTruthy();
+    button.click();
+
+    const request = httpTesting.expectOne('http://192.168.4.1:8080/logs/sessions');
+    expect(request.request.method).toBe("POST"); 
+    request.flush(apiResponse); 
+
+    fixture.detectChanges(); 
+
+    const pageData = fixture.nativeElement.querySelector('.file-name-display'); 
+    expect(pageData).toBeTruthy();
+    expect(pageData.textContent).toContain(fileName);
+
+  }); 
+
+}); 
