@@ -31,7 +31,7 @@ export class SessionStart {
       },
       error: (err) => {
         
-        this.errorMessage = 'Error starting file check the pi';
+        this.errorMessage = err.statusText;
 
       }
 

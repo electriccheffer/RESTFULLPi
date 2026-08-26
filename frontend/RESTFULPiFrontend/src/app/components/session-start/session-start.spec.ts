@@ -31,7 +31,7 @@ export class MockSessionStartService extends SessionStartService{
 
   override startSession(): Observable<StartStatus> {
     if(this.errorMessage !== ''){
-      return throwError( () => new Error(this.errorMessage)); 
+      return throwError(() => ({statusText:this.errorMessage})); 
     }
     return of(this.status);
   }
@@ -101,7 +101,7 @@ describe('SessionStart', () => {
   
   it('file creation error',() => {
 
-    const expectedErrorMessage = 'Error starting file check the pi';
+    const expectedErrorMessage = 'Internal Server Error';
     mockSessionStartService.setError(expectedErrorMessage);
     fixture.detectChanges();
 
@@ -175,5 +175,24 @@ describe('SessionStart service integration test',() => {
     expect(pageData.textContent).toContain(fileName);
 
   }); 
+
+  it('Integration test of SessionStart error case', () => {
+
+    const errorMessage = 'Internal Server Error'; 
+
+    const button = fixture.nativeElement.querySelector('.start-session-button');
+    expect(button).toBeTruthy();
+    button.click(); 
+
+    const request = httpTesting.expectOne('http://192.168.4.1:8080/logs/sessions');
+    expect(request.request.method).toBe("POST");
+    request.flush('',{status:500,statusText:'Internal Server Error'});
+
+    fixture.detectChanges();
+
+    const pageData = fixture.nativeElement.querySelector('.error-message'); 
+    expect(pageData).toBeTruthy();
+    expect(pageData.textContent).toContain(errorMessage);
+  });
 
 }); 
