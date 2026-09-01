@@ -254,3 +254,44 @@ describe("Logs Session Service with Mock SesssionStartService",() =>{
   });
 
 });
+
+describe("Integration Test with SessionStartService",()=>{
+
+  let component:Logs; 
+  let fixture:ComponentFixture<Logs>; 
+  let sessionStartService:SessionStartService; 
+  let mockLogService:MockLogService; 
+  let httpTesting: HttpTestingController; 
+
+  beforeEach(async() => {
+
+    await TestBed.configureTestingModule({
+      imports:[Logs],
+      providers:[
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        SessionStartService,
+        {provide: LogService,useClass:MockLogService}
+      ]
+    }).compileComponents();
+
+    sessionStartService = TestBed.inject(SessionStartService);
+    httpTesting = TestBed.inject(HttpTestingController);
+    mockLogService = TestBed.inject(MockLogService);
+    fixture = TestBed.createComponent(Logs);
+    component = fixture.componentInstance; 
+  });
+    afterEach(() => {
+
+      httpTesting.verify();
+
+    }); 
+
+    it("Should Initialize and Create",() => {
+
+      expect(component).toBeTruthy(); 
+
+    });
+
+  }); 
+
