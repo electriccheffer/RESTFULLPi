@@ -21,10 +21,15 @@ export class SessionStartService{
     startSession():Observable<StartStatus>{
 
         return this.http.post<StartStatus>(this.requestUrl,{}).pipe(tap(()=> {
-            this.sessionStartedSubject.next();}),
+            this.emitSessionStarted();}),
             catchError(this.handleError)); 
 
     };
+
+    protected emitSessionStarted():void{
+
+        this.sessionStartedSubject.next();
+    }
 
     private handleError(error:HttpErrorResponse):Observable<never>{
         
