@@ -69,5 +69,51 @@ describe('SessionStartService',() => {
 
     });
 
+    it('Should emit signal with success case',() => {
+
+        let signal = false; 
+        const expected:StartStatus = {name:'gps_log_08_31_2026.log'};
+        service.startSession().subscribe((res) => {
+            expect(res).toEqual(expected); 
+            expect(res.name).toBe(expected.name); 
+        }); 
+        service.sessionStarted$.subscribe(()=>{
+
+            signal = true; 
+
+        }); 
+        const request = httpMock.expectOne('http://192.168.4.1:8080/logs/sessions'); 
+        expect(request.request.method).toBe('POST'); 
+        expect(request.request.body).toEqual({});
+        request.flush(expected); 
+        expect(signal).toBe(true); 
+    }); 
+
+    it('Should not emit signal with failure case',() => {
+
+        let signal = false; 
+        const expected:StartStatus = {name:'gps_log_08_31_2026.log'};
+        service.startSession().subscribe({
+
+            next: () => expect.fail('Expected Bad Request'),
+            error: (error) =>{
+                expect(error.status).toBe(500); 
+                expect(error.statusText).toBe('Internal Server Error');
+
+            }
+
+        });
+
+        service.sessionStarted$.subscribe(()=>{
+
+            signal = true; 
+
+        }); 
+        const request = httpMock.expectOne('http://192.168.4.1:8080/logs/sessions'); 
+        expect(request.request.method).toBe('POST'); 
+        expect(request.request.body).toEqual({});
+        request.flush('',{status:500,statusText:'Internal Server Error'}); 
+        expect(signal).toBe(false); 
+    }); 
 });
 

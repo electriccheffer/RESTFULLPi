@@ -186,3 +186,4 @@ describe("HomePage Component Integration Test",() => {
     expect(logsRows).toBe(log.name); 
   });
 }); 
+

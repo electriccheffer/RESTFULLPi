@@ -1,4 +1,4 @@
-import { Observable, of, throwError } from "rxjs";
+import { Observable, of, Subject, tap, throwError } from "rxjs";
 import { StartStatus } from "../generated/models";
 import { HttpClient, HttpErrorResponse, HttpResponse } from "@angular/common/http";
 import { Injectable } from "@angular/core";
@@ -13,12 +13,16 @@ import { catchError } from "rxjs";
 export class SessionStartService{
 
     private readonly requestUrl = 'http://192.168.4.1:8080/logs/sessions'; 
+    private readonly sessionStartedSubject = new Subject<void>(); 
+    readonly sessionStarted$ = this.sessionStartedSubject.asObservable(); 
 
     constructor(private http:HttpClient){}
 
     startSession():Observable<StartStatus>{
 
-        return this.http.post<StartStatus>(this.requestUrl,{}).pipe(catchError(this.handleError)); 
+        return this.http.post<StartStatus>(this.requestUrl,{}).pipe(tap(()=> {
+            this.sessionStartedSubject.next();}),
+            catchError(this.handleError)); 
 
     };
 
