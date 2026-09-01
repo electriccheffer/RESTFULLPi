@@ -146,7 +146,6 @@ describe("HomePage Component Integration Test",() => {
     const compiled = fixture.nativeElement as HTMLElement;
     const statusRows = compiled.querySelector('status')?.textContent; 
     expect(statusRows).not.toBeNull(); 
-    console.log(statusRows); 
     expect(statusRows).toContain("RESTFULPi");
     expect(statusRows).toContain("Online"); 
     
@@ -177,7 +176,6 @@ describe("HomePage Component Integration Test",() => {
     const compiled = fixture.nativeElement as HTMLElement;
     const statusRows = compiled.querySelector('status')?.textContent; 
     expect(statusRows).not.toBeNull(); 
-    console.log(statusRows); 
     expect(statusRows).toContain("RESTFULPi");
     expect(statusRows).toContain("Online"); 
     

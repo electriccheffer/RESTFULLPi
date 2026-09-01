@@ -12,8 +12,8 @@ import { catchError } from "rxjs";
 
 export class SessionStartService{
 
-    private readonly requestUrl = 'http://192.168.4.1:8080/logs/sessions'; 
-    private readonly sessionStartedSubject = new Subject<void>(); 
+    protected readonly requestUrl = 'http://192.168.4.1:8080/logs/sessions'; 
+    protected readonly sessionStartedSubject = new Subject<void>(); 
     readonly sessionStarted$ = this.sessionStartedSubject.asObservable(); 
 
     constructor(private http:HttpClient){}

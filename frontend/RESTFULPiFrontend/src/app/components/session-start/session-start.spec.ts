@@ -1,11 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import {SessionStartService} from '../../services/session-start.service';
 import { SessionStart } from './session-start';
-import { Observable, of,throwError } from 'rxjs';
+import { Observable, of,throwError,tap } from 'rxjs';
 import {StartStatus} from '../../generated/models/start-status'
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideHttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { joinAllInternals } from 'rxjs/internal/operators/joinAllInternals';
 
+@Injectable({
+  providedIn:'root'
+})
 export class MockSessionStartService extends SessionStartService{
 
   status:StartStatus = {name:''};
@@ -31,9 +36,12 @@ export class MockSessionStartService extends SessionStartService{
 
   override startSession(): Observable<StartStatus> {
     if(this.errorMessage !== ''){
-      return throwError(() => ({statusText:this.errorMessage})); 
+
+      return throwError(() => ({
+        
+        statusText:this.errorMessage})); 
     }
-    return of(this.status);
+    return of(this.status).pipe(tap(()=>this.sessionStartedSubject.next()));
   }
 
 }

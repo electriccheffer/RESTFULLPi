@@ -6,6 +6,8 @@ import {Log} from '../../generated/models/log';
 import { ChangeDetectorRef, Injectable } from '@angular/core';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideHttpClient } from '@angular/common/http';
+import { MockSessionStartService } from '../session-start/session-start.spec';
+import { SessionStartService } from '../../services/session-start.service';
 
 @Injectable({
 
@@ -199,4 +201,56 @@ describe("Logs Component LogService Integration test",() => {
     expect(rowsTwo?.textContent?.trim()).toBe(logTwo.name);
   });
 
+  
+
 }); 
+
+describe("Logs Session Service with Mock SesssionStartService",() =>{
+
+  let component: Logs;
+  let fixture: ComponentFixture<Logs>;
+  let mockLogService: MockLogService ; 
+  let mockSessionStartService: MockSessionStartService; 
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [Logs],
+      providers:[{
+
+        provide:LogService,
+        useClass:MockLogService,
+        },{
+        provide:SessionStartService,
+        useClass:MockSessionStartService
+        }
+      ]
+    }).compileComponents();
+    mockLogService = TestBed.inject(LogService)as unknown as MockLogService;
+    mockSessionStartService = TestBed.inject(SessionStartService) as unknown as MockSessionStartService; 
+    fixture = TestBed.createComponent(Logs);
+    component = fixture.componentInstance;
+    await fixture.whenStable();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+
+
+  it('Integration Test for LogsComponent with SessionStartService',() => {
+
+    const expectedLog:Log = {name:'09_01_2026.gpx'}; 
+    const expectedLogs:Log[] = [expectedLog]; 
+    fixture.detectChanges();
+
+    mockLogService.setLogs(expectedLogs); 
+    mockSessionStartService.startSession().subscribe();
+    fixture.detectChanges(); 
+    const compiled = fixture.nativeElement as HTMLElement; 
+    const rows = compiled.querySelector(`[data-testid="logName-${expectedLog.name}"]`);
+    expect(rows).not.toBeNull();
+    expect(rows?.textContent?.trim()).toBe(expectedLog.name); 
+
+  });
+
+});
