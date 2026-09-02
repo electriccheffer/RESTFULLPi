@@ -9,12 +9,15 @@ import { Log } from '../../generated/models/log';
 import { StatusService } from '../../services/status.service';
 import { LogService } from '../../services/log.service';
 import { ChangeDetectorRef } from '@angular/core';
+import { SessionStartService } from '../../services/session-start.service';
+import { MockSessionStartService } from '../session-start/session-start.spec';
 
 describe('HomePage component level test', () => {
   let component: HomePage;
   let fixture: ComponentFixture<HomePage>;
   let mockStatusService:MockStatusService; 
   let mockLogService:MockLogService;
+  let mockSessionStartService:MockSessionStartService; 
 
   beforeEach(async () => {
    
@@ -24,13 +27,15 @@ describe('HomePage component level test', () => {
         provideHttpClient(),
         provideHttpClientTesting(),
         {provide:StatusService,useClass:MockStatusService},
-        {provide:LogService,useClass:MockLogService}
+        {provide:LogService,useClass:MockLogService},
+        {provide:SessionStartService,useClass:MockSessionStartService}
       ]
     }).compileComponents();
 
     fixture = TestBed.createComponent(HomePage);
     mockStatusService = TestBed.inject(StatusService) as MockStatusService; 
     mockLogService = TestBed.inject(LogService) as MockLogService; 
+    mockSessionStartService = TestBed.inject(SessionStartService) as MockSessionStartService; 
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

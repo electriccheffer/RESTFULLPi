@@ -8,6 +8,8 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { provideHttpClient } from '@angular/common/http';
 import { MockSessionStartService } from '../session-start/session-start.spec';
 import { SessionStartService } from '../../services/session-start.service';
+import { SessionStart } from '../session-start/session-start';
+import { StartStatus } from '../../generated/models';
 
 @Injectable({
 
@@ -255,12 +257,12 @@ describe("Logs Session Service with Mock SesssionStartService",() =>{
 
 });
 
-describe("Integration Test with SessionStartService",()=>{
+describe("Integration Test with Logs and SessionStartService",()=>{
 
   let component:Logs; 
   let fixture:ComponentFixture<Logs>; 
   let sessionStartService:SessionStartService; 
-  let mockLogService:MockLogService; 
+  let logService:LogService; 
   let httpTesting: HttpTestingController; 
 
   beforeEach(async() => {
@@ -271,13 +273,13 @@ describe("Integration Test with SessionStartService",()=>{
         provideHttpClient(),
         provideHttpClientTesting(),
         SessionStartService,
-        {provide: LogService,useClass:MockLogService}
+        LogService
       ]
     }).compileComponents();
 
     sessionStartService = TestBed.inject(SessionStartService);
     httpTesting = TestBed.inject(HttpTestingController);
-    mockLogService = TestBed.inject(MockLogService);
+    logService = TestBed.inject(LogService);
     fixture = TestBed.createComponent(Logs);
     component = fixture.componentInstance; 
   });
@@ -292,6 +294,35 @@ describe("Integration Test with SessionStartService",()=>{
       expect(component).toBeTruthy(); 
 
     });
+
+    it("Success case log created",() => {
+
+      const expectedLog:Log = {name:'09_01_2026.gpx'}; 
+      const expectedLogs:Log[] = [expectedLog]; 
+      const expectedSessionResponse:StartStatus = {name:'09_01_2026.gpx'}; 
+      fixture.detectChanges();
+      
+      const initialGet = httpTesting.expectOne('http://192.168.4.1:8080/logs'); 
+      expect(initialGet.request.method).toBe("GET"); 
+      initialGet.flush([]);
+
+      sessionStartService.startSession().subscribe();
+
+      const request = httpTesting.expectOne('http://192.168.4.1:8080/logs/sessions');
+      expect(request.request.method).toBe("POST");
+      request.flush(expectedSessionResponse); 
+      
+      const getRequest = httpTesting.expectOne('http://192.168.4.1:8080/logs');
+      expect(getRequest.request.method).toBe("GET");
+      getRequest.flush(expectedLogs); 
+
+      fixture.detectChanges();
+      
+      const compiled = fixture.nativeElement as HTMLElement; 
+      const rows = compiled.querySelector(`[data-testid="logName-${expectedLog.name}"]`);
+      expect(rows).not.toBeNull();
+      expect(rows?.textContent?.trim()).toContain(expectedLog.name); 
+    }); 
 
   }); 
 

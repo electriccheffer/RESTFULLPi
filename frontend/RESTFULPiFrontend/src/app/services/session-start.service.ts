@@ -32,7 +32,6 @@ export class SessionStartService{
     }
 
     private handleError(error:HttpErrorResponse):Observable<never>{
-        
         return throwError(() => error); 
 
     }
