@@ -235,5 +235,43 @@ describe("HomePage Component Integration Test",() => {
 
   });
 
+  it('Integration Test SessionStart error case',() => {
+
+    const log:Log = {name:"09_02_2026.gpx"}; 
+    const expectedLogs:Log[] = [log]; 
+    const newFileName:StartStatus = {name:log.name};
+
+    fixture.detectChanges(); 
+
+    const logsRequest = httpTesting.expectOne('http://192.168.4.1:8080/logs');
+    expect(logsRequest.request.method).toBe('GET');
+    logsRequest.flush([]);
+
+    const statusRequest = httpTesting.expectOne('http://192.168.4.1:8080/status');
+    expect(statusRequest.request.method).toBe('GET');
+    statusRequest.flush({device:"RESTFULPi",status:"Online"});
+
+    const button = fixture.nativeElement.querySelector('.start-session-button');
+    expect(button).toBeTruthy();
+    button.click();
+
+    const postRequest = httpTesting.expectOne('http://192.168.4.1:8080/logs/sessions'); 
+    expect(postRequest.request.method).toBe('POST');
+    postRequest.flush('',{status:500,statusText:'Internal Server Error'});
+    
+    fixture.detectChanges(); 
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    const statusRows = compiled.querySelector('status')?.textContent; 
+    expect(statusRows).not.toBeNull(); 
+    expect(statusRows).toContain("RESTFULPi");
+    expect(statusRows).toContain("Online"); 
+
+    const logFiles = compiled.querySelector('.empty-log-list'); 
+    expect(logFiles).toBeTruthy(); 
+    expect(logFiles?.textContent?.trim()).toContain('no current logs'); 
+
+  }); 
+
 }); 
 
