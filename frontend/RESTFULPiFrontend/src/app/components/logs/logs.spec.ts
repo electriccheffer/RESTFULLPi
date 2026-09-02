@@ -324,5 +324,32 @@ describe("Integration Test with Logs and SessionStartService",()=>{
       expect(rows?.textContent?.trim()).toContain(expectedLog.name); 
     }); 
 
+    it("Failure case no log created ", () =>{
+
+      fixture.detectChanges(); 
+      const initialGet = httpTesting.expectOne('http://192.168.4.1:8080/logs');
+      expect(initialGet.request.method).toBe("GET");
+      initialGet.flush([]);
+
+      let errorResponse:boolean = false; 
+
+      sessionStartService.startSession().subscribe({
+
+        next: () => console.log('No error thrown'),
+        error: (err) => {errorResponse = true;}
+        });
+      
+      const postRequest = httpTesting.expectOne('http://192.168.4.1:8080/logs/sessions');
+      expect(postRequest.request.method).toBe("POST");
+      postRequest.flush('',{status:500,statusText:'Internal Server Error'});
+      expect(errorResponse).toBe(true);
+
+      fixture.detectChanges(); 
+
+      const pageData = fixture.nativeElement.querySelector('.empty-log-list'); 
+      expect(pageData).toBeTruthy(); 
+      expect(pageData.textContent).toContain('no current logs');
+    }); 
+
   }); 
 
