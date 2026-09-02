@@ -11,6 +11,7 @@ import { LogService } from '../../services/log.service';
 import { ChangeDetectorRef } from '@angular/core';
 import { SessionStartService } from '../../services/session-start.service';
 import { MockSessionStartService } from '../session-start/session-start.spec';
+import { StartStatus } from '../../generated/models';
 
 describe('HomePage component level test', () => {
   let component: HomePage;
@@ -188,5 +189,51 @@ describe("HomePage Component Integration Test",() => {
     expect(logsRows).not.toBeNull();
     expect(logsRows).toBe(log.name); 
   });
+
+  it('Integration Test SessionStart',() => {
+
+    const log:Log = {name:"09_02_2026.gpx"}; 
+    const expectedLogs:Log[] = [log]; 
+    const newFileName:StartStatus = {name:log.name};
+
+    fixture.detectChanges(); 
+
+    const logsRequest = httpTesting.expectOne('http://192.168.4.1:8080/logs');
+    expect(logsRequest.request.method).toBe('GET');
+    logsRequest.flush([]);
+
+    const statusRequest = httpTesting.expectOne('http://192.168.4.1:8080/status');
+    expect(statusRequest.request.method).toBe('GET');
+    statusRequest.flush({device:"RESTFULPi",status:"Online"});
+
+    const button = fixture.nativeElement.querySelector('.start-session-button');
+    expect(button).toBeTruthy();
+    button.click();
+
+    const postRequest = httpTesting.expectOne('http://192.168.4.1:8080/logs/sessions'); 
+    expect(postRequest.request.method).toBe('POST');
+    postRequest.flush(newFileName);
+    
+    const refreashLogsRequest = httpTesting.expectOne('http://192.168.4.1:8080/logs');
+    expect(refreashLogsRequest.request.method).toBe('GET');
+    refreashLogsRequest.flush(expectedLogs);
+
+    fixture.detectChanges(); 
+
+    const fileData = fixture.nativeElement.querySelector('.file-name-display') as HTMLElement;
+    expect(fileData.textContent.trim()).toContain(log.name);
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    const statusRows = compiled.querySelector('status')?.textContent; 
+    expect(statusRows).not.toBeNull(); 
+    expect(statusRows).toContain("RESTFULPi");
+    expect(statusRows).toContain("Online"); 
+
+    const logFiles = compiled.querySelector(`[data-testid="logName-${log.name}"]`)
+    expect(logFiles).toBeTruthy(); 
+    expect(logFiles?.textContent?.trim()).toContain(log.name); 
+
+  });
+
 }); 
 
