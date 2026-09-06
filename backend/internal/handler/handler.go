@@ -2,8 +2,11 @@ package handler
 
 import "net/http"
 import "encoding/json"
-import "fmt"
 import "io/fs"
+import "time"
+import "fmt"
+import "crypto/rand"
+import "encoding/hex"
 import "restfulpi/internal/models"
 import "restfulpi/internal/file_operations"
 
@@ -105,5 +108,45 @@ func (glh *GetLogsHandler) ServeHTTP(response http.ResponseWriter,request *http.
 	}
 	response.WriteHeader(http.StatusOK)
 	response.Write(jsonLogs)		
+	return
+}
+
+type SessionStartHandler struct{
+	
+	manager SessionManagerService
+
+}
+
+func NewSessionStartHandler(mgr SessionManagerService) *SessionStartHandler{
+	
+	ssh := &SessionStartHandler{manager:mgr}
+	return ssh
+
+}
+
+func (ssh *SessionStartHandler) ServeHTTP(response http.ResponseWriter,request *http.Request){
+
+	now := time.Now()
+	filePath := now.Format("01_02_06_15_04_05.gpx")			
+
+	randomBytes := make([]byte,16)
+	 _,err := rand.Read(randomBytes)
+
+	if err != nil{
+			
+	}
+	id := hex.EncodeToString(randomBytes)
+	
+	session, err := ssh.manager.StartSession(id,filePath)
+	jsonSession, err := json.Marshal(session)
+	if err != nil{
+
+
+	}
+	
+	response.Header().Set("Content-Type","application/json")
+	response.Header().Set("X-Content-Type-Options","nosniff")
+	response.WriteHeader(http.StatusCreated)
+	response.Write(jsonSession)
 	return
 }

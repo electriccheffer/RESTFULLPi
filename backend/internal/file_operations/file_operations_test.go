@@ -78,3 +78,4 @@ func TestDirectoryReadDirectoryDoesNotExist(t *testing.T){
 		t.Errorf("Directory does not exist. Should throw error")
 	}
 }
+
