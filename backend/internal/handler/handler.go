@@ -7,6 +7,7 @@ import "time"
 import "fmt"
 import "crypto/rand"
 import "encoding/hex"
+import "errors"
 import "restfulpi/internal/models"
 import "restfulpi/internal/file_operations"
 
@@ -138,6 +139,42 @@ func (ssh *SessionStartHandler) ServeHTTP(response http.ResponseWriter,request *
 	id := hex.EncodeToString(randomBytes)
 	
 	session, err := ssh.manager.StartSession(id,filePath)
+		
+	if err != nil {
+		
+		retries := 3
+		var sessionManagerError *SessionManagerError
+		errors.As(err,&sessionManagerError)
+		if sessionManagerError.Code == 409{
+		
+			for attempt := 1 ; attempt < retries && err != nil ; attempt++{
+				randomBytes = make([]byte,16)
+				_,err = rand.Read(randomBytes)
+				id = hex.EncodeToString(randomBytes)
+				session, err = ssh.manager.StartSession(id,filePath)	
+			}
+			if err == nil{
+				jsonSession, err := json.Marshal(session)
+				if err != nil{
+
+
+				}
+	
+				response.Header().Set("Content-Type","application/json")
+				response.Header().Set("X-Content-Type-Options","nosniff")
+				response.WriteHeader(http.StatusCreated)
+				response.Write(jsonSession)
+	 
+			}else{
+				response.Header().Set("Content-Type","application/json")
+				response.Header().Set("X-Content-Type-Options","nosniff")
+				response.WriteHeader(http.StatusConflict)			
+			}
+				
+		}			
+	
+	}
+
 	jsonSession, err := json.Marshal(session)
 	if err != nil{
 

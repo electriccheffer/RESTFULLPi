@@ -12,6 +12,7 @@ import "regexp"
 
 import "restfulpi/internal/models"
 import "restfulpi/internal/server"
+import "restfulpi/internal/handler"
 
 func TestAngularAppDelivery(t *testing.T){
 	
@@ -361,4 +362,42 @@ func TestSessionStartHandlerSuccess(t *testing.T){
 		t.Errorf("File name did not match pattern got: %s",session.FileName)
 
 	}
+}
+
+type SessionStartNonUniqueId struct{
+	retries int
+}
+
+func NewSessionStartNonUniqueId() *SessionStartNonUniqueId{
+	ssnui := &SessionStartNonUniqueId{retries:0}
+	return ssnui	
+}
+
+func (ssnui *SessionStartNonUniqueId) StartSession(id string, 
+					filePath string)(*models.Session,error){
+	if ssnui.retries < 4{
+		ssnui.retries++ 
+		return nil,handler.NewSessionManagerError(
+				409,"non-unique id generated for session") 	
+	}	
+	session := &models.Session{FileName:filePath,Id:id}
+	return session,nil
+}
+
+
+func TestSessionStartNonUniqueIdErrorReturn(t *testing.T){
+
+	buildPath := filepath.Join("..","server","dist","browser","index.html")
+	sessionManager := NewSessionStartNonUniqueId()
+	router := router.NewRouter(buildPath,sessionManager)
+
+	request := httptest.NewRequest(http.MethodPost,"/logs/sessions",nil)
+	response := httptest.NewRecorder()
+	router.ServeHTTP(response,request)
+
+	if response.Code != http.StatusConflict {
+
+		t.Errorf("Errror expected in response code got:%d expected:%d",
+							response.Code,http.StatusConflict)
+	}	
 }
