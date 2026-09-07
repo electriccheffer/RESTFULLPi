@@ -626,7 +626,7 @@ func (ssnp *SessionStartNoPermissions) StartSession(id string,
 func TestSessionStartNoPermissions(t *testing.T){
 
 	buildPath := filepath.Join("..","server","dist","browser","index.html")
-	sessionManager := NewSessionStartNoWriteDirectory()
+	sessionManager := NewSessionStartNoPermissions()
 	router := router.NewRouter(buildPath,sessionManager)
 
 	request := httptest.NewRequest(http.MethodPost,"/logs/sessions",nil)
