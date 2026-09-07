@@ -605,6 +605,38 @@ func TestSessionStartDirectoryDoesNotExist(t *testing.T){
 		t.Errorf("Errror expected in response code got:%d expected:%d",
 							response.Code,http.StatusConflict)
 	}
+
+}
+
+type SessionStartNoPermissions struct{}
+
+
+func NewSessionStartNoPermissions() *SessionStartNoPermissions{
 	
+	return &SessionStartNoPermissions{}	
+}
+
+func (ssnp *SessionStartNoPermissions) StartSession(id string,
+						    fileName string)(*models.Session,error){
+
+	return nil,handler.NewSessionManagerError(13,"SessionManagerError:no permissions")
+}
+
+
+func TestSessionStartNoPermissions(t *testing.T){
+
+	buildPath := filepath.Join("..","server","dist","browser","index.html")
+	sessionManager := NewSessionStartNoWriteDirectory()
+	router := router.NewRouter(buildPath,sessionManager)
+
+	request := httptest.NewRequest(http.MethodPost,"/logs/sessions",nil)
+	response := httptest.NewRecorder()
+	router.ServeHTTP(response,request)
+
+	if response.Code != http.StatusInternalServerError {
+
+		t.Errorf("Errror expected in response code got:%d expected:%d",
+							response.Code,http.StatusConflict)
+	}
 
 }
