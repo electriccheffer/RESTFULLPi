@@ -401,3 +401,72 @@ func TestSessionStartNonUniqueIdErrorReturn(t *testing.T){
 							response.Code,http.StatusConflict)
 	}	
 }
+
+type SessionStartNonUniqueIdPasses struct{
+	retries int
+}
+
+
+func NewSessionStartNonUniqueIdPasses() *SessionStartNonUniqueIdPasses{
+	ssnuip := &SessionStartNonUniqueIdPasses{retries:0}
+	return ssnuip
+}
+
+func (ssnuip *SessionStartNonUniqueIdPasses) StartSession(id string,
+						filePath string)(*models.Session,error){
+
+	if ssnuip.retries < 3{
+		ssnuip.retries++
+		return nil,handler.NewSessionManagerError(409,
+						"non-unique id generated for session")
+	}
+
+	session := &models.Session{FileName:filePath,Id:id}
+	return session,nil	
+}
+
+func TestSessionStartNonUniqueIdSuccessReturn(t *testing.T){
+	
+	buildPath := filepath.Join("..","server","dist","browser","index.html")
+
+	sessionManager := NewSessionStartSuccess()
+	router := router.NewRouter(buildPath,sessionManager)
+	
+	request := httptest.NewRequest(http.MethodPost,"/logs/sessions",nil)
+	response := httptest.NewRecorder()
+	router.ServeHTTP(response,request)
+	
+	got,err := io.ReadAll(response.Body)
+	
+		
+	if err != nil {
+		t.Errorf("Error reading response:%s " , err.Error())	
+	}
+
+	if response.Code != http.StatusCreated{
+		t.Errorf("Expected: %d Got: %d",http.StatusCreated,response.Code)
+	}
+
+	var session models.Session
+	
+	err = json.Unmarshal(got,&session)
+
+	if err != nil {
+
+		t.Errorf("Error unmarshaling session object:%s ", err.Error())
+	}
+
+	lengthOfId := 32
+	if len(session.Id) != lengthOfId {
+		t.Errorf("Incorrect length of id. expected: %d got:%d",
+			 lengthOfId,len(session.Id))
+	}
+
+	fileNamePattern := `^\d{2}_\d{2}_\d{2}_\d{2}_\d{2}_\d{2}\.gpx$`
+	regularExpression := regexp.MustCompile(fileNamePattern)
+	if !regularExpression.MatchString(session.FileName){
+	
+		t.Errorf("File name did not match pattern got: %s",session.FileName)
+
+	}
+}
