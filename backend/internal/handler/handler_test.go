@@ -576,3 +576,35 @@ func TestSessionStartNonUniqueFileNameErrorReturn(t *testing.T){
 							response.Code,http.StatusConflict)
 	}	
 }
+
+type SessionStartNoWriteDirectory struct{}
+
+func NewSessionStartNoWriteDirectory()*SessionStartNoWriteDirectory{
+	return &SessionStartNoWriteDirectory{}
+}
+
+func (ssnwd *SessionStartNoWriteDirectory) StartSession(id string,
+							fileName string)(*models.Session,error){
+	return nil,
+		handler.NewSessionManagerError(2,
+					"SessionManagerError:write directory eos not exist")
+}
+
+func TestSessionStartDirectoryDoesNotExist(t *testing.T){
+
+	buildPath := filepath.Join("..","server","dist","browser","index.html")
+	sessionManager := NewSessionStartNoWriteDirectory()
+	router := router.NewRouter(buildPath,sessionManager)
+
+	request := httptest.NewRequest(http.MethodPost,"/logs/sessions",nil)
+	response := httptest.NewRecorder()
+	router.ServeHTTP(response,request)
+
+	if response.Code != http.StatusInternalServerError {
+
+		t.Errorf("Errror expected in response code got:%d expected:%d",
+							response.Code,http.StatusConflict)
+	}
+	
+
+}

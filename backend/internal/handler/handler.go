@@ -143,6 +143,13 @@ func (ssh *SessionStartHandler) ServeHTTP(response http.ResponseWriter,request *
 		retries := 3
 		var sessionManagerError *SessionManagerError
 		errors.As(err,&sessionManagerError)
+		if sessionManagerError.Code == 2{
+
+			response.Header().Set("Content-Type","application/json")
+			response.Header().Set("X-Content-Type-Options","nosniff")
+			response.WriteHeader(http.StatusInternalServerError)
+			return
+		}
 		if sessionManagerError.Code == 17{
 
 			for attempt := 1 ; attempt < retries && err !=nil; attempt++{
