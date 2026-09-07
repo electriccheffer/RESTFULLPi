@@ -4,7 +4,6 @@ import "net/http"
 import "encoding/json"
 import "io/fs"
 import "time"
-import "fmt"
 import "crypto/rand"
 import "encoding/hex"
 import "errors"
@@ -104,7 +103,6 @@ func (glh *GetLogsHandler) ServeHTTP(response http.ResponseWriter,request *http.
 
 	jsonLogs,err := json.Marshal(logs)
 	if err != nil{
-		fmt.Print("error in ServeHTTP marshaling")
 	
 	}
 	response.WriteHeader(http.StatusOK)
@@ -145,12 +143,12 @@ func (ssh *SessionStartHandler) ServeHTTP(response http.ResponseWriter,request *
 		retries := 3
 		var sessionManagerError *SessionManagerError
 		errors.As(err,&sessionManagerError)
-		if sessionManagerError.Code == 409{
-		
-			for attempt := 1 ; attempt < retries && err != nil ; attempt++{
-				randomBytes = make([]byte,16)
-				_,err = rand.Read(randomBytes)
-				id = hex.EncodeToString(randomBytes)
+		if sessionManagerError.Code == 17{
+
+			for attempt := 1 ; attempt < retries && err !=nil; attempt++{
+			
+				now = now.Add(1 * time.Second)
+				filePath = now.Format("01_02_06_15_04_05.gpx")
 				session, err = ssh.manager.StartSession(id,filePath)	
 			}
 			if err == nil{
@@ -164,11 +162,42 @@ func (ssh *SessionStartHandler) ServeHTTP(response http.ResponseWriter,request *
 				response.Header().Set("X-Content-Type-Options","nosniff")
 				response.WriteHeader(http.StatusCreated)
 				response.Write(jsonSession)
+				return
 	 
 			}else{
 				response.Header().Set("Content-Type","application/json")
 				response.Header().Set("X-Content-Type-Options","nosniff")
 				response.WriteHeader(http.StatusConflict)			
+				return
+			}
+		}
+		if sessionManagerError.Code == 409{
+			retries = 3	
+			for attempt := 1 ; attempt < retries && err != nil ; attempt++{
+				randomBytes = make([]byte,16)
+				_,err = rand.Read(randomBytes)
+				id = hex.EncodeToString(randomBytes)
+				session, err = ssh.manager.StartSession(id,filePath)	
+			}
+			if err == nil{
+				if session == nil {
+		
+				}
+				jsonSession, err := json.Marshal(session)
+				if err != nil{
+
+				}
+	
+				response.Header().Set("Content-Type","application/json")
+				response.Header().Set("X-Content-Type-Options","nosniff")
+				response.WriteHeader(http.StatusCreated)
+				response.Write(jsonSession)
+	 			return
+			}else{
+				response.Header().Set("Content-Type","application/json")
+				response.Header().Set("X-Content-Type-Options","nosniff")
+				response.WriteHeader(http.StatusConflict)			
+				return
 			}
 				
 		}			
