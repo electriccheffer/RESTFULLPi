@@ -484,7 +484,7 @@ func (ssnufn *SessionStartNonUniqueFileName) StartSession(id string,
 							fileName string)(*models.Session,error){
 
 
-	if ssnufn.retries < 3{
+	if ssnufn.retries < 2{
 
 		return nil,handler.NewSessionManagerError(17,"non-unique file name")	
 	
@@ -536,4 +536,43 @@ func TestSessionStartNonUniqueFileNameSuccessReturn(t *testing.T){
 		t.Errorf("File name did not match pattern got: %s",session.FileName)
 
 	}
+}
+
+type SessionStartNonUniqueFileNameFail struct{
+	retries int
+}
+
+func NewSessionStartNonUniqueFileNameFail()*SessionStartNonUniqueFileNameFail{
+	
+	return &SessionStartNonUniqueFileNameFail{retries:0}
+}
+
+func (ssnufnf *SessionStartNonUniqueFileNameFail) StartSession(id string,
+							fileName string) (*models.Session,error) {
+
+	if ssnufnf.retries < 3 {
+		ssnufnf.retries++
+		return nil,handler.NewSessionManagerError(17,
+							"SessionManagerError:non-unique file name")
+	}	
+	
+	session := &models.Session{FileName:fileName,Id:id}
+	return session,nil
+}
+
+func TestSessionStartNonUniqueFileNameErrorReturn(t *testing.T){
+
+	buildPath := filepath.Join("..","server","dist","browser","index.html")
+	sessionManager := NewSessionStartNonUniqueFileNameFail()
+	router := router.NewRouter(buildPath,sessionManager)
+
+	request := httptest.NewRequest(http.MethodPost,"/logs/sessions",nil)
+	response := httptest.NewRecorder()
+	router.ServeHTTP(response,request)
+
+	if response.Code != http.StatusConflict {
+
+		t.Errorf("Errror expected in response code got:%d expected:%d",
+							response.Code,http.StatusConflict)
+	}	
 }

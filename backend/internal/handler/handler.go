@@ -180,9 +180,7 @@ func (ssh *SessionStartHandler) ServeHTTP(response http.ResponseWriter,request *
 				session, err = ssh.manager.StartSession(id,filePath)	
 			}
 			if err == nil{
-				if session == nil {
-		
-				}
+				
 				jsonSession, err := json.Marshal(session)
 				if err != nil{
 
