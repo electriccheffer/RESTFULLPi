@@ -1,7 +1,38 @@
 package file_operations  
 
+import "io"
 import "io/fs"
 import "os"
+
+type FileHandle interface{
+	io.ReadWriteCloser
+}
+
+type Opener interface{
+
+	Open(path string)(FileHandle,error)
+	Create(path string)(FileHandle,error)
+}
+
+type OpenFile struct{}
+
+func (of *OpenFile) Open(path string)(FileHandle,error){
+	
+	file, err := os.Open(path)
+	if err != nil{
+		return nil, err
+	}
+	return file,nil
+}
+
+func (of *OpenFile) Create(path string)(FileHandle,error){
+	
+	file, err := os.Create(path)
+	if err != nil {
+		return nil, err
+	}
+	return file,nil
+}
 
 type DirectoryRead struct{
 	
@@ -22,5 +53,4 @@ func (dr *DirectoryRead) GetFiles() ([]os.DirEntry,error){
 	return entries,err
 
 }
-
  
