@@ -117,3 +117,59 @@ func TestSessionManagerStartSessionNoPermissions(t *testing.T){
 	
 }
 
+type NoPermissionsOpenerRead struct{}
+
+func NewNoPermissionsOpenerRead()file_operations.Opener{
+
+	npo := &NoPermissionsOpenerRead{}
+	return npo
+}
+
+func (npo *NoPermissionsOpenerRead) Open(path string)(file_operations.FileHandle,error){
+	
+	return nil,os.ErrPermission	
+}
+
+func (npo *NoPermissionsOpenerRead) Create(path string)(file_operations.FileHandle,error){
+
+	return os.Create(path)	
+}
+
+func TestSessionManagerStartSessionNoReadPermissions(t *testing.T){
+
+	testDirectory := t.TempDir()
+	readPath := filepath.Join(testDirectory,"read.gpx")
+	writePath := filepath.Join(testDirectory) 
+	testReadFile, err := os.Create(readPath)
+	if err != nil{
+		t.Errorf("Error creating read file: %s",err.Error())
+	}
+	defer testReadFile.Close()
+	 
+	noPermissionsOpenerRead := NewNoPermissionsOpenerRead()
+	sessionManager := handler.NewSessionManager(writePath,readPath,noPermissionsOpenerRead)
+	
+	randomBytes := make([]byte,16)
+	_,err = rand.Read(randomBytes)
+	if err != nil {
+		t.Errorf("Error reading random bytes: %s \n",err.Error())	
+	}
+	id := hex.EncodeToString(randomBytes)
+	writeFilePath := "write.gpx"
+	_,err = sessionManager.StartSession(id,writeFilePath)
+	if err == nil {
+		t.Error("No error thrown in no permissions case")
+	}
+	if err != nil {
+		var managerError *handler.SessionManagerError
+		
+		if errors.As(err,&managerError){
+			if managerError.Code != int(syscall.EACCES) {
+				t.Errorf("Incorrect error code expected:%d got:%d \n",
+									os.ErrPermission,
+									managerError.Code)
+			}
+		}else{t.Error("Error of incorrect type")}		
+			
+	}
+}

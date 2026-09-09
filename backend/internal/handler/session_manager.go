@@ -39,7 +39,10 @@ func (sm *SessionManager) StartSession(id string, filePath string)(*models.Sessi
 	_, err := sm.opener.Open(sm.deviceReadPath)
 	if err != nil{
 		
-		
+		if errors.Is(err,os.ErrPermission){
+			return nil, NewSessionManagerError(int(syscall.EACCES),
+				   "Permission Denied creating file: " + sm.deviceReadPath)
+		}
 
 	}
 	joinedWriteFilePath := filepath.Join(sm.upperWritePath,filePath)
