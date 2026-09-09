@@ -19,7 +19,7 @@ type Opener interface{
 
 type FileOpener struct{}
 
-func NewFileOpener()*FileOpener{
+func NewFileOpener()Opener{
 		
 	fo := &FileOpener{}
 	return fo
