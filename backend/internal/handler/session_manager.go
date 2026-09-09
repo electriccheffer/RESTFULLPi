@@ -1,5 +1,9 @@
 package handler
 
+import "syscall"
+import "path/filepath"
+import "errors"
+import "os"
 import "restfulpi/internal/models"
 import "restfulpi/internal/file_operations"
 
@@ -32,7 +36,20 @@ func (sm *SessionManager) StartSession(id string, filePath string)(*models.Sessi
 	}	
 		
 	// check for file errors 
-	
+	_, err := sm.opener.Open(sm.deviceReadPath)
+	if err != nil{
+		
+		
+
+	}
+	joinedWriteFilePath := filepath.Join(sm.upperWritePath,filePath)
+	_, err = sm.opener.Create(joinedWriteFilePath)
+	if err != nil{
+		if errors.Is(err,os.ErrPermission){
+			return nil, NewSessionManagerError(int(syscall.EACCES),
+				   "Permission Denied creating file: " + joinedWriteFilePath)
+		}	
+	}
 	session := &models.Session{FileName:filePath,Id:id}
 	return session,nil	
 }

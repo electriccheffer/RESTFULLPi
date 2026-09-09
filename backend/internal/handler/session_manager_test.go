@@ -5,6 +5,8 @@ import "path/filepath"
 import "crypto/rand"
 import "encoding/hex"
 import "os"
+import "errors"
+import "syscall"
 import "restfulpi/internal/handler"
 import "restfulpi/internal/file_operations"
 
@@ -56,21 +58,62 @@ func TestSessionManagerSuccess(t *testing.T){
 }
 
 
-type NoPermissionsOpener struct{}
+type NoPermissionsOpenerWrite struct{}
 
-func NewNoPermissionsOpener()file_operations.Opener{
+func NewNoPermissionsOpenerWrite()file_operations.Opener{
 
-	npo := &NoPermissionsOpener{}
+	npo := &NoPermissionsOpenerWrite{}
 	return npo
 }
 
-func (npo *NoPermissionsOpener) Open(path string)(file_operations.FileHandle,error){
+func (npo *NoPermissionsOpenerWrite) Open(path string)(file_operations.FileHandle,error){
 	
+	return os.Open(path)	
+}
+
+func (npo *NoPermissionsOpenerWrite) Create(path string)(file_operations.FileHandle,error){
+
 	return nil,os.ErrPermission	
 }
 
-func (npo *NoPermissionsOpener) Create(path string)(file_operations.FileHandle,error){
-
-	return nil,os.ErrPermission	
+func TestSessionManagerStartSessionNoPermissions(t *testing.T){
+	
+	testDirectory := t.TempDir()
+	readPath := filepath.Join(testDirectory,"read.gpx")
+	writePath := filepath.Join(testDirectory) 
+	testReadFile, err := os.Create(readPath)
+	if err != nil{
+		t.Errorf("Error creating read file: %s",err.Error())
+	}
+	defer testReadFile.Close()
+	 
+	noPermissionsOpenerWrite := NewNoPermissionsOpenerWrite()
+	sessionManager := handler.NewSessionManager(writePath,readPath,noPermissionsOpenerWrite)
+	
+	randomBytes := make([]byte,16)
+	_,err = rand.Read(randomBytes)
+	if err != nil {
+		t.Errorf("Error reading random bytes: %s \n",err.Error())	
+	}
+	id := hex.EncodeToString(randomBytes)
+	writeFilePath := "write.gpx"
+	_,err = sessionManager.StartSession(id,writeFilePath)
+	if err == nil {
+		t.Error("No error thrown in no permissions case")
+	}
+	if err != nil {
+		var managerError *handler.SessionManagerError
+		
+		if errors.As(err,&managerError){
+			if managerError.Code != int(syscall.EACCES) {
+				t.Errorf("Incorrect error code expected:%d got:%d \n",
+									os.ErrPermission,
+									managerError.Code)
+			}
+		}else{t.Error("Error of incorrect type")}		
+			
+	}
+	
+	
 }
 
