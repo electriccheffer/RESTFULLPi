@@ -173,3 +173,65 @@ func TestSessionManagerStartSessionNoReadPermissions(t *testing.T){
 			
 	}
 }
+
+
+type NoExistOpenerWrite struct{}
+
+func NewNoExistOpenerWrite()file_operations.Opener{
+	
+	neow := &NoExistOpenerWrite{}
+	return neow	
+}
+
+func (neow *NoExistOpenerWrite) Open(path string)(file_operations.FileHandle,error){
+	
+	return os.Open(path)
+	
+}
+
+func (neow *NoExistOpenerWrite) Create(path string)(file_operations.FileHandle,error){
+	
+	return nil,os.ErrNotExist
+}
+
+func TestSessionManagerStartSessionNoDirectoryWrite(t *testing.T){
+	
+	testDirectory := t.TempDir()
+	readPath := filepath.Join(testDirectory,"read.gpx")
+	writePath := "noexist"
+	writeFilePath := "write.gpx"
+	readFile,err := os.Create(readPath)
+	if err != nil{
+	
+		t.Errorf("Error Creating read path file: %s",err.Error())
+	}
+	defer readFile.Close()
+
+	randomBytes := make([]byte,16)
+	_,err = rand.Read(randomBytes)
+	if err != nil {
+		t.Errorf("Error reading random bytes: %s \n",err.Error())	
+	}
+	id := hex.EncodeToString(randomBytes)
+
+	opener := NewNoExistOpenerWrite()
+	sessionManager := handler.NewSessionManager(writePath,readPath,opener)
+	_,err = sessionManager.StartSession(id,writeFilePath)
+	if err == nil {
+		t.Error("No error thrown in no existing write path")
+	}
+	if err != nil {
+		
+		var managerError *handler.SessionManagerError
+		
+		if errors.As(err,&managerError) {
+			if managerError.Code != int(syscall.ENOENT){
+				t.Error(managerError.Error())
+				t.Errorf("Incorrect error code expected: %d got: %d",
+									syscall.ENOENT,
+									managerError.Code)
+			}
+		}else{t.Error("Error is not of correct type")}
+	}
+		
+}

@@ -52,6 +52,10 @@ func (sm *SessionManager) StartSession(id string, filePath string)(*models.Sessi
 			return nil, NewSessionManagerError(int(syscall.EACCES),
 				   "Permission Denied creating file: " + joinedWriteFilePath)
 		}	
+		if errors.Is(err,os.ErrNotExist){
+			return nil, NewSessionManagerError(int(syscall.ENOENT),
+				    "Directory does not exist: " + joinedWriteFilePath)
+		}
 	}
 	session := &models.Session{FileName:filePath,Id:id}
 	return session,nil	
