@@ -62,6 +62,11 @@ func (sm *SessionManager) StartSession(id string, filePath string)(*models.Sessi
 			return nil, NewSessionManagerError(int(syscall.ENOENT),
 				    "Directory does not exist: " + joinedWriteFilePath)
 		}
+		if errors.Is(err,os.ErrExist){
+
+			return nil, NewSessionManagerError(int(syscall.EEXIST),
+				    "Write file already exists")
+		}
 	}
 
 	session := &models.Session{FileName:filePath,Id:id}

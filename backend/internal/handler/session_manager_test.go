@@ -353,3 +353,66 @@ func TestSessionManagerStartSessionIdExists(t *testing.T){
 	
 	}else{t.Error("Error was not thrown")}	
 }
+
+
+func TestSessionManagerWriteFileAlreadyExists(t *testing.T){
+
+	testDir := t.TempDir()
+	testReadPath := filepath.Join(testDir,"read.gpx")
+	readFile,err := os.Create(testReadPath)
+	if err != nil{
+		
+		t.Errorf("Error creating read file:%s ",testReadPath)
+	
+	}
+	defer readFile.Close()
+	
+	fileOpener := file_operations.NewFileOpener()
+	sessionManager := handler.NewSessionManager(testDir,testReadPath,fileOpener)
+	filePath := "09_08_2026_12_33_05.gpx"
+	randomBytes := make([]byte,16)
+	_,err = rand.Read(randomBytes)
+	if err != nil {
+		t.Errorf("Error reading random bytes: %s \n",err.Error())	
+	}
+	id := hex.EncodeToString(randomBytes)		
+	
+	session, err := sessionManager.StartSession(id,filePath)
+	if err != nil {
+		t.Errorf("Error starting session: %s \n",err.Error())
+	}
+	
+	if session.FileName != filePath {
+		t.Errorf("Paths do not match. expected:%s got:%s \n",filePath,session.FileName)
+	}
+
+	expectedIdLength := 32
+	lengthOfId := len(session.Id)
+	if expectedIdLength != lengthOfId {
+		t.Errorf("Id of incorrect length. Expected:%d Got: %d \n",
+								expectedIdLength, lengthOfId)
+	}
+	randomBytes = make([]byte,16)
+	_,err = rand.Read(randomBytes)
+	if err != nil {
+		t.Errorf("Error reading random bytes: %s \n",err.Error())	
+	}
+	id = hex.EncodeToString(randomBytes)		
+	
+	_,err = sessionManager.StartSession(id,filePath)
+	
+	if err != nil {
+		
+		var managerError *handler.SessionManagerError
+		
+		if errors.As(err,&managerError) {
+			if managerError.Code != int(syscall.EEXIST){
+				t.Error(managerError.Error())
+				t.Errorf("Incorrect error code expected: %d got: %d",
+									int(syscall.EEXIST),	
+									managerError.Code)
+			}
+		}else{t.Error("Error was of incorrect type")}	
+		
+	}else{t.Error("Error not thrown")}
+}

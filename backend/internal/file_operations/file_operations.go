@@ -38,8 +38,10 @@ func (fo *FileOpener) Open(path string)(FileHandle,error){
 }
 
 func (fo *FileOpener) Create(path string)(FileHandle,error){
-
-	file,err := os.Create(path)
+	
+	flags := os.O_CREATE | os.O_EXCL | os.O_WRONLY
+	mode := os.FileMode(0666)
+	file,err := os.OpenFile(path,flags,mode)
 	if err != nil{	
 		return nil, err
 	}
