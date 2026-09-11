@@ -41,7 +41,11 @@ func (sm *SessionManager) StartSession(id string, filePath string)(*models.Sessi
 		
 		if errors.Is(err,os.ErrPermission){
 			return nil, NewSessionManagerError(int(syscall.EACCES),
-				   "Permission Denied creating file: " + sm.deviceReadPath)
+				   "Permission Denied opening serial file:" + sm.deviceReadPath)
+		}
+		if errors.Is(err,os.ErrNotExist){
+			return nil, NewSessionManagerError(int(syscall.ENOENT),
+				    "Serial file does not exist:: " + sm.deviceReadPath)
 		}
 
 	}

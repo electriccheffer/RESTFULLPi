@@ -235,3 +235,59 @@ func TestSessionManagerStartSessionNoDirectoryWrite(t *testing.T){
 	}
 		
 }
+
+
+type NoExistOpenerRead struct{}
+
+func NewNoExistOpenerRead()file_operations.Opener{
+	
+	neow := &NoExistOpenerRead{}
+	return neow	
+}
+
+func (neow *NoExistOpenerRead) Open(path string)(file_operations.FileHandle,error){
+	
+	return nil,os.ErrNotExist
+	
+}
+
+func (neow *NoExistOpenerRead) Create(path string)(file_operations.FileHandle,error){
+	
+	return os.Create(path) 
+}
+
+func TestSessionManagerStartSessionNoDirectoryRead(t *testing.T){
+	
+	testDirectory := t.TempDir()
+	readPath := "noexist"
+	writeFilePath := "write.gpx"
+
+	randomBytes := make([]byte,16)
+	_,err := rand.Read(randomBytes)
+	if err != nil {
+		t.Errorf("Error reading random bytes: %s \n",err.Error())	
+	}
+	id := hex.EncodeToString(randomBytes)
+
+	opener := NewNoExistOpenerRead()
+	sessionManager := handler.NewSessionManager(testDirectory,readPath,opener)
+	_,err = sessionManager.StartSession(id,writeFilePath)
+	if err == nil {
+		t.Error("No error thrown in no existing write path")
+	}
+	if err != nil {
+		
+		var managerError *handler.SessionManagerError
+		
+		if errors.As(err,&managerError) {
+			if managerError.Code != int(syscall.ENOENT){
+				t.Error(managerError.Error())
+				t.Errorf("Incorrect error code expected: %d got: %d",
+									syscall.ENOENT,
+									managerError.Code)
+			}
+		}else{t.Error("Error is not of correct type")}
+	}
+		
+}
+
