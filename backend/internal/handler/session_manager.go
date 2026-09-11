@@ -22,7 +22,9 @@ type SessionManager struct{
 
 func NewSessionManager(wp string,rp string,op file_operations.Opener)*SessionManager{
 
-	sm := &SessionManager{upperWritePath:wp,deviceReadPath:rp,opener:op}
+	sm := &SessionManager{upperWritePath:wp,
+				deviceReadPath:rp,opener:op,
+				sessions:make(map[string]*models.Session)}
 	return sm
 }
 
@@ -31,7 +33,7 @@ func (sm *SessionManager) StartSession(id string, filePath string)(*models.Sessi
 	_,exists := sm.sessions[id]
 	if exists {
 		
-		// collision case throw error
+		return nil, NewSessionManagerError(409,"Id in session table already exists")
 
 	}	
 		
@@ -61,6 +63,8 @@ func (sm *SessionManager) StartSession(id string, filePath string)(*models.Sessi
 				    "Directory does not exist: " + joinedWriteFilePath)
 		}
 	}
+
 	session := &models.Session{FileName:filePath,Id:id}
+	sm.sessions[id] = session
 	return session,nil	
 }
