@@ -3,7 +3,7 @@ package file_operations
 import "io/fs"
 import "os"
 import "io"
-
+import "strconv"
 
 type FileHandle interface {
 
@@ -47,6 +47,57 @@ func (fo *FileOpener) Create(path string)(FileHandle,error){
 	}
 	return file,nil
 }
+	
+type GPSParser struct{
+
+	
+}
+
+func NewGPSParser()*GPSParser{
+		
+	gp := &GPSParser{}
+	return gp
+	
+}
+
+
+func (gp *GPSParser) ParseSentence(sentence string){
+
+	// split the fields by comma 
+	// check field one for GPRMC or GPGGA 
+		//GPRMC Case 
+			
+		//GPGGA case 
+}
+
+
+func (gp *GPSParser) parseCoordinate(hemisphere string,
+				     coordinate string,
+				     latitude bool)(float64,error){
+	
+	if latitude {
+		
+		degrees := coordinate[:2]
+		minutes := coordinate[2:]
+		numericalDegree,err := strconv.ParseFloat(degrees,64)
+		if err != nil{
+			return 0,err
+		}
+		numericalMinutes,err := strconv.ParseFloat(minutes,64)
+		if err != nil{
+			return 0,err
+		}
+		result := numericalDegree + (numericalMinutes/60.0) 
+		if hemisphere == "N"{
+			return result,nil
+		}
+		if hemisphere == "S"{
+			return result * -1.0,nil
+		}
+	}
+	return 0,nil		
+} 
+
 
 type DirectoryRead struct{
 	

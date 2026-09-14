@@ -1,7 +1,6 @@
 package models
 
 import "time"
-import "encoding/xml"
 
 type Status struct{
 	Device string `json:"device"`
