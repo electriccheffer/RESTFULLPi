@@ -4,6 +4,8 @@ import "syscall"
 import "path/filepath"
 import "errors"
 import "os"
+import "context"
+import "io"
 import "restfulpi/internal/models"
 import "restfulpi/internal/file_operations"
 
@@ -37,7 +39,6 @@ func (sm *SessionManager) StartSession(id string, filePath string)(*models.Sessi
 
 	}	
 		
-	// check for file errors 
 	_, err := sm.opener.Open(sm.deviceReadPath)
 	if err != nil{
 		
@@ -72,4 +73,12 @@ func (sm *SessionManager) StartSession(id string, filePath string)(*models.Sessi
 	session := &models.Session{FileName:filePath,Id:id}
 	sm.sessions[id] = session
 	return session,nil	
+}
+
+func (sm *SessionManager) readNMEA(ctx context.Context,
+				   source io.Reader,
+				   destination io.Writer) error {
+
+	<-ctx.Done()
+	return ctx.Err()
 }

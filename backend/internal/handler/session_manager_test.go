@@ -416,3 +416,4 @@ func TestSessionManagerWriteFileAlreadyExists(t *testing.T){
 		
 	}else{t.Error("Error not thrown")}
 }
+
