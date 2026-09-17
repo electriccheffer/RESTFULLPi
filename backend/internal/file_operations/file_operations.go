@@ -74,7 +74,10 @@ func (gp *GPSParser) ParseSentence(sentence string){
 func (gp *GPSParser) parseCoordinate(hemisphere string,
 				     coordinate string,
 				     latitude bool)(float64,error){
+	if coordinate == ""{
 	
+		return 0, NewGPSParserError(101,"empty coordinate field")	
+	}			
 	if latitude {
 			
 		degrees := coordinate[:2]
