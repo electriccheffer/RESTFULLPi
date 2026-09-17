@@ -63,20 +63,20 @@ func NewGPSParser()*GPSParser{
 
 func (gp *GPSParser) ParseSentence(sentence string){
 
-	// split the fields by comma 
-	// check field one for GPRMC or GPGGA 
-		//GPRMC Case 
-			
-		//GPGGA case 
+	//TODO: implement me 
 }
 
+
+//TODO: parse time and date
+
+//TODO: parse checksum
 
 func (gp *GPSParser) parseCoordinate(hemisphere string,
 				     coordinate string,
 				     latitude bool)(float64,error){
 	
 	if latitude {
-		
+			
 		degrees := coordinate[:2]
 		minutes := coordinate[2:]
 		numericalDegree,err := strconv.ParseFloat(degrees,64)
@@ -92,6 +92,26 @@ func (gp *GPSParser) parseCoordinate(hemisphere string,
 			return result,nil
 		}
 		if hemisphere == "S"{
+			return result * -1.0,nil
+		}
+	}else if !latitude {
+		
+		degrees := coordinate[:3]
+		minutes := coordinate[3:]
+		numericalDegree, err := strconv.ParseFloat(degrees,64)
+		if err != nil {
+			return 0, err
+		}		
+		numericalMinutes,err := strconv.ParseFloat(minutes,64)
+		if err != nil{
+
+			return 0, err
+		}
+		result := numericalDegree + (numericalMinutes/60.0)
+		if hemisphere == "E"{
+			return result,nil	
+		}	
+		if hemisphere == "W"{
 			return result * -1.0,nil
 		}
 	}
