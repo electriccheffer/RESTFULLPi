@@ -43,7 +43,6 @@ func TestParseCoordinateLatitudeSouth(t *testing.T){
 	
 }
 
-//TODO: logitude case
 func TestParseCoordinateLongitudeEast(t *testing.T){
 
 	coordinate := "07103.5340"
@@ -63,4 +62,23 @@ func TestParseCoordinateLongitudeEast(t *testing.T){
 
 }
 
+func TestParseCoordinateLongitudeWest(t *testing.T){
+
+	coordinate := "07103.5340"
+	expected := -71.058900
+	hemisphere := "W"
+	latitude := false
+	
+	gpsParser := NewGPSParser()
+	delta := 0.000001
+	result, err := gpsParser.parseCoordinate(hemisphere,coordinate,latitude)
+	if err != nil {
+		t.Errorf("Unexpected error: %s",err.Error())
+	}
+	if math.Abs(result - expected) > delta{
+		t.Errorf("Incorrect coordinate returned got:%f expected:%f",result,expected)
+	}
+}
+
 //TODO: error cases
+
