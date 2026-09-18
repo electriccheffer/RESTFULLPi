@@ -125,7 +125,7 @@ func (gp *GPSParser) parseCoordinate(hemisphere string,
 			return result * -1.0,nil
 		}
 	}
-	return 0,nil		
+	return 0,NewGPSParserError(127,"unknown error unable to parse coordinate")		
 } 
 
 
