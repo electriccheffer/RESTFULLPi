@@ -81,7 +81,7 @@ func TestParseCoordinateLongitudeWest(t *testing.T){
 	}
 }
 
-func TestParseCoordinteErrorCaseEmptyCoordinate(t *testing.T){
+func TestParseCoordinateErrorCaseEmptyCoordinate(t *testing.T){
 
 	coordinate := ""
 	hemisphere := "W"
@@ -104,4 +104,52 @@ func TestParseCoordinteErrorCaseEmptyCoordinate(t *testing.T){
 		}
 	}
 
+}
+
+func TestParseCoordinateErrorCaseEmptyHemisphere(t *testing.T){
+
+	coordinate := "07103.5340"
+	hemisphere := ""
+	latitude := false
+	
+	gpsParser := NewGPSParser()
+	_, err := gpsParser.parseCoordinate(hemisphere,coordinate,latitude)
+	if err == nil{
+		t.Error("Error expected none thrown")
+	}
+	if err != nil{
+		var parserErr *GPSParserError
+		if !errors.As(err,&parserErr){
+			t.Errorf("Error of incorrect type:%s",err.Error())
+		} else{
+			if parserErr.Code != 101{
+				t.Errorf("GPSParserError wrong code expected:%d got:%d",
+					101,parserErr.Code)
+			}
+		}
+	}
+}
+
+func TestParseCoordinateErrorCaseInvalidHemisphere(t *testing.T){
+
+	coordinate := "07103.5340"
+	hemisphere := "B"
+	latitude := false
+	
+	gpsParser := NewGPSParser()
+	_, err := gpsParser.parseCoordinate(hemisphere,coordinate,latitude)
+	if err == nil{
+		t.Error("Error expected none thrown")
+	}
+	if err != nil{
+		var parserErr *GPSParserError
+		if !errors.As(err,&parserErr){
+			t.Errorf("Error of incorrect type:%s",err.Error())
+		} else{
+			if parserErr.Code != 101{
+				t.Errorf("GPSParserError wrong code expected:%d got:%d",
+					101,parserErr.Code)
+			}
+		}
+	}
 }

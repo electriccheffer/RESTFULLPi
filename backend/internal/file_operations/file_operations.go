@@ -77,7 +77,14 @@ func (gp *GPSParser) parseCoordinate(hemisphere string,
 	if coordinate == ""{
 	
 		return 0, NewGPSParserError(101,"empty coordinate field")	
-	}			
+	}		
+	switch hemisphere {
+
+		case "N","S","E","W":
+			break 
+		default:
+			return 0.0,NewGPSParserError(101,"invalid hemisphere")
+	}		
 	if latitude {
 			
 		degrees := coordinate[:2]
