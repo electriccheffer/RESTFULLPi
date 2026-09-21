@@ -74,7 +74,7 @@ func (gp *GPSParser) parseTime(clockTime string,date string)(time.Time,error){
 	parsedTime, err := time.ParseInLocation(gp.layout,concatenatedTime,time.UTC)
 	if err != nil{
 
-		return parsedTime,err	
+		return time.Time{},err	
 	}
 	return parsedTime,nil 
 }
