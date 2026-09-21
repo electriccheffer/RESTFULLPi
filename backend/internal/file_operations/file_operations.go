@@ -4,6 +4,7 @@ import "io/fs"
 import "os"
 import "io"
 import "strconv"
+import "time"
 
 type FileHandle interface {
 
@@ -50,12 +51,12 @@ func (fo *FileOpener) Create(path string)(FileHandle,error){
 	
 type GPSParser struct{
 
-	
+	layout string	
 }
 
 func NewGPSParser()*GPSParser{
 		
-	gp := &GPSParser{}
+	gp := &GPSParser{layout:"020106 150405.00"}
 	return gp
 	
 }
@@ -67,7 +68,17 @@ func (gp *GPSParser) ParseSentence(sentence string){
 }
 
 
-//TODO: parse time and date
+func (gp *GPSParser) parseTime(clockTime string,date string)(time.Time,error){
+
+	concatenatedTime := date + " " + clockTime
+	parsedTime, err := time.ParseInLocation(gp.layout,concatenatedTime,time.UTC)
+	if err != nil{
+
+		return parsedTime,err	
+	}
+	return parsedTime,nil 
+}
+
 
 //TODO: parse checksum
 

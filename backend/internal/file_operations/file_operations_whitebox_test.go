@@ -3,6 +3,7 @@ package file_operations
 import "testing"
 import "math"
 import "errors"
+import "time"
 
 func TestParseCoordinateLatitudeNorth(t *testing.T){
 
@@ -152,4 +153,21 @@ func TestParseCoordinateErrorCaseInvalidHemisphere(t *testing.T){
 			}
 		}
 	}
+}
+
+func TestParseTimeSuccess(t *testing.T){
+
+	expected := time.Date(2026,time.September,21,12,1,30,300000000,time.UTC)
+	day := "210926"
+	dayTime := "120130.30"
+	parser := NewGPSParser()
+	result,err := parser.parseTime(dayTime,day)
+	if err != nil {
+		t.Errorf("Unexpected error:%s ", err.Error())
+	}
+	if !result.Equal(expected){
+
+		t.Errorf("got:%s expected: %s",result,expected)
+	}
+
 }
