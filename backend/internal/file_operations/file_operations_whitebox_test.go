@@ -171,3 +171,40 @@ func TestParseTimeSuccess(t *testing.T){
 	}
 
 }
+
+func TestValidateChecksumSuccess(t *testing.T){
+
+	validSentence := "$GPRMC,123519.50,A,4807.038,"+
+			 "N,01131.000,E,022.4,084.4,210926,003.1,W*40"
+	
+	parser := NewGPSParser()
+	got := parser.validateChecksum(validSentence)		
+	if !got{
+		t.Error("expected true returned false")
+	}
+}
+
+func TestValidateChecksumFailure(t *testing.T){
+
+	invalidSentence := "$GPRMC,23519.50,A,4807.038,"+
+			 "N,01131.000,E,022.4,084.4,210926,003.1,W*40"
+	
+	parser := NewGPSParser()
+	got := parser.validateChecksum(invalidSentence)		
+
+	if got{
+		t.Error("expected false returned false")
+	}
+}
+
+func TestValidateChecksumNoStar(t *testing.T){
+
+	invalidSentence := "$GPRMC,123519.50,A,4807.038,"+
+			 "N,01131.000,E,022.4,084.4,210926,003.1,W40"
+	
+	parser := NewGPSParser()
+	got := parser.validateChecksum(invalidSentence)		
+	if got{
+		t.Error("expected false returned true")
+	}
+}

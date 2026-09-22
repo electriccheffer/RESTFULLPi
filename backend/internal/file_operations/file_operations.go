@@ -5,6 +5,7 @@ import "os"
 import "io"
 import "strconv"
 import "time"
+import "fmt"
 
 type FileHandle interface {
 
@@ -80,7 +81,33 @@ func (gp *GPSParser) parseTime(clockTime string,date string)(time.Time,error){
 }
 
 
-//TODO: parse checksum
+func (gp *GPSParser) validateChecksum(gpsSentence string)(bool){
+		
+	var checksum byte = 0
+	var checksumIndex = 0 	
+
+	sentenceLength := len(gpsSentence)
+	
+	for index := 1 ; index < sentenceLength ; index++ {
+		
+		if gpsSentence[index] == byte('*'){
+			checksumIndex = index
+			break
+		}
+		checksum ^= gpsSentence[index]
+	}
+	if checksumIndex == 0 {
+		return false
+	}
+	value := gpsSentence[checksumIndex+1:]
+	formattedSum := fmt.Sprintf("%02X",checksum) 
+	if formattedSum == value {
+		
+		return true		
+	}	
+	return false
+
+}
 
 func (gp *GPSParser) parseCoordinate(hemisphere string,
 				     coordinate string,
