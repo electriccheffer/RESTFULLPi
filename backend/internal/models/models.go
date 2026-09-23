@@ -16,10 +16,8 @@ type Session struct{
 	Id string `json:"id"`
 }
 
-type GPSPathPoint struct{
+type GPSTrackPoint struct{
 	Latitude float64 `xml:"trkpt"`
-	Logitude float64 `xml:"lat.attr"`
-	Elevation float64 `xml:ele.omitempty`
+	Longitude float64 `xml:"lat.attr"`
 	Time time.Time `xml:"time.omitempty"`
-	Valid bool `xml:"-"`
 }

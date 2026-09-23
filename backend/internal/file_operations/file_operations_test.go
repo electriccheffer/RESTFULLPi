@@ -1,8 +1,10 @@
 package file_operations_test
 
 import  "path/filepath"
-import  "restfulpi/internal/file_operations"
 import "testing"
+import "math"
+import  "restfulpi/internal/file_operations"
+import "time"
 
 func TestDirectoryReadSuccess(t *testing.T){
 			
@@ -78,4 +80,34 @@ func TestDirectoryReadDirectoryDoesNotExist(t *testing.T){
 		t.Errorf("Directory does not exist. Should throw error")
 	}
 }
+
+
+func TestParseSentenceSuccess(t *testing.T){
+	
+	validSentence := "$GPRMC,123519.50,A,4807.038,"+
+			 "N,01131.000,E,022.4,084.4,210926,003.1,W*40"
+	
+	expectedLatitude := 48.117300
+	expectedLongitude := 11.516667
+	expectedTime := time.Date(2026,time.September,21,12,35,19,500000000,time.UTC)	
+	
+	parser := file_operations.NewGPSParser()
+	trackPoint, err := parser.ParseSentence(validSentence)
+	if err != nil {
+	
+		t.Errorf("unexpected error: %s",err.Error())
+	}
+	
+	delta := .000001
+	if math.Abs(trackPoint.Latitude - expectedLatitude) > delta{
+		t.Errorf("expected: %f got: %f",expectedLatitude,trackPoint.Latitude)
+	}
+	if math.Abs(trackPoint.Longitude - expectedLongitude) > delta{
+		t.Errorf("expected: %f got: %f",expectedLongitude,trackPoint.Longitude)
+	}
+	if trackPoint.Time != expectedTime {
+		t.Errorf("expected:%v got:%v",expectedTime,trackPoint.Time)
+	}
+}
+
 

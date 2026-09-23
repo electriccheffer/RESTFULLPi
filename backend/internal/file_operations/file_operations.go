@@ -6,6 +6,9 @@ import "io"
 import "strconv"
 import "time"
 import "fmt"
+import "strings"
+
+import "restfulpi/internal/models"
 
 type FileHandle interface {
 
@@ -63,9 +66,44 @@ func NewGPSParser()*GPSParser{
 }
 
 
-func (gp *GPSParser) ParseSentence(sentence string){
+func (gp *GPSParser) ParseSentence(sentence string)(*models.GPSTrackPoint,error){
 
-	//TODO: implement me 
+	// Check if valid 
+	
+	valid := gp.validateChecksum(sentence)
+	if !valid {
+		return nil,NewGPSParserError(127,"invalid checksum") 
+	}		
+	splitSentence := strings.Split(sentence,",")
+	if len(splitSentence) != 12 {
+		return nil,NewGPSParserError(127,"invalid sentence length")
+	}
+		
+	latitudeHemisphere := splitSentence[4]
+	rawLatitude := splitSentence[3]
+	longitudeHemisphere := splitSentence[6]
+	rawLongitude := splitSentence[5]
+	
+	latitude,err := gp.parseCoordinate(latitudeHemisphere,rawLatitude,true)
+	if err != nil {
+		return nil, NewGPSParserError(100,"error parsing latitude")
+	}
+		
+	longitude,err := gp.parseCoordinate(longitudeHemisphere,rawLongitude,false)
+	if err != nil {
+		return nil, NewGPSParserError(100,"error parsing longitude")
+	}
+	rawTime := splitSentence[1]
+	rawDate := splitSentence[9]
+
+	gpsTime,err := gp.parseTime(rawTime,rawDate)
+	if err != nil {
+		return nil, NewGPSParserError(100,"error parsing time")
+	}
+	
+	trackpoint := &models.GPSTrackPoint{Latitude:latitude,Longitude:longitude,Time:gpsTime}
+	return trackpoint,nil
+
 }
 
 
