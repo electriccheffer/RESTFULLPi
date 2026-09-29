@@ -72,7 +72,7 @@ func (gp *GPSParser) ParseSentence(sentence string)(*models.GPSTrackPoint,error)
 	
 	valid := gp.validateChecksum(sentence)
 	if !valid {
-		return nil,NewGPSParserError(127,"invalid checksum") 
+		return nil,NewGPSParserError(74,"invalid checksum") 
 	}		
 	splitSentence := strings.Split(sentence,",")
 	if len(splitSentence) != 12 {

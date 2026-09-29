@@ -3,8 +3,9 @@ package file_operations_test
 import  "path/filepath"
 import "testing"
 import "math"
-import  "restfulpi/internal/file_operations"
+import "errors"
 import "time"
+import  "restfulpi/internal/file_operations"
 
 func TestDirectoryReadSuccess(t *testing.T){
 			
@@ -110,4 +111,31 @@ func TestParseSentenceSuccess(t *testing.T){
 	}
 }
 
-
+//TODO: Test parser Bad check sum
+func TestParseSentenceInvalidChecksum(t *testing.T){
+	
+	invalidSentence := "$GPRMC,123519.50,A,4807.038," +
+			 "N,01131.000,E,022.4,084.4,210926,003.1,W*44"
+	
+	parser := file_operations.NewGPSParser()
+	trackPoint, err := parser.ParseSentence(invalidSentence)
+	if trackPoint != nil {
+		t.Error("ParseSentence did not return nil. Expected error.")
+	}
+	if err != nil{
+		var parserErr *file_operations.GPSParserError
+		if !errors.As(err,&parserErr){
+			t.Error("ParseSentence incorrect error type")
+		}
+		if parserErr.Code != 74 {
+			t.Errorf("Incorrect error code returned expected: %d got: %d",
+				74,parserErr.Code)	
+		}
+	}
+	
+} 
+//TODO: Test parser not valid
+//TODO: Test parser bad lat 
+//TODO: Test parser bad long
+//TODO: Test parser bad time 
+//TODO: Test parser missing fields valid checksum 

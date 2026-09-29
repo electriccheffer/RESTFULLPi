@@ -43,3 +43,12 @@ func TestReadNMEACancellation(t *testing.T){
 			t.Error("Time exceeded.")
 	}
 }	
+
+//TODO: Test Error case for readNEMA bad serial port 
+//TODO: Test Error case for readNEMA bad write case 
+//TODO: Test Error cases for bad NEMA sentences bad date 
+//TODO: Test Error case for bad NEMA sentences invalid 
+//TODO: Test Error case for bad NEMA sentences bad checksum 
+//TODO: Test Error case for bad NEMA sentences bad lat 
+//TODO: Test Error case for bad NEMA sentences bad long
+//TODO: Test Error case for bad NEMA sentences blank fields
