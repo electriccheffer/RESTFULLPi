@@ -178,11 +178,17 @@ func TestParseSentenceBadLatitude(t *testing.T){
 			t.Errorf("Incorrect error code returned expected: %d got: %d",
 				22,parserErr.Code)	
 		}
+		if parserErr.Error() != "GPSParserError 22: error parsing latitude" {
+			t.Errorf("incorrect message expected:%s got:%s",
+						"GPSParserError 22: error parsing latitude",
+						parserErr)
+		}
 	}
-		
+	
 }
 
 //TODO: Test parser bad long
+
 //TODO: Test parser bad lat hemisphere
 //TODO: Test parser bad long hemisphere
 //TODO: Test parser bad time 
