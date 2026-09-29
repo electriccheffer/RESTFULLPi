@@ -98,9 +98,9 @@ func TestParseCoordinateErrorCaseEmptyCoordinate(t *testing.T){
 		if !errors.As(err,&parserErr){
 			t.Errorf("Error of incorrect type:%s",err.Error())
 		} else{
-			if parserErr.Code != 101{
+			if parserErr.Code != 22{
 				t.Errorf("GPSParserError wrong code expected:%d got:%d",
-					101,parserErr.Code)
+					22,parserErr.Code)
 			}
 		}
 	}
@@ -123,9 +123,9 @@ func TestParseCoordinateErrorCaseEmptyHemisphere(t *testing.T){
 		if !errors.As(err,&parserErr){
 			t.Errorf("Error of incorrect type:%s",err.Error())
 		} else{
-			if parserErr.Code != 101{
+			if parserErr.Code != 22{
 				t.Errorf("GPSParserError wrong code expected:%d got:%d",
-					101,parserErr.Code)
+					22,parserErr.Code)
 			}
 		}
 	}
@@ -147,7 +147,7 @@ func TestParseCoordinateErrorCaseInvalidHemisphere(t *testing.T){
 		if !errors.As(err,&parserErr){
 			t.Errorf("Error of incorrect type:%s",err.Error())
 		} else{
-			if parserErr.Code != 101{
+			if parserErr.Code != 22{
 				t.Errorf("GPSParserError wrong code expected:%d got:%d",
 					101,parserErr.Code)
 			}

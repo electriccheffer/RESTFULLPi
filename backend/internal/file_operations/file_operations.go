@@ -98,6 +98,10 @@ func (gp *GPSParser) ParseSentence(sentence string)(*models.GPSTrackPoint,error)
 		
 	longitude,err := gp.parseCoordinate(longitudeHemisphere,rawLongitude,false)
 	if err != nil {
+		var parserError *GPSParserError
+		if errors.As(err,&parserError){
+			return nil, err
+		}
 		return nil, NewGPSParserError(22,"error parsing longitude")
 	}
 	rawTime := splitSentence[1]
@@ -159,7 +163,7 @@ func (gp *GPSParser) parseCoordinate(hemisphere string,
 				     latitude bool)(float64,error){
 	if coordinate == ""{
 	
-		return 0, NewGPSParserError(101,"empty coordinate field")	
+		return 0, NewGPSParserError(22,"empty coordinate field")	
 	}		
 			
 	if latitude {
@@ -168,7 +172,7 @@ func (gp *GPSParser) parseCoordinate(hemisphere string,
 		case "N","S":
 			break 
 		default:
-			return 0.0,NewGPSParserError(22,"invalid hemisphere")
+			return 0.0,NewGPSParserError(22,"invalid lat hemisphere")
 		}	
 		degrees := coordinate[:2]
 		minutes := coordinate[2:]
@@ -193,7 +197,7 @@ func (gp *GPSParser) parseCoordinate(hemisphere string,
 		case "E","W":
 			break 
 		default:
-			return 0.0,NewGPSParserError(101,"invalid hemisphere")
+			return 0.0,NewGPSParserError(22,"invalid long hemisphere")
 		}	
 		degrees := coordinate[:3]
 		minutes := coordinate[3:]
