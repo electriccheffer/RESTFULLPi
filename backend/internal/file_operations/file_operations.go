@@ -78,7 +78,6 @@ func (gp *GPSParser) ParseSentence(sentence string)(*models.GPSTrackPoint,error)
 		return nil,NewGPSParserError(127,"invalid sentence length")
 	}
 		
-	// Check if valid 
 	status := splitSentence[2]
 	if status != "A"{
 		return nil,NewGPSParserError(42,"gps fix status is void")	
@@ -90,7 +89,7 @@ func (gp *GPSParser) ParseSentence(sentence string)(*models.GPSTrackPoint,error)
 	
 	latitude,err := gp.parseCoordinate(latitudeHemisphere,rawLatitude,true)
 	if err != nil {
-		return nil, NewGPSParserError(100,"error parsing latitude")
+		return nil, NewGPSParserError(22,"error parsing latitude")
 	}
 		
 	longitude,err := gp.parseCoordinate(longitudeHemisphere,rawLongitude,false)
