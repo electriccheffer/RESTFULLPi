@@ -94,7 +94,7 @@ func (gp *GPSParser) ParseSentence(sentence string)(*models.GPSTrackPoint,error)
 		
 	longitude,err := gp.parseCoordinate(longitudeHemisphere,rawLongitude,false)
 	if err != nil {
-		return nil, NewGPSParserError(100,"error parsing longitude")
+		return nil, NewGPSParserError(22,"error parsing longitude")
 	}
 	rawTime := splitSentence[1]
 	rawDate := splitSentence[9]
