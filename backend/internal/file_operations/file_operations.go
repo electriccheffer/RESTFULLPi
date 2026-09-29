@@ -7,7 +7,7 @@ import "strconv"
 import "time"
 import "fmt"
 import "strings"
-
+import "errors"
 import "restfulpi/internal/models"
 
 type FileHandle interface {
@@ -89,6 +89,10 @@ func (gp *GPSParser) ParseSentence(sentence string)(*models.GPSTrackPoint,error)
 	
 	latitude,err := gp.parseCoordinate(latitudeHemisphere,rawLatitude,true)
 	if err != nil {
+		var parserError *GPSParserError
+		if errors.As(err,&parserError){
+			return nil, err
+		}	
 		return nil, NewGPSParserError(22,"error parsing latitude")
 	}
 		
@@ -157,15 +161,15 @@ func (gp *GPSParser) parseCoordinate(hemisphere string,
 	
 		return 0, NewGPSParserError(101,"empty coordinate field")	
 	}		
-	switch hemisphere {
+			
+	if latitude {
+		switch hemisphere {
 
-		case "N","S","E","W":
+		case "N","S":
 			break 
 		default:
-			return 0.0,NewGPSParserError(101,"invalid hemisphere")
-	}		
-	if latitude {
-			
+			return 0.0,NewGPSParserError(22,"invalid hemisphere")
+		}	
 		degrees := coordinate[:2]
 		minutes := coordinate[2:]
 		numericalDegree,err := strconv.ParseFloat(degrees,64)
@@ -184,7 +188,13 @@ func (gp *GPSParser) parseCoordinate(hemisphere string,
 			return result * -1.0,nil
 		}
 	}else if !latitude {
-		
+		switch hemisphere {
+
+		case "E","W":
+			break 
+		default:
+			return 0.0,NewGPSParserError(101,"invalid hemisphere")
+		}	
 		degrees := coordinate[:3]
 		minutes := coordinate[3:]
 		numericalDegree, err := strconv.ParseFloat(degrees,64)

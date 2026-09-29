@@ -215,7 +215,35 @@ func TestParseSentenceBadLongitude(t *testing.T){
 	}
 	
 }
+
 //TODO: Test parser bad lat hemisphere
+func TestParseSentenceBadLatitudeHemisphere(t *testing.T){
+	
+	invalidSentence := "$GPRMC,123519.50,A,4807.038,"+
+			 "E,01131.000,E,022.4,084.4,210926,003.1,W*4B"
+	
+	parser := file_operations.NewGPSParser()
+	trackPoint, err := parser.ParseSentence(invalidSentence)
+
+	if trackPoint != nil {
+		t.Error("ParseSentence did not return nil. Expected error.")
+	}
+	if err != nil{
+		var parserErr *file_operations.GPSParserError
+		if !errors.As(err,&parserErr){
+			t.Error("ParseSentence incorrect error type")
+		}
+		if parserErr.Code != 22 {
+			t.Errorf("Incorrect error code returned expected: %d got: %d",
+				22,parserErr.Code)	
+		}
+		if parserErr.Error() != "GPSParserError 22: invalid hemisphere" {
+			t.Errorf("incorrect message expected:%s got:%s",
+						"GPSParserError 22: invalid hemisphere",
+						parserErr)
+		}
+	}	
+}
 //TODO: Test parser bad long hemisphere
 //TODO: Test parser bad time 
 //TODO: Test parser missing fields valid checksum 
