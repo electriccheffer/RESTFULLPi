@@ -109,7 +109,7 @@ func (gp *GPSParser) ParseSentence(sentence string)(*models.GPSTrackPoint,error)
 
 	gpsTime,err := gp.parseTime(rawTime,rawDate)
 	if err != nil {
-		return nil, NewGPSParserError(100,"error parsing time")
+		return nil, NewGPSParserError(22,"error parsing time")
 	}
 	
 	trackpoint := &models.GPSTrackPoint{Latitude:latitude,Longitude:longitude,Time:gpsTime}
