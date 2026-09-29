@@ -301,7 +301,6 @@ func TestParseSentenceBadTime(t *testing.T){
 
 }
 
-//TODO: Test parser missing fields valid checksum 
 func TestParseSentenceInvalidFieldCount(t *testing.T){
 
 	invalidSentence := "$GPRMC,123519.50,4807.038,"+
