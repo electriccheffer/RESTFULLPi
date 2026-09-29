@@ -75,7 +75,7 @@ func (gp *GPSParser) ParseSentence(sentence string)(*models.GPSTrackPoint,error)
 	}		
 	splitSentence := strings.Split(sentence,",")
 	if len(splitSentence) != 12 {
-		return nil,NewGPSParserError(127,"invalid sentence length")
+		return nil,NewGPSParserError(22,"missing fields")
 	}
 		
 	status := splitSentence[2]
