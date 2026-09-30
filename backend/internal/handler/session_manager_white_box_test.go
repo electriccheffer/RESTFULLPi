@@ -44,6 +44,7 @@ func TestReadNMEACancellation(t *testing.T){
 	}
 }	
 
+//TODO: Test success case readNEMA
 //TODO: Test Error case for readNEMA bad serial port 
 //TODO: Test Error case for readNEMA bad write case 
 //TODO: Test Error cases for bad NEMA sentences bad date 
