@@ -37,7 +37,9 @@ type GPSTrackSegment struct{
 }
 
 type GPSTrackPoint struct{
-	Latitude float64 `xml:"trkpt"`
-	Longitude float64 `xml:"lat.attr"`
-	Time time.Time `xml:"time.omitempty"`
+	XMLName xml.Name `xml:"trkpt"`
+	Latitude float64 `xml:"lat,attr"`
+	Longitude float64 `xml:"lon,attr"`
+	Time time.Time `xml:"time,omitempty"`
 }
+

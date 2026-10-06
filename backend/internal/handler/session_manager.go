@@ -6,6 +6,9 @@ import "errors"
 import "os"
 import "context"
 import "io"
+import "bufio"
+import "strings"
+import "encoding/xml"
 import "restfulpi/internal/models"
 import "restfulpi/internal/file_operations"
 
@@ -20,6 +23,7 @@ type SessionManager struct{
 	deviceReadPath string
 	sessions map[string]*models.Session
 	opener file_operations.Opener
+	
 }
 
 func NewSessionManager(wp string,rp string,op file_operations.Opener)*SessionManager{
@@ -78,7 +82,46 @@ func (sm *SessionManager) StartSession(id string, filePath string)(*models.Sessi
 func (sm *SessionManager) readNMEA(ctx context.Context,
 				   source io.Reader,
 				   destination io.Writer) error {
+	
+	reader := bufio.NewReader(source)
+	writer := bufio.NewWriterSize(destination,64*1024)
+	defer writer.Flush()
 
-	<-ctx.Done()
-	return ctx.Err()
+	header := `<?xml version="1.0" encoding="UTF-8"?><gpx version="1.1"
+		   creator="RESTFULPi" xmlns="http://www.topografix.com/GPX/1/1"><trk><trkseg>`
+	footer := `</trkseg></trk></gpx>`
+
+	_,err := writer.WriteString(header)
+	if err != nil {
+		return err
+	} 
+
+	parser := file_operations.NewGPSParser()
+	encoder := xml.NewEncoder(writer)
+	for {
+		select {
+			case <- ctx.Done():
+				_,err = writer.WriteString(footer)
+				if err != nil {
+					return err	
+				}
+				return ctx.Err()
+			default:
+				line, err := reader.ReadString('\n')
+				if err != nil{
+					return err
+				}
+				line = strings.TrimRight(line,"\r\n")
+				trackPoint,err := parser.ParseSentence(line)
+				if err != nil {
+					return err
+				}
+				err = encoder.Encode(trackPoint)
+				if err != nil {
+					return err
+				}		
+		}
+		
+	}
+	
 }
