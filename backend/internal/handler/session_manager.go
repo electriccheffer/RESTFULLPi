@@ -109,6 +109,7 @@ func (sm *SessionManager) readNMEA(ctx context.Context,
 			default:
 				line, err := reader.ReadString('\n')
 				if err != nil{
+					_,_ = writer.WriteString(footer)	
 					return err
 				}
 				line = strings.TrimRight(line,"\r\n")
