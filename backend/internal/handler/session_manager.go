@@ -112,14 +112,19 @@ func (sm *SessionManager) readNMEA(ctx context.Context,
 					return err
 				}
 				line = strings.TrimRight(line,"\r\n")
-				trackPoint,err := parser.ParseSentence(line)
-				if err != nil {
-					return err
-				}
-				err = encoder.Encode(trackPoint)
-				if err != nil {
-					return err
-				}		
+				if strings.HasPrefix(line,"$GPRMC"){
+					trackPoint,err := parser.ParseSentence(line)
+					if err != nil {
+						return err
+					}	
+					err = encoder.Encode(trackPoint)
+					if err != nil {
+						return err
+					}
+				}else{
+					continue
+				}	
+						
 		}
 		
 	}
