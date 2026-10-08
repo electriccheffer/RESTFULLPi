@@ -8,6 +8,7 @@ import "context"
 import "io"
 import "bufio"
 import "strings"
+import "fmt"
 import "encoding/xml"
 import "restfulpi/internal/models"
 import "restfulpi/internal/file_operations"
@@ -107,6 +108,7 @@ func (sm *SessionManager) readNMEA(ctx context.Context,
 				}
 				return ctx.Err()
 			default:
+				fmt.Print("READING FIRST STRING")
 				line, err := reader.ReadString('\n')
 				if err != nil{
 					_,_ = writer.WriteString(footer)	
