@@ -740,4 +740,81 @@ func TestBadNMEASentencesBadLongitudeParserIntegration(t *testing.T){
 			t.Error("Time exceeded.")
 	}
 }
-//TODO: Test Error case for bad NEMA sentences blank fields
+
+func TestBadNMEASentencesBadFieldParserIntegration(t *testing.T){
+
+	readNMEAContext, cancel := context.WithCancel(context.Background())
+	simulatedReadFile,writer  := io.Pipe()
+	defer simulatedReadFile.Close()
+	defer writer.Close() 
+	
+	opener := file_operations.NewFileOpener()	
+	dir := t.TempDir()
+	writePath := filepath.Join(dir,"WriteFile.gpx")
+	writeFile, err := opener.Create(writePath)
+	if err != nil {
+		t.Errorf("unexpected error: %s",err.Error())
+	}
+	sessionManager := NewSessionManager(dir,dir,opener)
+	
+	errorChannel := make(chan error,1)
+
+	go func(){
+		validSentence := "$GPRMC,123519.50,A,4807.038,"+
+			 "N,01131.000,E,022.4,084.4,210926,003.1,W*40\r\n"
+		invalidSentence :="$GPRMC,123519.50,A,,N,01131.000," + 
+				   "E,022.4,084.4,210926,003.1,W*5E\r\n"
+		invalidBytes := []byte(invalidSentence)
+
+		byteSentence := []byte(validSentence)
+		for i := 0 ; i < 5 ; i++{
+			if i == 2 {
+				writer.Write(invalidBytes)
+				continue
+			}
+			writer.Write(byteSentence)	
+		}
+		cancel()  
+	}()
+	
+	go func(){
+		errorChannel <- sessionManager.readNMEA(readNMEAContext,
+							simulatedReadFile,
+							writeFile)
+	
+	}()
+	
+	select {
+		
+		case err := <-errorChannel:
+			if !errors.Is(err,context.Canceled){
+			
+				t.Errorf("Expected: Context.Canceled Got:%v ",err)
+			}
+			_ = writeFile.Close()
+			fileContents, err := os.Open(writePath)
+			if err != nil {
+				t.Errorf("unexpected error: %s",err.Error())
+			}
+			defer fileContents.Close()
+			var gpxFile models.GPSFile
+			decoder := xml.NewDecoder(fileContents)	
+			err = decoder.Decode(&gpxFile)
+			if err != nil{
+				t.Errorf("unexpected error: %s", err.Error())
+			}
+			expectedLatitude := 48.1173
+			latitude := gpxFile.Track.Segment.Points[0].Latitude
+			delta := 0.000001
+			if len(gpxFile.Track.Segment.Points) != 4{
+				t.Errorf("invalid length expected: %d got: %d",4,
+						len(gpxFile.Track.Segment.Points))	
+			}
+			if math.Abs(expectedLatitude - latitude) > delta{
+				t.Errorf("expected: %f got: %f",expectedLatitude,
+								latitude)
+			}
+		case <- time.After(1 * time.Second):
+			t.Error("Time exceeded.")
+	}
+}
