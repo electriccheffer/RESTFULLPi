@@ -429,7 +429,6 @@ func TestBadNMEASentencesBadDateParserIntegration(t *testing.T){
 	
 }
 
-//TODO: Test Error case for bad NEMA sentences invalid 
 func TestBadNMEASentencesInvalidParserIntegration(t *testing.T){
 
 	readNMEAContext, cancel := context.WithCancel(context.Background())
@@ -459,6 +458,7 @@ func TestBadNMEASentencesInvalidParserIntegration(t *testing.T){
 		for i := 0 ; i < 5 ; i++{
 			if i == 2 {
 				writer.Write(invalidBytes)
+				continue
 			}
 			writer.Write(byteSentence)	
 		}
@@ -494,6 +494,10 @@ func TestBadNMEASentencesInvalidParserIntegration(t *testing.T){
 			expectedLatitude := 48.1173
 			latitude := gpxFile.Track.Segment.Points[0].Latitude
 			delta := 0.000001
+			if len(gpxFile.Track.Segment.Points) != 4{
+				t.Errorf("invalid length expected: %d got: %d",4,
+						len(gpxFile.Track.Segment.Points))	
+			}
 			if math.Abs(expectedLatitude - latitude) > delta{
 				t.Errorf("expected: %f got: %f",expectedLatitude,
 								latitude)
