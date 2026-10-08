@@ -31,7 +31,7 @@ export class SessionStart {
       },
       error: (err) => {
         
-        this.errorMessage = err.statusText;
+        this.errorMessage = err.status;
 
       }
 

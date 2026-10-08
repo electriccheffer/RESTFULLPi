@@ -1,7 +1,8 @@
-+ Frontend developement for POST /logs/sessions
 + Backend developement for POST /logs/sessions 
+	- Implement sesion closer 
 + Frontend developement for PATCH /logs/sessions/{id}
 + Backend developement for PATCH /logs/sessions/{id}
++ Introduce error logging for uncaught errors
 + Frontend developement for GET /logs/{id}
 + Backend developement for GET /logs/{id}
 + Frontend developement for DELETE /logs/{id}
