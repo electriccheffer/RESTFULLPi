@@ -126,3 +126,48 @@ func TestSessionStartHandlerIntegrationRedundantIdSuccess(t *testing.T){
 
 
 }
+
+func TestSessionStartHandlerIntegrationRedundantIdFailure(t *testing.T){
+
+	readDirectory := t.TempDir()
+	writeDirectory := t.TempDir()
+	readFilePath := filepath.Join(readDirectory,"device")
+	fileOpener := file_operations.NewFileOpener()
+	_,err := fileOpener.Create(readFilePath)
+	if err != nil{
+
+		t.Errorf("unexpected error creating read path: %s",err.Error())
+	}	
+
+	sessionManager := NewSessionManager(writeDirectory,readFilePath,fileOpener)
+		
+	handler := NewSessionStartHandler(sessionManager)
+	
+	nonRandomBytes := make([]byte,16) 
+	for i := 0 ; i < 16 ; i++{
+		nonRandomBytes[i] = byte(i)
+	}
+	handler.randomReader = func(b []byte)(int,error){
+		
+		length := len(b)	
+		for i := range length{
+			b[i] = byte(i)
+		}
+		return length,nil
+		
+	}
+	id := hex.EncodeToString(nonRandomBytes)
+	sessionStandin := &models.Session{}
+	sessionManager.sessions[id] = sessionStandin
+	request := httptest.NewRequest(http.MethodPost,"/logs/sessions",nil)
+	response := httptest.NewRecorder()
+			
+	handler.ServeHTTP(response,request)
+	
+	if response.Code != http.StatusConflict {
+		t.Errorf("incorrect status code expected:%d got:%d",
+							http.StatusConflict,
+							response.Code)
+	}
+	
+}

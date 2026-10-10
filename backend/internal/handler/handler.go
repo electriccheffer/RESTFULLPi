@@ -189,7 +189,7 @@ func (ssh *SessionStartHandler) ServeHTTP(response http.ResponseWriter,request *
 			retries = 3	
 			for attempt := 1 ; attempt < retries && err != nil ; attempt++{
 				randomBytes = make([]byte,16)
-				_,err = rand.Read(randomBytes)
+				_,err = ssh.randomReader(randomBytes)
 				id = hex.EncodeToString(randomBytes)
 				session, err = ssh.manager.StartSession(id,filePath)	
 			}
