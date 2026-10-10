@@ -113,12 +113,12 @@ func (glh *GetLogsHandler) ServeHTTP(response http.ResponseWriter,request *http.
 type SessionStartHandler struct{
 	
 	manager SessionManagerService
-
+	randomReader func(b []byte) (int, error)
 }
 
 func NewSessionStartHandler(mgr SessionManagerService) *SessionStartHandler{
 	
-	ssh := &SessionStartHandler{manager:mgr}
+	ssh := &SessionStartHandler{manager:mgr,randomReader:rand.Read}
 	return ssh
 
 }
@@ -129,7 +129,7 @@ func (ssh *SessionStartHandler) ServeHTTP(response http.ResponseWriter,request *
 	filePath := now.Format("01_02_06_15_04_05.gpx")			
 
 	randomBytes := make([]byte,16)
-	 _,err := rand.Read(randomBytes)
+	 _,err := ssh.randomReader(randomBytes)
 
 	if err != nil{
 			
