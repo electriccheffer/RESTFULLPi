@@ -640,3 +640,4 @@ func TestSessionStartNoPermissions(t *testing.T){
 	}
 
 }
+

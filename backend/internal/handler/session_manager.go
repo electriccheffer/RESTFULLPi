@@ -16,7 +16,7 @@ type SessionManagerService interface{
 
 	StartSession(id string,filePath string) (*models.Session,error)
 } 
-
+// TODO: add mutext to map 
 type SessionManager struct{
 	
 	upperWritePath string
@@ -35,7 +35,8 @@ func NewSessionManager(wp string,rp string,op file_operations.Opener)*SessionMan
 }
 
 func (sm *SessionManager) StartSession(id string, filePath string)(*models.Session,error){
-
+	
+	//TODO: handle mutex 
 	_,exists := sm.sessions[id]
 	if exists {
 		
@@ -73,9 +74,10 @@ func (sm *SessionManager) StartSession(id string, filePath string)(*models.Sessi
 				    "Write file already exists")
 		}
 	}
-
+	
 	session := &models.Session{FileName:filePath,Id:id}
 	sm.sessions[id] = session
+	//TODO: start readNMEA 
 	return session,nil	
 }
 
