@@ -10,6 +10,7 @@ import "net/http"
 import "net/http/httptest"
 import "encoding/json"
 import "regexp"
+import "os"
 import "restfulpi/internal/models"
 import "restfulpi/internal/file_operations"
 
@@ -208,5 +209,12 @@ func TestSessionStartHandlerIntegrationRedundantFileSucccess(t *testing.T){
 		t.Errorf("incorrect status code expected:%d got:%d",
 							http.StatusCreated,
 							response.Code)
+	}
+	
+	timeStamp = time.Date(2026,10,21,16,0,0,1,time.UTC)
+	badFileName = timeStamp.Format("01_02_06_15_04_05.gpx")
+	_,err = os.Stat(badWritePath)
+	if err != nil {
+		t.Errorf("file not created error code: %s",err.Error())
 	}
 }
