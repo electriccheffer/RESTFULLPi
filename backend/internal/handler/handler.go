@@ -114,6 +114,7 @@ type SessionStartHandler struct{
 	
 	manager SessionManagerService
 	randomReader func(b []byte) (int, error)
+	timeMaker func()(time.Time)	
 }
 
 func NewSessionStartHandler(mgr SessionManagerService) *SessionStartHandler{

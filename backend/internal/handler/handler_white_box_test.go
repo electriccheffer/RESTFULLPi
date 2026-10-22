@@ -4,6 +4,7 @@ import "encoding/hex"
 import "crypto/rand"
 import "io"
 import "testing"
+import "time"
 import "path/filepath"
 import "net/http"
 import "net/http/httptest"
@@ -170,4 +171,42 @@ func TestSessionStartHandlerIntegrationRedundantIdFailure(t *testing.T){
 							response.Code)
 	}
 	
+}
+
+func TestSessionStartHandlerIntegrationRedundantFileSucccess(t *testing.T){
+
+	readDirectory := t.TempDir()
+	writeDirectory := t.TempDir()
+	readFilePath := filepath.Join(readDirectory,"device")
+	
+	timeStamp := time.Date(2026,10,21,16,0,0,0,time.UTC)
+	badFileName := timeStamp.Format("01_02_06_15_04_05.gpx")
+	badWritePath := filepath.Join(writeDirectory,badFileName)	
+	fileOpener := file_operations.NewFileOpener()
+	_,err := fileOpener.Create(readFilePath)
+	if err != nil {
+		t.Errorf("unexpected error creating read path: %s",err.Error())
+	}
+	
+	_,err = fileOpener.Create(badWritePath)
+	if err != nil {
+		t.Errorf("unexpected error creating write path: %s",err.Error())
+	}
+	
+	sessionManager := NewSessionManager(writeDirectory,readFilePath,fileOpener)
+	handler := NewSessionStartHandler(sessionManager)
+	handler.timeMaker = func()(time.Time){
+		return timeStamp			
+	}
+	
+	request := httptest.NewRequest(http.MethodPost,"/logs/sessions",nil)
+	response := httptest.NewRecorder()
+			
+	handler.ServeHTTP(response,request)
+	
+	if response.Code != http.StatusCreated {
+		t.Errorf("incorrect status code expected:%d got:%d",
+							http.StatusCreated,
+							response.Code)
+	}
 }
