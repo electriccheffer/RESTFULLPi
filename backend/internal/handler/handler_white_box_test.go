@@ -219,3 +219,84 @@ func TestSessionStartHandlerIntegrationRedundantFileSucccess(t *testing.T){
 		t.Errorf("file not created error code: %s",err.Error())
 	}
 }
+
+func TestSesionStartHandlerIntegrationRedundantFileFailure(t *testing.T){
+
+	readDirectory := t.TempDir()
+	writeDirectory := t.TempDir()
+	
+	fileOpener := file_operations.NewFileOpener()
+	readFilePath := filepath.Join(readDirectory,"device")
+	
+	timeStampOne := time.Date(2026,10,21,16,0,0,0,time.UTC)
+	timeStampTwo := timeStampOne.Add(1 * time.Second)
+	timeStampThree := timeStampTwo.Add(1 * time.Second)
+	timeStampFour := timeStampThree.Add(1 * time.Second) 
+
+	badFileNameOne := timeStampOne.Format("01_02_06_15_04_05.gpx")
+	badFileNameTwo := timeStampTwo.Format("01_02_06_15_04_05.gpx")
+	badFileNameThree := timeStampThree.Format("01_02_06_15_04_05.gpx")
+	badFileNameFour := timeStampFour.Format("01_02_06_15_04_05.gpx")
+	
+	badWritePathOne := filepath.Join(writeDirectory,badFileNameOne)
+	badWritePathTwo := filepath.Join(writeDirectory,badFileNameTwo)
+	badWritePathThree := filepath.Join(writeDirectory,badFileNameThree)
+	badWritePathFour := filepath.Join(writeDirectory,badFileNameFour)
+	
+	_,err := fileOpener.Create(badWritePathOne)
+	if err != nil {
+		t.Errorf("unexpected error creating write path: %s",err.Error())
+	}
+	_,err = fileOpener.Create(badWritePathTwo)
+	if err != nil {
+		t.Errorf("unexpected error creating write path: %s",err.Error())
+	}
+	_,err = fileOpener.Create(badWritePathThree)
+	if err != nil {
+		t.Errorf("unexpected error creating write path: %s",err.Error())
+	}
+	_,err = fileOpener.Create(badWritePathFour)
+	if err != nil {
+		t.Errorf("unexpected error creating write path: %s",err.Error())
+	}
+	
+	_,err = fileOpener.Create(readFilePath)
+	if err != nil{
+		t.Errorf("unexpected error creating read path: %s",err.Error())
+	}
+	
+	numberOfTries := 0
+	sessionManager := NewSessionManager(writeDirectory,readFilePath,fileOpener)
+	handler := NewSessionStartHandler(sessionManager)
+	handler.timeMaker = func()(time.Time){
+		switch numberOfTries {
+			
+			case 0:
+				numberOfTries++ 
+				return timeStampOne 
+			case 1:
+				numberOfTries++ 
+				return timeStampTwo 
+			case 2:
+				numberOfTries++ 
+				return timeStampThree
+			case 3:
+				numberOfTries++ 
+				return timeStampFour
+			
+		}
+		return timeStampOne
+	}
+	
+	request := httptest.NewRequest(http.MethodPost,"/logs/sessions",nil)
+	response := httptest.NewRecorder()
+			
+	handler.ServeHTTP(response,request)
+	
+	if response.Code != http.StatusConflict {
+		t.Errorf("incorrect status code expected:%d got:%d",
+							http.StatusConflict,
+							response.Code)
+	}	
+	
+}
