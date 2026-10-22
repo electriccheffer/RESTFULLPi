@@ -119,14 +119,14 @@ type SessionStartHandler struct{
 
 func NewSessionStartHandler(mgr SessionManagerService) *SessionStartHandler{
 	
-	ssh := &SessionStartHandler{manager:mgr,randomReader:rand.Read}
+	ssh := &SessionStartHandler{manager:mgr,randomReader:rand.Read,timeMaker:time.Now}
 	return ssh
 
 }
 
 func (ssh *SessionStartHandler) ServeHTTP(response http.ResponseWriter,request *http.Request){
 
-	now := time.Now()
+	now := ssh.timeMaker() 
 	filePath := now.Format("01_02_06_15_04_05.gpx")			
 
 	randomBytes := make([]byte,16)

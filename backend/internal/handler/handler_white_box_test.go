@@ -213,6 +213,7 @@ func TestSessionStartHandlerIntegrationRedundantFileSucccess(t *testing.T){
 	
 	timeStamp = time.Date(2026,10,21,16,0,0,1,time.UTC)
 	badFileName = timeStamp.Format("01_02_06_15_04_05.gpx")
+	badWritePath = filepath.Join(writeDirectory,badFileName)
 	_,err = os.Stat(badWritePath)
 	if err != nil {
 		t.Errorf("file not created error code: %s",err.Error())
