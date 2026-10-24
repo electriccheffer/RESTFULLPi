@@ -300,3 +300,26 @@ func TestSesionStartHandlerIntegrationRedundantFileFailure(t *testing.T){
 	}	
 	
 }
+
+func TestSessionStartHandlerIntegrationNoReadPath(t *testing.T){
+	
+	readDirectory := t.TempDir()
+	writeDirectory := t.TempDir()
+	readFilePath := filepath.Join(readDirectory,"device")
+			
+	fileOpener := file_operations.NewFileOpener()
+	sessionManager := NewSessionManager(writeDirectory,readFilePath,fileOpener)
+	handler := NewSessionStartHandler(sessionManager)
+	
+	request := httptest.NewRequest(http.MethodPost,"/logs/sessions",nil)
+	response := httptest.NewRecorder()
+			
+	handler.ServeHTTP(response,request)
+	if response.Code != http.StatusInternalServerError {
+		t.Errorf("incorrect status returned expected:%d got:%d",
+						http.StatusInternalServerError,response.Code)
+	}
+}
+//TODO: Integration test write path doesn't exist 
+//TODO: Integration test read path permissions error
+//TODO: Integration test write path permissions error
