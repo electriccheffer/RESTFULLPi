@@ -9,6 +9,8 @@ import "syscall"
 import "os"
 
 import "restfulpi/internal/server"
+import "restfulpi/internal/handler"
+import "restfulpi/internal/file_operations"
 
 func main(){
 	
@@ -17,7 +19,10 @@ func main(){
 		log.Fatalf("Failed to get user home directory: %v", err)
 	}
 	gpsLoggingPath := filepath.Join(homeDir, "gpsLogs")
-	router := router.NewRouter(gpsLoggingPath)
+	readPath := filepath.Join("/dev","ttyACM0")
+	fileOpener := file_operations.NewFileOpener()	
+	sessionManager := handler.NewSessionManager(gpsLoggingPath,readPath,fileOpener)
+	router := router.NewRouter(gpsLoggingPath,sessionManager)
 	port := "8080" 
 	httpServer := &http.Server{
 			Addr: ":" + port,

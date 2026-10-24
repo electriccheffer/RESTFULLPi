@@ -4,8 +4,11 @@ import "testing"
 import "net/http"
 import "net/http/httptest"
 import "path/filepath"
-
+import "os"
+import "log"
 import "restfulpi/internal/server"
+import "restfulpi/internal/file_operations"
+import "restfulpi/internal/handler"
 
 func TestAlwaysTrue(t *testing.T) {
 
@@ -16,8 +19,16 @@ func TestAlwaysTrue(t *testing.T) {
 }
 
 func TestRouterCallsHandler(t *testing.T){
-	testPath := filepath.Join("..","..","testData","browser","index.html");	
-	router := router.NewRouter(testPath)
+	
+	homeDir,err := os.UserHomeDir()
+	if err != nil {
+		log.Fatalf("Failed to get user home directory: %v", err)
+	}
+	gpsLoggingPath := filepath.Join(homeDir, "gpsLogs")
+	readPath := filepath.Join("/dev","ttyACM0")
+	fileOpener := file_operations.NewFileOpener()	
+	sessionManager := handler.NewSessionManager(gpsLoggingPath,readPath,fileOpener)
+	router := router.NewRouter(gpsLoggingPath,sessionManager)
 	request := httptest.NewRequest(http.MethodGet,"/",nil)
 	response := httptest.NewRecorder()
 	router.ServeHTTP(response,request)
