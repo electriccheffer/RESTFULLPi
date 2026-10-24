@@ -405,4 +405,26 @@ func TestSessionStartHandlerIntegrationNoPermissionsReadPath(t *testing.T){
 	}
 }
 
-//TODO: Integration test write path permissions error
+func TestSessionStartHandlerIntegrationNoPermissionsWritePath(t *testing.T){
+	
+	readDirectory := t.TempDir()
+	writeDirectory := t.TempDir()
+	readFilePath := filepath.Join(readDirectory,"device")
+	testFileOpener := NewNoPermissionsOpenerWrite() 
+	fileOpener := file_operations.NewFileOpener() 
+	_,err := fileOpener.Create(readFilePath)
+	if err != nil {
+		t.Errorf("unexpected error creating read path:%s",err.Error())
+	}
+		
+	sessionManager := NewSessionManager(writeDirectory,readFilePath,testFileOpener)
+	handler := NewSessionStartHandler(sessionManager)
+	request := httptest.NewRequest(http.MethodPost,"/logs/sessions",nil)
+	response := httptest.NewRecorder()
+			
+	handler.ServeHTTP(response,request)
+	if response.Code != http.StatusInternalServerError {
+		t.Errorf("incorrect status returned expected:%d got:%d",
+						http.StatusInternalServerError,response.Code)
+	}
+}
