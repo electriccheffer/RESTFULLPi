@@ -74,10 +74,11 @@ func (sh *StatusHandler) ServeHTTP(response http.ResponseWriter,request *http.Re
 
 type GetLogsHandler struct{
 	path string
+	sessionManager *SessionManagerService
 }
 
 func NewGetLogsHandler(path string) *GetLogsHandler{
-	lh := &GetLogsHandler{path}
+	lh := &GetLogsHandler{path:path}
 	return lh 
 }
 
