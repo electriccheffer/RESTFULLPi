@@ -1,8 +1,9 @@
-+ Backend developement for POST /logs/sessions 
-	- Fix build 
-	- Deploy 
-	- Merge to main 	
-+ Frontend developement or PATCH /logs/sessions/{id}
++ Frontend developement for PATCH /logs/sessions/{id}
+	- Component Developement 
+		-> Render level tests with mock service	
+	- Service Developement
+		-> Mock Http test response
+		-> Integration test with component
 + Backend developement for PATCH /logs/sessions/{id}
 + Introduce error logging for uncaught errors
 + Frontend developement for GET /logs/{id}

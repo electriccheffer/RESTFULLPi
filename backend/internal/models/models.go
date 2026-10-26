@@ -10,6 +10,7 @@ type Status struct{
 
 type Logs struct{
 	Name string `json:"name"`
+	Id string `json:"id"`
 }
 
 type Session struct{

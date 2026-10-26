@@ -187,7 +187,7 @@ func TestGetLogsHandlerSuccessOneFile(t *testing.T){
 	}	
 	
 	expectedName := "2006-01-02.gpx" 
-	expectedLog :=  models.Logs{expectedName}
+	expectedLog :=  models.Logs{Name:expectedName}
 	expectedLogArray := []models.Logs{expectedLog}
 	expectedMarshal, err := json.Marshal(expectedLogArray)
 	if err != nil{
@@ -215,9 +215,9 @@ func TestGetLogsHandlerSuccessTwoFiles(t *testing.T){
 	}
 
 	expectedName := "2006-01-02.gpx" 
-	expectedLog := models.Logs{expectedName}
+	expectedLog := models.Logs{Name:expectedName}
 	expectedSecondName := "2006.gpx"
-	expectedSecondLog := models.Logs{expectedSecondName}
+	expectedSecondLog := models.Logs{Name:expectedSecondName}
 	expectedLogArray := []models.Logs{expectedLog,expectedSecondLog}
 	expectedMarshal, err := json.Marshal(expectedLogArray)
 	if err != nil{
@@ -245,9 +245,9 @@ func TestGetLogsHandlerSuccessFilesWithDirectory(t *testing.T){
 	}
 
 	expectedName := "2006-01-02.gpx" 
-	expectedLog := models.Logs{expectedName}
+	expectedLog := models.Logs{Name:expectedName}
 	expectedSecondName := "2006.gpx"
-	expectedSecondLog := models.Logs{expectedSecondName}
+	expectedSecondLog := models.Logs{Name:expectedSecondName}
 	expectedLogArray := []models.Logs{expectedLog,expectedSecondLog}
 	expectedMarshal, err := json.Marshal(expectedLogArray)
 	if err != nil{
