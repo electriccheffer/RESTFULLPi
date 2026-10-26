@@ -15,6 +15,7 @@ import "restfulpi/internal/file_operations"
 type SessionManagerService interface{
 
 	StartSession(id string,filePath string) (*models.Session,error)
+	GetSessions() map[string]*models.Session	
 } 
 // TODO: add mutext to map 
 type SessionManager struct{
@@ -32,6 +33,10 @@ func NewSessionManager(wp string,rp string,op file_operations.Opener)*SessionMan
 				deviceReadPath:rp,opener:op,
 				sessions:make(map[string]*models.Session)}
 	return sm
+}
+
+func (sm *SessionManager) GetSessions()map[string]*models.Session{
+	return sm.sessions
 }
 
 func (sm *SessionManager) StartSession(id string, filePath string)(*models.Session,error){

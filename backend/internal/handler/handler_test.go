@@ -303,11 +303,17 @@ func TestGetLogsHandlerFailNotDirectory(t *testing.T){
 
 }
 
-type SessionStartSuccess struct{}
+type SessionStartSuccess struct{
+	sessions map[string]*models.Session
+}
 
 func NewSessionStartSuccess() *SessionStartSuccess{
 	sss := &SessionStartSuccess{}
 	return sss
+}
+
+func (sss *SessionStartSuccess) GetSessions()map[string]*models.Session{
+	return sss.sessions	
 }
 
 func (sss *SessionStartSuccess) StartSession(id string, filePath string) (*models.Session,error){
@@ -365,6 +371,11 @@ func TestSessionStartHandlerSuccess(t *testing.T){
 
 type SessionStartNonUniqueId struct{
 	retries int
+	sessions map[string]*models.Session
+}
+
+func (ssnui *SessionStartNonUniqueId)GetSessions()map[string]*models.Session{
+	return ssnui.sessions 
 }
 
 func NewSessionStartNonUniqueId() *SessionStartNonUniqueId{
@@ -403,12 +414,18 @@ func TestSessionStartNonUniqueIdErrorReturn(t *testing.T){
 
 type SessionStartNonUniqueIdPasses struct{
 	retries int
+	sessions map[string]*models.Session
 }
 
 
 func NewSessionStartNonUniqueIdPasses() *SessionStartNonUniqueIdPasses{
 	ssnuip := &SessionStartNonUniqueIdPasses{retries:0}
 	return ssnuip
+}
+
+
+func (ssnuip *SessionStartNonUniqueIdPasses) GetSessions()map[string]*models.Session{
+	return ssnuip.sessions
 }
 
 func (ssnuip *SessionStartNonUniqueIdPasses) StartSession(id string,
@@ -471,6 +488,7 @@ func TestSessionStartNonUniqueIdSuccessReturn(t *testing.T){
 type SessionStartNonUniqueFileName struct{
 
 	retries int
+	sessions map[string]*models.Session
 }
 
 
@@ -478,6 +496,11 @@ func NewSessionStartNonUniqueFileName()*SessionStartNonUniqueFileName{
 
 	ssnufn := &SessionStartNonUniqueFileName{retries:3}
 	return ssnufn
+}
+
+
+func (ssnufn *SessionStartNonUniqueFileName) GetSessions()map[string]*models.Session{
+	return ssnufn.sessions
 }
 
 func (ssnufn *SessionStartNonUniqueFileName) StartSession(id string,
@@ -540,11 +563,16 @@ func TestSessionStartNonUniqueFileNameSuccessReturn(t *testing.T){
 
 type SessionStartNonUniqueFileNameFail struct{
 	retries int
+	sessions map[string]*models.Session
 }
 
 func NewSessionStartNonUniqueFileNameFail()*SessionStartNonUniqueFileNameFail{
 	
 	return &SessionStartNonUniqueFileNameFail{retries:0}
+}
+
+func (ssnufnf *SessionStartNonUniqueFileNameFail) GetSessions()map[string]*models.Session{
+	return ssnufnf.sessions
 }
 
 func (ssnufnf *SessionStartNonUniqueFileNameFail) StartSession(id string,
@@ -577,10 +605,17 @@ func TestSessionStartNonUniqueFileNameErrorReturn(t *testing.T){
 	}	
 }
 
-type SessionStartNoWriteDirectory struct{}
+type SessionStartNoWriteDirectory struct{
+
+	sessions map[string]*models.Session
+}
 
 func NewSessionStartNoWriteDirectory()*SessionStartNoWriteDirectory{
 	return &SessionStartNoWriteDirectory{}
+}
+
+func (ssnwd *SessionStartNoWriteDirectory) GetSessions()map[string]*models.Session{
+	return ssnwd.sessions
 }
 
 func (ssnwd *SessionStartNoWriteDirectory) StartSession(id string,
@@ -608,12 +643,18 @@ func TestSessionStartDirectoryDoesNotExist(t *testing.T){
 
 }
 
-type SessionStartNoPermissions struct{}
+type SessionStartNoPermissions struct{
+	sessions map[string]*models.Session
+}
 
 
 func NewSessionStartNoPermissions() *SessionStartNoPermissions{
 	
 	return &SessionStartNoPermissions{}	
+}
+
+func (ssnp *SessionStartNoPermissions) GetSessions()map[string]*models.Session{
+	return ssnp.sessions
 }
 
 func (ssnp *SessionStartNoPermissions) StartSession(id string,
