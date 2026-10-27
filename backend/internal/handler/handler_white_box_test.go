@@ -14,6 +14,43 @@ import "os"
 import "restfulpi/internal/models"
 import "restfulpi/internal/file_operations"
 
+func TestGetLogsHandlerNonEmpty(t *testing.T){
+	
+	id := "1234"
+	fileName := "SomeFile.gpx"
+	session := &models.Session{FileName:fileName,Id:id}
+	sessions := map[string]*models.Session{} 
+	sessions[id] = session
+	fileOpener := file_operations.NewFileOpener()
+	sessionManager := NewSessionManager("NA","NA",fileOpener)
+	sessionManager.sessions = sessions
+	getLogsHandler := NewGetLogsHandler(sessionManager)	
+	request := httptest.NewRequest(http.MethodGet,"/logs",nil)
+	response := httptest.NewRecorder()
+	getLogsHandler.ServeHTTP(response,request)
+
+	got, err := io.ReadAll(response.Body)
+	if err != nil {
+		t.Errorf("Error reading response: %s",err.Error())
+	}	
+	
+	var gotLogList []models.Logs
+	err = json.Unmarshal(got,&gotLogList)
+	if err != nil {
+		t.Errorf("Error Unmarshaling response: %s", err.Error())
+	}
+	expectedLog := &models.Logs{Name:fileName,Id:id}
+	if gotLogList[0].Name != expectedLog.Name {
+		t.Error("file names did not match")
+	}
+	if gotLogList[0].Id != expectedLog.Id {
+		t.Error("ids do not match")
+	}
+	
+	
+
+}
+
 func TestSessionHandlerIntegrationSuccessCase(t *testing.T){
 
 	readDirectory := t.TempDir()

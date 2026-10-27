@@ -139,38 +139,6 @@ func TestStatusHandler(t *testing.T){
 	}	
 }
 
-
-/*
-func TestGetLogsHandlerSuccessOneFile(t *testing.T){
-	
-	path := filepath.Join("..","..","testData","OneFileDirectory")
-
-	sessionManager := NewSessionStartSuccess()
-	router := router.NewRouter(path,sessionManager)
-	
-	request := httptest.NewRequest(http.MethodGet,"/logs",nil)
-	response := httptest.NewRecorder()
-	router.ServeHTTP(response,request)
-		
-	got,err := io.ReadAll(response.Body)
-	if err != nil{
-		t.Errorf("Error reading response: " + err.Error())
-	}	
-	
-	expectedName := "2006-01-02.gpx" 
-	expectedLog :=  models.Logs{Name:expectedName}
-	expectedLogArray := []models.Logs{expectedLog}
-	expectedMarshal, err := json.Marshal(expectedLogArray)
-	if err != nil{
-		t.Errorf("Difficulty with marshaling expected log")
-	}
-	if !bytes.Equal(expectedMarshal,got){
-		t.Errorf("Incorrect data returned from one file")
-	}
-}
-
-*/
-
 //TODO: Implement tests For GetLogsHandler
 func TestGetLogsHandlerEmpty(t *testing.T){
 	
@@ -200,7 +168,6 @@ func TestGetLogsHandlerEmpty(t *testing.T){
 		t.Error("Log list not of correct size")
 	}
 }
-
 
 type SessionStartSuccess struct{
 	sessions map[string]*models.Session
