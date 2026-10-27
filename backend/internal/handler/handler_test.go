@@ -144,32 +144,8 @@ func TestStatusHandler(t *testing.T){
 	}	
 }
 
-func TestGetLogsHandlerSuccessEmpty(t *testing.T){
-	
-	path := filepath.Join("..","..","testData","EmptyDirectory")
 
-	sessionManager := NewSessionStartSuccess()
-	router := router.NewRouter(path,sessionManager)
-	
-	request := httptest.NewRequest(http.MethodGet,"/logs",nil)
-	response := httptest.NewRecorder()
-	router.ServeHTTP(response,request)
-	
-	got,err := io.ReadAll(response.Body)
-	if err != nil{
-		t.Errorf("Error reading response: " + err.Error())
-	}
-	
-	var gotArray []models.Logs
-	err = json.Unmarshal(got,&gotArray)
-	if err != nil{
-		t.Errorf("Error Unmarshling response: %s",err.Error())
-	}
-	if len(gotArray) != 0 {
-		t.Errorf("Length of array response was not zero")
-	}
-}
-
+/*
 func TestGetLogsHandlerSuccessOneFile(t *testing.T){
 	
 	path := filepath.Join("..","..","testData","OneFileDirectory")
@@ -198,110 +174,39 @@ func TestGetLogsHandlerSuccessOneFile(t *testing.T){
 	}
 }
 
-func TestGetLogsHandlerSuccessTwoFiles(t *testing.T){
-	
-	path := filepath.Join("..","..","testData","DirectoryWithTwoFiles")
+*/
 
+//TODO: Implement tests For GetLogsHandler
+func TestGetLogsHandlerEmpty(t *testing.T){
+	
+	path := filepath.Join("..","..","testData","OneFileDirectory")
 	sessionManager := NewSessionStartSuccess()
+	
 	router := router.NewRouter(path,sessionManager)
 	
 	request := httptest.NewRequest(http.MethodGet,"/logs",nil)
 	response := httptest.NewRecorder()
+	
 	router.ServeHTTP(response,request)
 	
 	got,err := io.ReadAll(response.Body)
 	if err != nil{
-		t.Errorf("Error reading response: " + err.Error())
-	}
-
-	expectedName := "2006-01-02.gpx" 
-	expectedLog := models.Logs{Name:expectedName}
-	expectedSecondName := "2006.gpx"
-	expectedSecondLog := models.Logs{Name:expectedSecondName}
-	expectedLogArray := []models.Logs{expectedLog,expectedSecondLog}
-	expectedMarshal, err := json.Marshal(expectedLogArray)
-	if err != nil{
-		t.Errorf("Dirriculty with marshaling expected log")
-	}
-	if !bytes.Equal(expectedMarshal,got){
-		t.Errorf("Incorrect data returned from file")
-	}
-}
-
-func TestGetLogsHandlerSuccessFilesWithDirectory(t *testing.T){
-
-	path := filepath.Join("..","..","testData","DirectoryWithTwoFilesAndDirectory")
-
-	sessionManager := NewSessionStartSuccess()
-	router := router.NewRouter(path,sessionManager)
-	
-	request := httptest.NewRequest(http.MethodGet,"/logs",nil)
-	response := httptest.NewRecorder()
-	router.ServeHTTP(response,request)
-	
-	got,err := io.ReadAll(response.Body)
-	if err != nil{
-		t.Errorf("Error reading response: " + err.Error())
-	}
-
-	expectedName := "2006-01-02.gpx" 
-	expectedLog := models.Logs{Name:expectedName}
-	expectedSecondName := "2006.gpx"
-	expectedSecondLog := models.Logs{Name:expectedSecondName}
-	expectedLogArray := []models.Logs{expectedLog,expectedSecondLog}
-	expectedMarshal, err := json.Marshal(expectedLogArray)
-	if err != nil{
-		t.Errorf("Dirriculty with marshaling expected log")
-	}
-	if !bytes.Equal(expectedMarshal,got){
-		t.Errorf("Incorrect data returned from file")
+		t.Errorf("Error reading response:%s " + err.Error())
 	}
 	
-}
-
-func TestGetLogsHandlerFailNoExist(t *testing.T){
-	
-	path := filepath.Join(".","NoExist")
-
-	sessionManager := NewSessionStartSuccess()
-	router := router.NewRouter(path,sessionManager)
-	
-	request := httptest.NewRequest(http.MethodGet,"/logs",nil)
-	response := httptest.NewRecorder()
-	router.ServeHTTP(response,request)
-
-	_,err := io.ReadAll(response.Body)
+	expectedSize := 0
+	 
+	var gotLogList []models.Logs
+	err = json.Unmarshal(got,&gotLogList)
 	if err != nil {
-		t.Errorf("Error reading response: " + err.Error())
+		t.Errorf("Error unmarshaling response: %s",err.Error())
 	}
 	
-	if response.Code != http.StatusNotFound{
-		t.Errorf("Expected:%d Got:%d",http.StatusNotFound,response.Code)
-	}	
-	
+	if len(gotLogList) != expectedSize {
+		t.Error("Log list not of correct size")
+	}
 }
 
-func TestGetLogsHandlerFailNotDirectory(t *testing.T){
-
-	path := filepath.Join(".","handler_test.go")
-
-	sessionManager := NewSessionStartSuccess()
-	router := router.NewRouter(path,sessionManager)
-	
-	request := httptest.NewRequest(http.MethodGet,"/logs",nil)
-	response := httptest.NewRecorder()
-	router.ServeHTTP(response,request)
-
-	_,err := io.ReadAll(response.Body)
-	if err != nil {
-		t.Errorf("Error reading response: " + err.Error())
-	}
-	
-	if response.Code != http.StatusNotFound{
-		t.Errorf("Expected:%d Got:%d",http.StatusNotFound,response.Code)
-	}
-
-}
 
 type SessionStartSuccess struct{
 	sessions map[string]*models.Session

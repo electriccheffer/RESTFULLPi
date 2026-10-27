@@ -8,7 +8,6 @@ import "crypto/rand"
 import "encoding/hex"
 import "errors"
 import "restfulpi/internal/models"
-import "restfulpi/internal/file_operations"
 
 
 type FrontendHandler struct{
@@ -83,32 +82,23 @@ func NewGetLogsHandler(path string,sessionManager SessionManagerService) *GetLog
 }
 
 func (glh *GetLogsHandler) ServeHTTP(response http.ResponseWriter,request *http.Request){
-	
-	directoryReader := file_operations.NewDirectoryRead(glh.path)
-	logFiles, err := directoryReader.GetFiles()		
-	if err != nil {
-		response.Header().Set("Content-Type","application/json")
-		response.Header().Set("X-Content-Type-Options","nosniff")
-		response.WriteHeader(http.StatusNotFound)
-		return	
-	}	
-	
+		
+	sessions := glh.sessionManager.GetSessions() 
 	var logs []models.Logs	
-	for _, entry := range logFiles{		
-		if entry.IsDir(){
-			continue
-		}
-		log := models.Logs{Name:entry.Name()}
+	for _, session := range sessions {
+		log := models.Logs{Name:session.FileName,Id:session.Id}
 		logs = append(logs,log)
 	}
-
+	
 	jsonLogs,err := json.Marshal(logs)
 	if err != nil{
-	
+				
 	}
 	response.WriteHeader(http.StatusOK)
 	response.Write(jsonLogs)		
 	return
+
+	
 }
 
 type SessionStartHandler struct{
