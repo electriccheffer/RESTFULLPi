@@ -8,7 +8,7 @@ import "io/fs"
 //go:embed dist/browser/*
 var applicationPath embed.FS
 
-func NewRouter(logsPath string,sessionManager handler.SessionManagerService) http.Handler {
+func NewRouter(sessionManager handler.SessionManagerService) http.Handler {
 	
 	
 	applicationFS, err := fs.Sub(applicationPath,"dist/browser")
@@ -20,7 +20,7 @@ func NewRouter(logsPath string,sessionManager handler.SessionManagerService) htt
 
 	frontendHandler := handler.NewFrontendHandler(applicationFS)
 	statusHandler := handler.NewStatusHandler()
-	getLogsHandler := handler.NewGetLogsHandler(logsPath,sessionManager)
+	getLogsHandler := handler.NewGetLogsHandler(sessionManager)
 	sessionStartHandler := handler.NewSessionStartHandler(sessionManager)
 
 	mux.Handle("GET /",frontendHandler) 

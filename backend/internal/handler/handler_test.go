@@ -1,9 +1,9 @@
 package handler_test
 
 import "testing"
-import "path/filepath"
 import "net/http"
 import "net/http/httptest"
+import "path/filepath"
 import "os"
 import "io"
 import "bytes"
@@ -15,12 +15,10 @@ import "restfulpi/internal/handler"
 
 func TestAngularAppDelivery(t *testing.T){
 	
-	buildPath := filepath.Join("..","server","dist","browser","index.html")
-	
 	sessionManager := NewSessionStartSuccess()
 	
-	router := router.NewRouter(buildPath,sessionManager)
-	
+	router := router.NewRouter(sessionManager)
+	buildPath := filepath.Join("..","server","dist","browser","index.html") 	
 	expected,err := os.ReadFile(buildPath)
 	if err != nil {
 		t.Errorf("error reading file:" + err.Error())
@@ -47,11 +45,10 @@ func TestAngularAppDelivery(t *testing.T){
 }
 
 func TestAngularAppDeliveryFileNotFound(t *testing.T){
-
-	buildPath := filepath.Join("..","server","dist","browser","index.html")
 	
 	sessionManager := NewSessionStartSuccess()
-	router := router.NewRouter(buildPath,sessionManager)
+	router := router.NewRouter(sessionManager)
+	buildPath := filepath.Join("..","server","dist","browser","index.html")
 	expected,err := os.ReadFile(buildPath)
 	if err != nil {
 		t.Errorf("error reading file:" + err.Error())
@@ -78,10 +75,10 @@ func TestAngularAppDeliveryFileNotFound(t *testing.T){
 
 func TestAngularAppDeliveryFileIsDirectory(t *testing.T){
 
-	buildPath := filepath.Join("..","server","dist","browser","index.html")
 	
 	sessionManager := NewSessionStartSuccess()
-	router := router.NewRouter(buildPath,sessionManager)
+	router := router.NewRouter(sessionManager)
+	buildPath := filepath.Join("..","server","dist","browser","index.html")
 	expected,err := os.ReadFile(buildPath)
 	if err != nil {
 		t.Errorf("error reading file:" + err.Error())
@@ -109,10 +106,8 @@ func TestAngularAppDeliveryFileIsDirectory(t *testing.T){
 
 func TestStatusHandler(t *testing.T){
 
-	buildPath := filepath.Join("..","handler")
-
 	sessionManager := NewSessionStartSuccess()
-	router := router.NewRouter(buildPath,sessionManager)
+	router := router.NewRouter(sessionManager)
 	
 	request := httptest.NewRequest(http.MethodGet,"/status",nil)
 	response := httptest.NewRecorder()
@@ -179,10 +174,9 @@ func TestGetLogsHandlerSuccessOneFile(t *testing.T){
 //TODO: Implement tests For GetLogsHandler
 func TestGetLogsHandlerEmpty(t *testing.T){
 	
-	path := filepath.Join("..","..","testData","OneFileDirectory")
 	sessionManager := NewSessionStartSuccess()
 	
-	router := router.NewRouter(path,sessionManager)
+	router := router.NewRouter(sessionManager)
 	
 	request := httptest.NewRequest(http.MethodGet,"/logs",nil)
 	response := httptest.NewRecorder()
@@ -230,10 +224,8 @@ func (sss *SessionStartSuccess) StartSession(id string, filePath string) (*model
 
 func TestSessionStartHandlerSuccess(t *testing.T){
 
-	buildPath := filepath.Join("..","server","dist","browser","index.html")
-
 	sessionManager := NewSessionStartSuccess()
-	router := router.NewRouter(buildPath,sessionManager)
+	router := router.NewRouter(sessionManager)
 	
 	request := httptest.NewRequest(http.MethodPost,"/logs/sessions",nil)
 	response := httptest.NewRecorder()
@@ -302,9 +294,8 @@ func (ssnui *SessionStartNonUniqueId) StartSession(id string,
 
 func TestSessionStartNonUniqueIdErrorReturn(t *testing.T){
 
-	buildPath := filepath.Join("..","server","dist","browser","index.html")
 	sessionManager := NewSessionStartNonUniqueId()
-	router := router.NewRouter(buildPath,sessionManager)
+	router := router.NewRouter(sessionManager)
 
 	request := httptest.NewRequest(http.MethodPost,"/logs/sessions",nil)
 	response := httptest.NewRecorder()
@@ -346,10 +337,9 @@ func (ssnuip *SessionStartNonUniqueIdPasses) StartSession(id string,
 }
 
 func TestSessionStartNonUniqueIdSuccessReturn(t *testing.T){
-	buildPath := filepath.Join("..","server","dist","browser","index.html")
 
 	sessionManager := NewSessionStartNonUniqueIdPasses()
-	router := router.NewRouter(buildPath,sessionManager)
+	router := router.NewRouter(sessionManager)
 	
 	request := httptest.NewRequest(http.MethodPost,"/logs/sessions",nil)
 	response := httptest.NewRecorder()
@@ -422,10 +412,8 @@ func (ssnufn *SessionStartNonUniqueFileName) StartSession(id string,
 
 func TestSessionStartNonUniqueFileNameSuccessReturn(t *testing.T){
 	
-	buildPath := filepath.Join("..","server","dist","browser","index.html")
-
 	sessionManager := NewSessionStartNonUniqueFileName()
-	router := router.NewRouter(buildPath,sessionManager)
+	router := router.NewRouter(sessionManager)
 	
 	request := httptest.NewRequest(http.MethodPost,"/logs/sessions",nil)
 	response := httptest.NewRecorder()
@@ -495,9 +483,8 @@ func (ssnufnf *SessionStartNonUniqueFileNameFail) StartSession(id string,
 
 func TestSessionStartNonUniqueFileNameErrorReturn(t *testing.T){
 
-	buildPath := filepath.Join("..","server","dist","browser","index.html")
 	sessionManager := NewSessionStartNonUniqueFileNameFail()
-	router := router.NewRouter(buildPath,sessionManager)
+	router := router.NewRouter(sessionManager)
 
 	request := httptest.NewRequest(http.MethodPost,"/logs/sessions",nil)
 	response := httptest.NewRecorder()
@@ -532,9 +519,8 @@ func (ssnwd *SessionStartNoWriteDirectory) StartSession(id string,
 
 func TestSessionStartDirectoryDoesNotExist(t *testing.T){
 
-	buildPath := filepath.Join("..","server","dist","browser","index.html")
 	sessionManager := NewSessionStartNoWriteDirectory()
-	router := router.NewRouter(buildPath,sessionManager)
+	router := router.NewRouter(sessionManager)
 
 	request := httptest.NewRequest(http.MethodPost,"/logs/sessions",nil)
 	response := httptest.NewRecorder()
@@ -571,9 +557,8 @@ func (ssnp *SessionStartNoPermissions) StartSession(id string,
 
 func TestSessionStartNoPermissions(t *testing.T){
 
-	buildPath := filepath.Join("..","server","dist","browser","index.html")
 	sessionManager := NewSessionStartNoPermissions()
-	router := router.NewRouter(buildPath,sessionManager)
+	router := router.NewRouter(sessionManager)
 
 	request := httptest.NewRequest(http.MethodPost,"/logs/sessions",nil)
 	response := httptest.NewRecorder()
