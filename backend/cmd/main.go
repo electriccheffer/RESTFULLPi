@@ -22,7 +22,7 @@ func main(){
 	readPath := filepath.Join("/dev","ttyACM0")
 	fileOpener := file_operations.NewFileOpener()	
 	sessionManager := handler.NewSessionManager(gpsLoggingPath,readPath,fileOpener)
-	router := router.NewRouter(gpsLoggingPath,sessionManager)
+	router := router.NewRouter(sessionManager)
 	port := "8080" 
 	httpServer := &http.Server{
 			Addr: ":" + port,

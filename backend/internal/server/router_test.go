@@ -28,7 +28,7 @@ func TestRouterCallsHandler(t *testing.T){
 	readPath := filepath.Join("/dev","ttyACM0")
 	fileOpener := file_operations.NewFileOpener()	
 	sessionManager := handler.NewSessionManager(gpsLoggingPath,readPath,fileOpener)
-	router := router.NewRouter(gpsLoggingPath,sessionManager)
+	router := router.NewRouter(sessionManager)
 	request := httptest.NewRequest(http.MethodGet,"/",nil)
 	response := httptest.NewRecorder()
 	router.ServeHTTP(response,request)
