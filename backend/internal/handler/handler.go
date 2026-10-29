@@ -219,3 +219,4 @@ func (ssh *SessionStartHandler) ServeHTTP(response http.ResponseWriter,request *
 	response.Write(jsonSession)
 	return
 }
+

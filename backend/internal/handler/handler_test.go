@@ -139,7 +139,6 @@ func TestStatusHandler(t *testing.T){
 	}	
 }
 
-//TODO: Implement tests For GetLogsHandler
 func TestGetLogsHandlerEmpty(t *testing.T){
 	
 	sessionManager := NewSessionStartSuccess()
