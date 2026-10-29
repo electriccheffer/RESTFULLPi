@@ -11,6 +11,7 @@ type Status struct{
 type Logs struct{
 	Name string `json:"name"`
 	Id string `json:"id"`
+	Active bool `json:"active"`
 }
 
 type Session struct{
