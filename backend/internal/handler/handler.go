@@ -85,7 +85,7 @@ func (glh *GetLogsHandler) ServeHTTP(response http.ResponseWriter,request *http.
 	sessions := glh.sessionManager.GetSessions() 
 	var logs []models.Logs	
 	for _, session := range sessions {
-		log := models.Logs{Name:session.FileName,Id:session.Id}
+		log := models.Logs{Name:session.FileName,Id:session.Id,Active:session.Active}
 		logs = append(logs,log)
 	}
 	

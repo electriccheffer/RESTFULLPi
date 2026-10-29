@@ -17,6 +17,7 @@ type Logs struct{
 type Session struct{
 	FileName string `json:"name"`
 	Id string `json:"id"`
+	Active bool `json:"active"`
 }
 
 type GPSFile struct{

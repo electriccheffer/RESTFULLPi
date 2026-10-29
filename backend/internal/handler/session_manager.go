@@ -80,7 +80,7 @@ func (sm *SessionManager) StartSession(id string, filePath string)(*models.Sessi
 		}
 	}
 	
-	session := &models.Session{FileName:filePath,Id:id}
+	session := &models.Session{FileName:filePath,Id:id,Active:true}
 	sm.sessions[id] = session
 	//TODO: start readNMEA 
 	return session,nil	
