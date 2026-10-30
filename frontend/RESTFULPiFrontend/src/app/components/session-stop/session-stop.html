@@ -1,1 +1,12 @@
-<p>session-stop works!</p>
+<button (click)="stopSession()">Stop Logging</button>
+@if (status) {
+    <div class="stop-status">
+        <p>Session Stopped!</p>
+    </div>
+}
+@if (errorMessage) {
+    <div class="error-info">
+        <p>Error Stopping Log: </p>
+        <p class="error-message">{{errorMessage}}</p>
+    </div>
+}

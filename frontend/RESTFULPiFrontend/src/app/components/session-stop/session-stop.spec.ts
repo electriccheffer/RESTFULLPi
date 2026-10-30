@@ -3,11 +3,14 @@ import { SessionStop } from './session-stop';
 import { SessionStopService } from '../../services/session-stop';
 import { Observable,of } from 'rxjs';
 import { StopStatus } from '../../generated/models/stop-status';
+import { Injectable } from '@angular/core';
+import { Log } from '../../generated/models';
 
+@Injectable()
 class MockSessionStopService extends SessionStopService{
   private status:StopStatus = {success:false}; 
 
-  override stopService():Observable<StopStatus>{
+  override stopService(id:string):Observable<StopStatus>{
     return of(this.status)
   }
   setStopStatus(status:StopStatus){
@@ -18,7 +21,7 @@ class MockSessionStopService extends SessionStopService{
 describe('SessionStop', () => {
   let component: SessionStop;
   let fixture: ComponentFixture<SessionStop>;
-  let service: SessionStopService; 
+  let service: MockSessionStopService;
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [SessionStop],
@@ -30,11 +33,46 @@ describe('SessionStop', () => {
 
     fixture = TestBed.createComponent(SessionStop);
     component = fixture.componentInstance;
-    service = TestBed.inject(SessionStopService);
+    service = TestBed.inject(MockSessionStopService);
     await fixture.whenStable();
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('Session stop success',() => {
+
+    // get the button component
+    component.log = {
+      id:"123",
+      name:"testfile",
+      active:true
+
+    }
+    fixture.detectChanges();
+    const stopStatus = {success:true}; 
+    service.setStopStatus(stopStatus); 
+    const compiled = fixture.nativeElement as HTMLElement;
+    const button = compiled.querySelector('button'); 
+    expect(button).not.toBeNull(); 
+    button?.click(); 
+    fixture.detectChanges();
+    const status = compiled.querySelector('.stop-status p'); 
+    expect(status)?.toBeTruthy(); 
+    expect(status?.textContent)?.toContain('Session Stopped!'); 
+    // press the button 
+    // check the status 
+    // check the button text
+
+  }); 
+
+  it('Session stop failure false',() => {
+
+  }); 
+
+  it('Sessions stop error',() => {
+
+  }); 
+
 });

@@ -7,7 +7,7 @@ import { StopStatus } from '../generated/models/stop-status';
 })
 export class SessionStopService {
 
-    stopService():Observable<StopStatus>{
+    stopService(id:string):Observable<StopStatus>{
 
         return of({success:true}); 
     }
