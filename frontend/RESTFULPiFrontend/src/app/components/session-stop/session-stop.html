@@ -1,5 +1,5 @@
 <button (click)="stopSession()">Stop Logging</button>
-@if (status) {
+@if (status?.success == true) {
     <div class="stop-status">
         <p>Session Stopped!</p>
     </div>

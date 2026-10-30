@@ -19,7 +19,7 @@ export class SessionStop {
   constructor(private service:SessionStopService){}
 
   stopSession():void{
-      this.status = this.service.stopService(this.log.id!).
+      this.service.stopService(this.log.id!).
                           subscribe({
 
                       next:(data)=>{

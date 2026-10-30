@@ -61,14 +61,10 @@ describe('SessionStop', () => {
     const status = compiled.querySelector('.stop-status p'); 
     expect(status)?.toBeTruthy(); 
     expect(status?.textContent)?.toContain('Session Stopped!'); 
-    // press the button 
-    // check the status 
-    // check the button text
-
   }); 
 
   it('Session stop failure false',() => {
-
+    
   }); 
 
   it('Sessions stop error',() => {
