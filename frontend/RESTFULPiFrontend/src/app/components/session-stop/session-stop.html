@@ -4,6 +4,13 @@
         <p>Session Stopped!</p>
     </div>
 }
+@else if (status?.success == false){
+
+    <div class="stop-status">
+        <p>Session Already Stopped!</p>
+    </div>
+
+}
 @if (errorMessage) {
     <div class="error-info">
         <p>Error Stopping Log: </p>

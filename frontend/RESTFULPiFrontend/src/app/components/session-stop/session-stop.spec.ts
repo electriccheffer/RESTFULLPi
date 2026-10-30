@@ -64,7 +64,22 @@ describe('SessionStop', () => {
   }); 
 
   it('Session stop failure false',() => {
-    
+    component.log = {
+      id:"123",
+      name:"testfile",
+      active:true
+    }
+    fixture.detectChanges(); 
+    const stopStatus = {success:false}; 
+    service.setStopStatus(stopStatus); 
+    const compiled = fixture.nativeElement as HTMLElement; 
+    const button = compiled.querySelector('button'); 
+    expect(button).not.toBeNull();
+    button?.click();
+    fixture.detectChanges();
+    const status = compiled.querySelector('.stop-status p');
+    expect(status)?.toBeTruthy(); 
+    expect(status?.textContent)?.toContain('Session Already Stopped!');
   }); 
 
   it('Sessions stop error',() => {
