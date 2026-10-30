@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { SessionStopService } from '../../services/session-stop';
 
 @Component({
   selector: 'app-session-stop',
@@ -6,4 +7,8 @@ import { Component } from '@angular/core';
   templateUrl: './session-stop.html',
   styleUrl: './session-stop.css',
 })
-export class SessionStop {}
+export class SessionStop {
+
+  constructor(private servic:SessionStopService){}
+
+}

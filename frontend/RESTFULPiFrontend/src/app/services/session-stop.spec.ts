@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { SessionStop } from './session-stop';
+import { SessionStopService } from './session-stop';
 
 describe('SessionStop', () => {
-  let service: SessionStop;
+  let service: SessionStopService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(SessionStop);
+    service = TestBed.inject(SessionStopService);
   });
 
   it('should be created', () => {
