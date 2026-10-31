@@ -1,6 +1,4 @@
 + Frontend developement for POST /logs/sessions/{id}/stop
-	- Component Developement 
-		-> Render level tests with mock service	for button component
 	- Service Developement
 		-> Mock Http test response
 		-> Integration test with component
