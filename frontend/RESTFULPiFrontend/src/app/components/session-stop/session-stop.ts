@@ -12,7 +12,7 @@ import { StopStatus } from '../../generated/models/stop-status';
 export class SessionStop {
   
   status?:StopStatus;
-  errorMessage?:string; 
+  errorMessage:string = ''; 
 
   @Input() log!:Log; 
 
