@@ -58,5 +58,23 @@ describe('SessionStop', () => {
       request.flush(expected); 
   }); 
 
-  
+  it('Return error',() => { 
+      let caughtError: any; 
+
+        service.stopService("xfg").subscribe({
+            next: () => {throw new Error("expected an error response")}, 
+            error: (error) => {
+                caughtError = error; 
+            }
+        }); 
+
+        const request = httpMock.expectOne('http://192.168.4.1:8080/logs/sessions/xfg/stop');
+        expect(request.request.method).toBe('POST');
+        request.flush('Internal Server errror',{status:500,statusText:"Server Error"}); 
+        expect(caughtError).toBeTruthy();
+        expect(caughtError.status).toBe(500);  
+
+
+  });
+
 });

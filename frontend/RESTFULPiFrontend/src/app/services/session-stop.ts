@@ -1,7 +1,7 @@
 import { Injectable, Service } from '@angular/core';
-import { Observable,of } from 'rxjs';
+import { catchError, Observable,of,throwError } from 'rxjs';
 import { StopStatus } from '../generated/models/stop-status';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 
 @Injectable({
     providedIn:'root'
@@ -14,7 +14,11 @@ export class SessionStopService {
 
     stopService(id:string):Observable<StopStatus>{
         let request:string = this.url + "/" + id + "/stop";
-        return this.http.post<StopStatus>(request,{}); 
+        return this.http.post<StopStatus>(request,{}).pipe(
+            catchError((error:HttpErrorResponse) => { 
+                return throwError(() => error);
+            })
+        ); 
        
     }
 
