@@ -46,8 +46,17 @@ describe('SessionStop', () => {
     }); 
 
   it('Should send POST /logs/sessions/{id}/stop sucess false', () =>{
-
+      const expected:StopStatus = {success:false}; 
+      service.stopService("xfg").subscribe((res) => {
+        expect(res).toEqual(expected); 
+        expect(res.success).toBe(false); 
+      }); 
       
+      const request = httpMock.expectOne('http://192.168.4.1:8080/logs/sessions/xfg/stop'); 
+      expect(request.request.method).toBe('POST'); 
+      expect(request.request.body).toEqual({}); 
+      request.flush(expected); 
   }); 
 
+  
 });
