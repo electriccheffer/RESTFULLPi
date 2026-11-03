@@ -5,6 +5,8 @@ import { Observable,of, throwError } from 'rxjs';
 import { StopStatus } from '../../generated/models/stop-status';
 import { Injectable } from '@angular/core';
 import { Log } from '../../generated/models';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideHttpClient } from '@angular/common/http';
 
 @Injectable()
 class MockSessionStopService extends SessionStopService{
@@ -115,4 +117,43 @@ describe('SessionStop', () => {
     const errorReply = compiled.querySelector('.error-info p'); 
     expect(errorReply?.textContent)?.toContain(errorMessage);
   }); 
+});
+
+
+describe('SessionStopIntegrationTest',() => {
+
+  let service:SessionStopService; 
+  let component:SessionStop; 
+  let fixture:ComponentFixture<SessionStop>;
+  let httpMock:HttpTestingController; 
+
+  beforeEach(async () => {
+
+    TestBed.configureTestingModule({
+
+      providers:[
+        SessionStop,
+        SessionStopService,
+        provideHttpClient(),
+        provideHttpClientTesting()
+      ]
+    });
+
+    fixture = TestBed.createComponent(SessionStop);
+    component = fixture.componentInstance; 
+    service = TestBed.inject(SessionStopService); 
+    httpMock = TestBed.inject(HttpTestingController); 
+    await fixture.whenStable();
+  }); 
+
+  afterEach(() => {
+
+    httpMock.verify(); 
+
+  }); 
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+
 });
