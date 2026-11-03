@@ -184,4 +184,56 @@ describe('SessionStopIntegrationTest',() => {
       expect(errorMessage)?.toBeNull(); 
     });
 
+  it('SessionStop component and service integration test false case', ()=>{
+
+    let log:Log = {
+      name:"file.gpx",
+      id: "xyz",
+      active:true}; 
+      
+    let status:StopStatus = {success:false}; 
+       
+    component.log = log; 
+    
+    const compiled = fixture.nativeElement as HTMLElement; 
+    const button = compiled.querySelector('button'); 
+    expect(button).not.toBeNull(); 
+    button?.click(); 
+    const request = httpMock.expectOne("http://192.168.4.1:8080/logs/sessions/xyz/stop"); 
+    expect(request.request.method).toBe("POST"); 
+    request.flush(status);
+    
+    fixture.detectChanges(); 
+    const htmlStatus = compiled.querySelector('.stop-status p');
+    expect(htmlStatus)?.toBeTruthy();
+    expect(htmlStatus?.textContent)?.toContain('Session Already Stopped!'); 
+    const errorMessage = compiled.querySelector('.error-info p'); 
+    expect(errorMessage)?.toBeNull();
+
+  }); 
+
+  it('SessionStop comoponent and service integration test error case',() => {
+
+    
+    let log:Log = {
+      name:"file.gpx",
+      id: "xyz",
+      active:true}; 
+    component.log = log; 
+    
+    const compiled = fixture.nativeElement as HTMLElement; 
+    const button = compiled.querySelector('button'); 
+    expect(button).not.toBeNull(); 
+    button?.click(); 
+    const request = httpMock.expectOne("http://192.168.4.1:8080/logs/sessions/xyz/stop"); 
+    expect(request.request.method).toBe("POST"); 
+    request.flush('Internal Server Error',{status:500,statusText:"Server Error"});
+    
+    fixture.detectChanges(); 
+    const htmlStatus = compiled.querySelector('.stop-status p');
+    expect(htmlStatus)?.toBeNull();
+    const errorMessage = compiled.querySelector('.error-info p'); 
+    expect(errorMessage?.textContent)?.toContain("Server Error");
+  });
+
 });
