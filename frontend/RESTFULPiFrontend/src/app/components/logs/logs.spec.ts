@@ -381,13 +381,36 @@ describe("Integration Test with Logs and SessionStartService",()=>{
     });
 
     afterEach(() => {
+      httpMock.verify();
     });
 
     it('should create',() => {
-
+      let emptyLogs:Logs[] = []; 
+      const request = httpMock.expectOne('http://192.168.4.1:8080/logs');
+      expect(request.request.method).toBe("GET"); 
+      request.flush(emptyLogs); 
+      fixture.detectChanges();
       expect(component).toBeTruthy(); 
-
     }); 
+
+    it('Integration test logs component and session stop component empty list',() => {
+
+      let emptyLogs:Logs[] = []; 
+      const request = httpMock.expectOne('http://192.168.4.1:8080/logs');
+      expect(request.request.method).toBe("GET"); 
+      request.flush(emptyLogs); 
+      fixture.detectChanges(); 
+
+      const compiled = fixture.nativeElement as HTMLElement; 
+      const empty = compiled.querySelector('.empty-log-list');
+      expect(empty).not.toBeNull();
+      expect(empty?.textContent)?.toContain('There are no current logs'); 
+      
+      const emptyComponent = compiled.querySelector('app-session-stop');
+      expect(emptyComponent).toBeNull(); 
+    }); 
+
+
 
   }); 
 

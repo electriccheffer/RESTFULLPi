@@ -8,7 +8,7 @@ import { SessionStop } from '../session-stop/session-stop';
 
 @Component({
   selector: 'app-logs',
-  imports: [CommonModule],
+  imports: [CommonModule, SessionStop],
   templateUrl: './logs.html',
   styleUrl: './logs.css',
   
