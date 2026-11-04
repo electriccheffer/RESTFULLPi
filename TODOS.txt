@@ -1,7 +1,5 @@
 + Frontend developement for POST /logs/sessions/{id}/stop
-	- Service Developement
-		-> Mock Http test response
-		-> Integration test with component
+	- Integration test
 + Backend developement for POST /logs/sessions/{id}/stop
 + Frontend development for POST /logs/sessions/{id}/start
 	- Componenet Developement 

@@ -10,6 +10,7 @@ import { MockSessionStartService } from '../session-start/session-start.spec';
 import { SessionStartService } from '../../services/session-start.service';
 import { SessionStart } from '../session-start/session-start';
 import { StartStatus } from '../../generated/models';
+import { SessionStop } from '../session-stop/session-stop';
 
 @Injectable({
 
@@ -349,6 +350,43 @@ describe("Integration Test with Logs and SessionStartService",()=>{
       const pageData = fixture.nativeElement.querySelector('.empty-log-list'); 
       expect(pageData).toBeTruthy(); 
       expect(pageData.textContent).toContain('no current logs');
+    }); 
+
+  });
+  
+  describe('Integration test Logs component and SessionStop',() => {
+
+    let component:Logs; 
+    let httpMock:HttpTestingController; 
+    let fixture:ComponentFixture<Logs>; 
+    
+    beforeEach(async () => {
+      await TestBed.configureTestingModule({
+        imports:[
+          Logs,
+          SessionStop,
+          SessionStart
+        ],
+        providers:[
+          LogService,
+          SessionStartService,
+          provideHttpClient(),
+          provideHttpClientTesting()
+        ]
+      });
+      fixture = TestBed.createComponent(Logs);
+      component = fixture.componentInstance; 
+      httpMock = TestBed.inject(HttpTestingController);
+      await fixture.whenStable(); 
+    });
+
+    afterEach(() => {
+    });
+
+    it('should create',() => {
+
+      expect(component).toBeTruthy(); 
+
     }); 
 
   }); 

@@ -4,6 +4,7 @@ import { LogService } from '../../services/log.service';
 import { CommonModule } from '@angular/common';
 import { single, Subject, takeUntil } from 'rxjs';
 import { SessionStartService } from '../../services/session-start.service';
+import { SessionStop } from '../session-stop/session-stop';
 
 @Component({
   selector: 'app-logs',
