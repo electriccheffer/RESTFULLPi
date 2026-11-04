@@ -11,6 +11,7 @@ import { SessionStartService } from '../../services/session-start.service';
 import { SessionStart } from '../session-start/session-start';
 import { StartStatus } from '../../generated/models';
 import { SessionStop } from '../session-stop/session-stop';
+import { By } from '@angular/platform-browser';
 
 @Injectable({
 
@@ -395,7 +396,7 @@ describe("Integration Test with Logs and SessionStartService",()=>{
 
     it('Integration test logs component and session stop component empty list',() => {
 
-      let emptyLogs:Logs[] = []; 
+      let emptyLogs:Log[] = []; 
       const request = httpMock.expectOne('http://192.168.4.1:8080/logs');
       expect(request.request.method).toBe("GET"); 
       request.flush(emptyLogs); 
@@ -410,7 +411,30 @@ describe("Integration Test with Logs and SessionStartService",()=>{
       expect(emptyComponent).toBeNull(); 
     }); 
 
+    it('Integration test logs component and session stop component non empty list',() => {
 
+      let exampleLog: Log = {
+        name:'file.gpx',
+        id:'xyz',
+        active:true};   
+      let logList:Log[] = [exampleLog]; 
+      const request = httpMock.expectOne('http://192.168.4.1:8080/logs');
+      expect(request.request.method).toBe("GET"); 
+      request.flush(logList); 
+      fixture.detectChanges();
 
+      const compiled = fixture.nativeElement as HTMLElement; 
+      const nonEmpty = compiled.querySelector(`[data-testid="logName-${exampleLog.name}"]`);
+      expect(nonEmpty).not.toBeNull();
+      expect(nonEmpty?.textContent)?.toContain(exampleLog.name); 
+      
+      const nonEmptyCompoenent = compiled.querySelector('app-session-stop'); 
+      expect(nonEmptyCompoenent).not.toBeNull();
+
+      const logSession = fixture.debugElement.query(By.directive(SessionStop));
+      expect(logSession).not.toBeNull();
+      const logInstance = logSession.componentInstance as SessionStop;
+      expect(logInstance.log).toEqual(exampleLog); 
+    }); 
   }); 
 
