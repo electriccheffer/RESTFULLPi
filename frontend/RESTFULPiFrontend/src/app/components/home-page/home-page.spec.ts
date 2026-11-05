@@ -273,5 +273,41 @@ describe("HomePage Component Integration Test",() => {
 
   }); 
 
-}); 
+});
 
+
+describe("Homepage Integration test Logs, Session Stop",() => {
+
+  let component:HomePage;
+  let fixture:ComponentFixture<HomePage>; 
+  let httpMock:HttpTestingController; 
+
+  beforeEach(async () => {
+
+    TestBed.configureTestingModule({
+
+      providers:[
+        provideHttpClient(),
+        provideHttpClientTesting(),  
+      ]
+
+    });
+    fixture = TestBed.createComponent(HomePage); 
+    component = fixture.componentInstance; 
+    httpMock = TestBed.inject(HttpTestingController);
+    await fixture.whenStable(); 
+  }); 
+
+  afterEach(() => {
+
+
+
+  }); 
+
+  it("Should create",() => {
+
+    expect(component).toBeTruthy(); 
+
+  }); 
+
+}); 
