@@ -300,14 +300,43 @@ describe("Homepage Integration test Logs, Session Stop",() => {
 
   afterEach(() => {
 
-
+    httpMock.verify(); 
 
   }); 
 
   it("Should create",() => {
+    const emptyLogs:Log[] = []; 
+    const statusRequest = httpMock.expectOne('http://192.168.4.1:8080/status'); 
+    expect(statusRequest.request.method).toBe("GET"); 
+    const logsRequest = httpMock.expectOne('http://192.168.4.1:8080/logs'); 
+    expect(logsRequest.request.method).toBe("GET"); 
+    logsRequest.flush(emptyLogs); 
 
     expect(component).toBeTruthy(); 
 
+  }); 
+
+  it("No Logs, No SessionStop",() => {
+    
+    const emptyLogs:Log[] = []; 
+    const statusRequest = httpMock.expectOne('http://192.168.4.1:8080/status'); 
+    expect(statusRequest.request.method).toBe("GET"); 
+    const status:Status = {device:"RESTFULPi",status:"Online"};
+    statusRequest.flush(status);
+    fixture.detectChanges();
+    const logsRequest = httpMock.expectOne('http://192.168.4.1:8080/logs'); 
+    expect(logsRequest.request.method).toBe("GET"); 
+    logsRequest.flush(emptyLogs); 
+    fixture.detectChanges(); 
+    //check no logs listed
+    const homepage = fixture.nativeElement as HTMLElement; 
+    const logsListArea = homepage.querySelector("app-logs");
+    expect(logsListArea).not.toBeNull();
+    const actualLogList = logsListArea?.querySelector(".empty-log-list"); 
+    expect(actualLogList).not.toBeNull(); 
+    expect(actualLogList?.textContent).toContain("There are no current logs"); 
+    const nullLists = actualLogList?.querySelector("app-session-stop"); 
+    expect(nullLists).toBeNull();     
   }); 
 
 }); 

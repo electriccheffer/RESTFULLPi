@@ -9,7 +9,7 @@
     <tbody>
         @if (logs().length === 0) {
           <tr>
-            <td class='empty-log-list'>There are no current logs</td>
+            <td colspan="2" class='empty-log-list'>There are no current logs</td>
           </tr>
         } @else {
           @for (log of logs(); track log.name) {
