@@ -12,6 +12,8 @@ import { ChangeDetectorRef } from '@angular/core';
 import { SessionStartService } from '../../services/session-start.service';
 import { MockSessionStartService } from '../session-start/session-start.spec';
 import { StartStatus } from '../../generated/models';
+import { StopStatus } from '../../generated/models/stop-status';
+import { SessionStopService } from '../../services/session-stop';
 
 describe('HomePage component level test', () => {
   let component: HomePage;
@@ -337,6 +339,57 @@ describe("Homepage Integration test Logs, Session Stop",() => {
     expect(actualLogList?.textContent).toContain("There are no current logs"); 
     const nullLists = actualLogList?.querySelector("app-session-stop"); 
     expect(nullLists).toBeNull();     
+  }); 
+
+
+  it("No Logs, Start session, Check logs, check button, stop button",() => {
+
+    const emptyLogs:Log[] = []; 
+    const statusRequest = httpMock.expectOne('http://192.168.4.1:8080/status'); 
+    expect(statusRequest.request.method).toBe("GET");
+    const status:Status = {device:"RESTFULPi",status:"Online"}; 
+    statusRequest.flush(status); 
+    fixture.detectChanges(); 
+
+    const logsRequest = httpMock.expectOne('http://192.168.4.1:8080/logs');
+    expect(logsRequest.request.method).toBe("GET"); 
+    logsRequest.flush(emptyLogs); 
+
+    const homepage = fixture.nativeElement as HTMLElement; 
+    const startButton = homepage.querySelector("app-session-start button") as HTMLButtonElement; 
+    expect(startButton).not.toBeNull();
+    startButton.click();
+
+    const log:Log = {
+      name:"file.gpx",
+      id:"xyz",
+      active: true
+    }; 
+    const logs:Log[] = [log]; 
+    const startStatus:StartStatus = {name:"file.gpx"}; 
+    const sessionStartRequest = httpMock.expectOne('http://192.168.4.1:8080/logs/sessions'); 
+    expect(sessionStartRequest.request.method).toBe("POST"); 
+    sessionStartRequest.flush(startStatus); 
+
+    const newSessionLogsRequest = httpMock.expectOne('http://192.168.4.1:8080/logs'); 
+    expect(newSessionLogsRequest.request.method).toBe("GET"); 
+    newSessionLogsRequest.flush(logs); 
+    fixture.detectChanges();
+
+    const sessionHomepage = fixture.nativeElement as HTMLElement; 
+    const appLogs = sessionHomepage.querySelector('app-logs [data-testid="logName-file.gpx"]'); 
+    expect(appLogs).not.toBeNull();
+    expect(appLogs?.textContent).toContain("file"); 
+
+    const sessionStopButton = sessionHomepage.querySelector("app-logs app-session-stop button") as HTMLButtonElement; 
+    expect(sessionStopButton).not.toBeNull(); 
+    sessionStopButton.click();
+    const stopStatus:StopStatus = {success:true}; 
+    const stopSessionRequest = httpMock.expectOne('http://192.168.4.1:8080/logs/sessions/xyz/stop'); 
+    expect(stopSessionRequest.request.method).toBe("POST"); 
+    stopSessionRequest.flush(stopStatus);
+    fixture.detectChanges();
+
   }); 
 
 }); 
