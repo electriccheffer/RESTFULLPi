@@ -100,6 +100,17 @@ func (glh *GetLogsHandler) ServeHTTP(response http.ResponseWriter,request *http.
 	
 }
 
+type SessionStopHandler struct{
+	
+}
+
+
+func (ssh *SessionStopHandler) ServeHTTP(response http.ResponseWriter,request *http.Request){
+
+		
+
+}
+
 type SessionStartHandler struct{
 	
 	manager SessionManagerService

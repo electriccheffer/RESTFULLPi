@@ -15,7 +15,9 @@ import "restfulpi/internal/file_operations"
 type SessionManagerService interface{
 
 	StartSession(id string,filePath string) (*models.Session,error)
-	GetSessions() map[string]*models.Session	
+	StopSession(id string)error
+	GetSessions() map[string]*models.Session
+	
 } 
 // TODO: add mutext to map 
 type SessionManager struct{
@@ -84,6 +86,10 @@ func (sm *SessionManager) StartSession(id string, filePath string)(*models.Sessi
 	sm.sessions[id] = session
 	//TODO: start readNMEA 
 	return session,nil	
+}
+
+func (sm *SessionManager) StopSession(id string)error{
+	return nil
 }
 
 func (sm *SessionManager) readNMEA(ctx context.Context,

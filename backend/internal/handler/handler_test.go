@@ -177,6 +177,8 @@ func NewSessionStartSuccess() *SessionStartSuccess{
 	return sss
 }
 
+func (sss *SessionStartSuccess) StopSession(id string)error{return nil}
+
 func (sss *SessionStartSuccess) GetSessions()map[string]*models.Session{
 	return sss.sessions	
 }
@@ -257,6 +259,7 @@ func (ssnui *SessionStartNonUniqueId) StartSession(id string,
 	return session,nil
 }
 
+func (ssnui *SessionStartNonUniqueId) StopSession(id string)error{return nil}
 
 func TestSessionStartNonUniqueIdErrorReturn(t *testing.T){
 
@@ -301,6 +304,8 @@ func (ssnuip *SessionStartNonUniqueIdPasses) StartSession(id string,
 	session := &models.Session{FileName:filePath,Id:id}
 	return session,nil	
 }
+
+func (ssnuip *SessionStartNonUniqueIdPasses) StopSession(id string)error{return nil}
 
 func TestSessionStartNonUniqueIdSuccessReturn(t *testing.T){
 
@@ -376,6 +381,8 @@ func (ssnufn *SessionStartNonUniqueFileName) StartSession(id string,
 	return &models.Session{FileName:fileName,Id:id},nil
 }
 
+func (ssnufn *SessionStartNonUniqueFileName) StopSession(id string)error{return nil}
+
 func TestSessionStartNonUniqueFileNameSuccessReturn(t *testing.T){
 	
 	sessionManager := NewSessionStartNonUniqueFileName()
@@ -447,6 +454,8 @@ func (ssnufnf *SessionStartNonUniqueFileNameFail) StartSession(id string,
 	return session,nil
 }
 
+func (ssnufnf *SessionStartNonUniqueFileNameFail) StopSession(id string)error{return nil}
+
 func TestSessionStartNonUniqueFileNameErrorReturn(t *testing.T){
 
 	sessionManager := NewSessionStartNonUniqueFileNameFail()
@@ -482,6 +491,8 @@ func (ssnwd *SessionStartNoWriteDirectory) StartSession(id string,
 		handler.NewSessionManagerError(2,
 					"SessionManagerError:write directory eos not exist")
 }
+
+func (ssnwd *SessionStartNoWriteDirectory) StopSession(id string)error{return nil}
 
 func TestSessionStartDirectoryDoesNotExist(t *testing.T){
 
@@ -520,6 +531,7 @@ func (ssnp *SessionStartNoPermissions) StartSession(id string,
 	return nil,handler.NewSessionManagerError(13,"SessionManagerError:no permissions")
 }
 
+func (ssnp *SessionStartNoPermissions) StopSession(id string)error{return nil}
 
 func TestSessionStartNoPermissions(t *testing.T){
 
@@ -538,3 +550,9 @@ func TestSessionStartNoPermissions(t *testing.T){
 
 }
 
+
+func TestSessionStopSuccess(t *testing.T){
+	
+	//create a session manager 
+	//put a session in manager 			
+}

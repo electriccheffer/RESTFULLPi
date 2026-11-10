@@ -1,6 +1,5 @@
-+ Frontend developement for POST /logs/sessions/{id}/stop
-	- Integration test
 + Backend developement for POST /logs/sessions/{id}/stop
+	-
 + Frontend development for POST /logs/sessions/{id}/start
 	- Componenet Developement 
 	- Service Developement
