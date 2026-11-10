@@ -85,9 +85,8 @@ func (sm *SessionManager) StartSession(id string, filePath string)(*models.Sessi
 		}
 	}
 	context,cancel := context.WithCancel(context.Background())
-	doneChannel := make(chan struct{})		
 	session := &models.Session{FileName:filePath,Id:id,Active:true,
-				   Context:context,Cancel:cancel,Done:doneChannel}
+				   Context:context,Cancel:cancel}
 	sm.sessions[id] = session
 	go sm.readNMEA(context,reader,writer)	
 	return session,nil	

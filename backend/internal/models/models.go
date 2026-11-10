@@ -26,7 +26,6 @@ type Session struct{
 	Active bool `json:"active"`
 	Context context.Context `json:"-"`
 	Cancel context.CancelFunc `json:"-"`
-	Done chan struct{} `json:"-"`
 }
 
 type GPSFile struct{
