@@ -5,7 +5,6 @@ import "path/filepath"
 import "crypto/rand"
 import "encoding/hex"
 import "os"
-import "time"
 import "errors"
 import "syscall"
 import "restfulpi/internal/handler"
@@ -49,14 +48,6 @@ func TestSessionManagerSuccess(t *testing.T){
 	if expectedIdLength != lengthOfId {
 		t.Errorf("Id of incorrect length. Expected:%d Got: %d \n",
 								expectedIdLength, lengthOfId)
-	}
-	session.Cancel()
-	deadline := time.Now().Add(2 * time.Second)
-	for time.Now().Before(deadline) {
-		if _, exists := sessionManager.GetSessions()[id]; !exists {
-			return // Success! Safe to let the test exit now.
-		}
-		time.Sleep(10 * time.Millisecond)
 	}
 }
 
