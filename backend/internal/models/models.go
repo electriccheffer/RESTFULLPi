@@ -8,6 +8,10 @@ type Status struct{
 	Status string `json:"status"`
 }
 
+type StopStatus struct{
+	Success bool `json:"success"`
+}
+
 type Logs struct{
 	Name string `json:"name"`
 	Id string `json:"id"`

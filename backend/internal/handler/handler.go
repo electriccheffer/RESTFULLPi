@@ -101,15 +101,34 @@ func (glh *GetLogsHandler) ServeHTTP(response http.ResponseWriter,request *http.
 }
 
 type SessionStopHandler struct{
+	manager SessionManagerService	
+}
+
+func NewSessionStopHandler(mgr SessionManagerService)*SessionStopHandler{
+	ssh := &SessionStopHandler{manager:mgr}
+	return ssh
+}
+
+func (ssh *SessionStopHandler) ServeHTTP(response http.ResponseWriter,request *http.Request){
+	
+	sessionId := request.PathValue("id")
+	err := ssh.manager.StopSession(sessionId)
+	if err != nil{
+		// error case
+	}
+	response.Header().Set("Content-Type","application/json")
+	response.Header().Set("X-Conent-Type-Options","nosniff")
+	stopStatus := &models.StopStatus{Success:true}
+	jsonStatus,err := json.Marshal(stopStatus)
+	if err != nil{
+		// error case
+	}
+	response.WriteHeader(http.StatusOK)
+	response.Write(jsonStatus)
 	
 }
 
 
-func (ssh *SessionStopHandler) ServeHTTP(response http.ResponseWriter,request *http.Request){
-
-		
-
-}
 
 type SessionStartHandler struct{
 	
