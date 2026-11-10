@@ -550,9 +550,17 @@ func TestSessionStartNoPermissions(t *testing.T){
 
 }
 
+type SessionManagerStopSuccess struct{}
+
+func (smss *SessionManagerStopSuccess) StartSession(id string, 
+					filePath string)(*models.Session,error){
+	return nil,nil
+}
+
+func (smss *SessionManagerStopSuccess) StopSession(id string)error{return nil}
+
+func (smss *SessionManagerStopSuccess) GetSessions()map[string]*models.Session{return nil}
 
 func TestSessionStopSuccess(t *testing.T){
 	
-	//create a session manager 
-	//put a session in manager 			
 }
