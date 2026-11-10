@@ -89,6 +89,14 @@ func (sm *SessionManager) StartSession(id string, filePath string)(*models.Sessi
 }
 
 func (sm *SessionManager) StopSession(id string)error{
+	// find the session in the map
+	_,exists := sm.sessions[id]
+	if !exists {
+		return NewSessionManagerError(4001,"session not in table")	
+	}
+	
+	// stop the sesssion
+		 
 	return nil
 }
 

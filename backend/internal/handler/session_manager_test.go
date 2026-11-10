@@ -417,3 +417,41 @@ func TestSessionManagerWriteFileAlreadyExists(t *testing.T){
 	}else{t.Error("Error not thrown")}
 }
 
+
+func TestSessionManagerStopSessionSuccess(t *testing.T){
+
+	writePath := t.TempDir()
+	readPath := t.TempDir() 
+	readPath = filepath.Join(readPath,"readfile")
+	
+	fileOpener := file_operations.NewFileOpener()
+	_,err := fileOpener.Create(readPath)
+	if err != nil {
+		t.Errorf("unexpected error creating file: %s",err.Error())
+	}
+	
+	sessionManager := handler.NewSessionManager(writePath,readPath,fileOpener)
+	
+	writeFile := "11_10_2026_03_14_00.gpx"
+	randomBytes := make([]byte,16)
+	_,err = rand.Read(randomBytes)
+	if err != nil {
+		t.Errorf("unexpected error reading random bytes:%s",err.Error())
+	}		
+	id := hex.EncodeToString(randomBytes)
+	
+	session,err := sessionManager.StartSession(id,writeFile)
+	if err != nil {
+	
+		t.Errorf("unexpected error starting session:%s",err.Error())
+	}
+	
+	err = sessionManager.StopSession(session.Id)
+	if err != nil{
+		var sessionError *handler.SessionManagerError
+		errors.As(err,&sessionError)
+		t.Errorf("unexpected error stopping session:%s",sessionError.Error())
+
+	}
+	
+}
