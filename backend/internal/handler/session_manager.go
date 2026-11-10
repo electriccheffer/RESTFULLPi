@@ -100,8 +100,7 @@ func (sm *SessionManager) StopSession(id string)error{
 	}
 	session.Active = false
 	sm.mu.Unlock() 
-	// stop the sesssion
-
+	session.Cancel()	
 	return nil
 }
 
