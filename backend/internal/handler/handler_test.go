@@ -595,3 +595,53 @@ func TestSessionStopSuccess(t *testing.T){
 		t.Error("expected true, got false")
 	}
 }
+
+type SessionManagerStopNotInTable struct{}
+		
+func (smsnit *SessionManagerStopNotInTable) StartSession(id string,
+							 filePath string)(*models.Session,error){
+
+	return nil,nil
+}
+
+func (smsnit *SessionManagerStopNotInTable) StopSession(id string)error{
+	return handler.NewSessionManagerError(4001,"session not in table")		
+}
+
+func (smsnit *SessionManagerStopNotInTable) GetSessions()map[string]*models.Session{return nil}
+
+func NewSessionManagerStopNotInTable()*SessionManagerStopNotInTable{
+	smsnit := &SessionManagerStopNotInTable{}
+	return smsnit	
+}
+
+func TestSessionStopErrorNotInTable(t *testing.T){
+
+	sessionManager := NewSessionManagerStopNotInTable()
+	handler := handler.NewSessionStopHandler(sessionManager)
+	
+	request := httptest.NewRequest(http.MethodPost,"/logs/sessions/xyz/stop",nil)
+	request.SetPathValue("id","xyz")
+	response := httptest.NewRecorder()
+	handler.ServeHTTP(response,request)
+	
+	if response.Code != http.StatusNotFound{
+		t.Errorf("status: %d want: %d ",response.Code,http.StatusNotFound)
+	}
+	
+	got,err := io.ReadAll(response.Body)
+	if err != nil {
+		t.Errorf("unexpected error reading body: %s",err.Error())
+	}
+	
+	var stopStatus models.StopStatus
+	err = json.Unmarshal(got,&stopStatus)
+	if err != nil {
+		t.Errorf("unexpected error unmarshaling response: %s",err.Error())
+	}
+	
+	if stopStatus.Success{
+		t.Error("expected false, got true")
+	}	
+
+}

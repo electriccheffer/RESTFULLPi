@@ -114,7 +114,20 @@ func (ssh *SessionStopHandler) ServeHTTP(response http.ResponseWriter,request *h
 	sessionId := request.PathValue("id")
 	err := ssh.manager.StopSession(sessionId)
 	if err != nil{
-		// error case
+		var sessionManagerError *SessionManagerError
+		errors.As(err,&sessionManagerError)
+		if sessionManagerError.Code == 4001{
+			response.Header().Set("Content-Type","application/json")
+			response.Header().Set("X-Conent-Type-Options","nosniff")
+			stopStatus := &models.StopStatus{Success:false}
+			jsonStatus,err := json.Marshal(stopStatus)
+			if err != nil{
+				// error case
+			}
+			response.WriteHeader(http.StatusNotFound)
+			response.Write(jsonStatus)
+			return 	
+		}
 	}
 	response.Header().Set("Content-Type","application/json")
 	response.Header().Set("X-Conent-Type-Options","nosniff")
