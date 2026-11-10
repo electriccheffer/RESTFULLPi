@@ -122,7 +122,10 @@ func (ssh *SessionStopHandler) ServeHTTP(response http.ResponseWriter,request *h
 			stopStatus := &models.StopStatus{Success:false}
 			jsonStatus,err := json.Marshal(stopStatus)
 			if err != nil{
-				// error case
+				http.Error(response,
+					   "Internal Server Error",
+					    http.StatusInternalServerError)
+				return
 			}
 			response.WriteHeader(http.StatusNotFound)
 			response.Write(jsonStatus)
@@ -134,7 +137,8 @@ func (ssh *SessionStopHandler) ServeHTTP(response http.ResponseWriter,request *h
 	stopStatus := &models.StopStatus{Success:true}
 	jsonStatus,err := json.Marshal(stopStatus)
 	if err != nil{
-		// error case
+		http.Error(response,"Internal Server Error",http.StatusInternalServerError)
+		return 
 	}
 	response.WriteHeader(http.StatusOK)
 	response.Write(jsonStatus)
