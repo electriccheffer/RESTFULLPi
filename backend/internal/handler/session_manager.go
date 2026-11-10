@@ -9,6 +9,7 @@ import "io"
 import "bufio"
 import "strings"
 import "encoding/xml"
+import "sync"
 import "restfulpi/internal/models"
 import "restfulpi/internal/file_operations"
 
@@ -19,9 +20,9 @@ type SessionManagerService interface{
 	GetSessions() map[string]*models.Session
 	
 } 
-// TODO: add mutext to map 
+
 type SessionManager struct{
-	
+	mu sync.Mutex
 	upperWritePath string
 	deviceReadPath string
 	sessions map[string]*models.Session
@@ -38,20 +39,22 @@ func NewSessionManager(wp string,rp string,op file_operations.Opener)*SessionMan
 }
 
 func (sm *SessionManager) GetSessions()map[string]*models.Session{
+	sm.mu.Lock()
+	defer sm.mu.Unlock()
 	return sm.sessions
 }
 
 func (sm *SessionManager) StartSession(id string, filePath string)(*models.Session,error){
 	
-	//TODO: handle mutex 
+	sm.mu.Lock()
 	_,exists := sm.sessions[id]
 	if exists {
-		
+		sm.mu.Unlock()	
 		return nil, NewSessionManagerError(409,"Id in session table already exists")
 
 	}	
-		
-	_, err := sm.opener.Open(sm.deviceReadPath)
+	defer sm.mu.Unlock()
+	reader, err := sm.opener.Open(sm.deviceReadPath)
 	if err != nil{
 		
 		if errors.Is(err,os.ErrPermission){
@@ -65,7 +68,7 @@ func (sm *SessionManager) StartSession(id string, filePath string)(*models.Sessi
 
 	}
 	joinedWriteFilePath := filepath.Join(sm.upperWritePath,filePath)
-	_, err = sm.opener.Create(joinedWriteFilePath)
+	writer, err := sm.opener.Create(joinedWriteFilePath)
 	if err != nil{
 		if errors.Is(err,os.ErrPermission){
 			return nil, NewSessionManagerError(int(syscall.EACCES),
@@ -81,22 +84,25 @@ func (sm *SessionManager) StartSession(id string, filePath string)(*models.Sessi
 				    "Write file already exists")
 		}
 	}
-	
-	session := &models.Session{FileName:filePath,Id:id,Active:true}
+	context,cancel := context.WithCancel(context.Background())
+	doneChannel := make(chan struct{})		
+	session := &models.Session{FileName:filePath,Id:id,Active:true,
+				   Context:context,Cancel:cancel,Done:doneChannel}
 	sm.sessions[id] = session
-	//TODO: start readNMEA 
+	go sm.readNMEA(context,reader,writer)	
 	return session,nil	
 }
 
 func (sm *SessionManager) StopSession(id string)error{
-	// find the session in the map
-	_,exists := sm.sessions[id]
+	sm.mu.Lock()
+	session,exists := sm.sessions[id]
 	if !exists {
 		return NewSessionManagerError(4001,"session not in table")	
 	}
-	
+	session.Active = false
+	sm.mu.Unlock() 
 	// stop the sesssion
-		 
+
 	return nil
 }
 

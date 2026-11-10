@@ -2,10 +2,12 @@ package models
 
 import "time"
 import "encoding/xml"
+import "context"
 
 type Status struct{
 	Device string `json:"device"`
 	Status string `json:"status"`
+	
 }
 
 type StopStatus struct{
@@ -22,6 +24,9 @@ type Session struct{
 	FileName string `json:"name"`
 	Id string `json:"id"`
 	Active bool `json:"active"`
+	Context context.Context `json:"-"`
+	Cancel context.CancelFunc `json:"-"`
+	Done chan struct{} `json:"-"`
 }
 
 type GPSFile struct{
