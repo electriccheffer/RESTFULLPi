@@ -524,4 +524,60 @@ func TestSessionStopHandlerIntegrationTestSuccess(t *testing.T){
 		t.Errorf("expected stopStatus true, got false")
 	} 	
 }
+
+func TestSesssionStopHandlerIntegrationTestNotInMap(t *testing.T){
+
+	writeDir := t.TempDir()
+	writePath := filepath.Join(writeDir,"write.gpx")
+	opener := file_operations.NewFileOpener()
+	writeFile, err := opener.Create(writePath)
+	if err != nil {
+		t.Errorf("unexpected error creating file: %s",err.Error())
+	}
+	
+	
+	context, cancel := context.WithCancel(context.Background())
+		
+	readPipe,writePipe := io.Pipe()
+	sessionManager := NewSessionManager(writeDir,writeDir,opener)
+	
+	go func() {
+		defer writePipe.Close()
+		validSentence := "$GPRMC,123519.50,A,4807.038,"+
+			 "N,01131.000,E,022.4,084.4,210926,003.1,W*40\r\n"
+		byteSentence := []byte(validSentence)
+		_,_ = writePipe.Write(byteSentence)
+	}()
+	
+	id := "xyz"
+	session := &models.Session{FileName:"write.gpx",Id:id,Active:true,Context:context,
+				   Cancel:cancel}
+	sessionManager.sessions[id] = session
+	go sessionManager.readNMEA(context,readPipe,writeFile)
+	
+	handler := NewSessionStopHandler(sessionManager)
+	
+	request := httptest.NewRequest(http.MethodPost,"/logs/sessions/xyz/stop",nil)
+	request.SetPathValue("id","xxx")
+	response := httptest.NewRecorder()
+	
+	handler.ServeHTTP(response,request)
+	
+	got, err := io.ReadAll(response.Body)
+	if err != nil {
+		t.Errorf("unexpected error reading body of response:%s",err.Error())
+	}
+	if response.Code != http.StatusNotFound{
+		t.Errorf("incorrect status code returned expected:%d got:%d",response.Code,
+									    http.StatusNotFound)
+	}
+	var stopStatus models.StopStatus
+	err = json.Unmarshal(got,&stopStatus)
+	if err != nil {
+		t.Errorf("unexpected unmarshal error:%s ",err.Error())
+	}
+	if stopStatus.Success {
+		t.Error("expected stopStatus false, got true")
+	}
+}
 	
