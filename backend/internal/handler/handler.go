@@ -251,6 +251,10 @@ func (ssh *SessionStartHandler) ServeHTTP(response http.ResponseWriter,request *
 				
 				jsonSession, err := json.Marshal(session)
 				if err != nil{
+					http.Error(response,"Internal Server Error",
+						   http.StatusInternalServerError)
+					return 
+
 
 				}
 	
@@ -273,6 +277,8 @@ func (ssh *SessionStartHandler) ServeHTTP(response http.ResponseWriter,request *
 	jsonSession, err := json.Marshal(session)
 	if err != nil{
 
+		http.Error(response,"Internal Server Error",http.StatusInternalServerError)
+		return 
 
 	}
 	

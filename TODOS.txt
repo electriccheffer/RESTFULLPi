@@ -1,5 +1,8 @@
 + Backend developement for POST /logs/sessions/{id}/stop
 	- Handler integration tests for handler with SessionManager 
+		* Success case
+		* Session not in map 
+		* Session already stopped 
 + Frontend development for POST /logs/sessions/{id}/start
 	- Componenet Developement 
 	- Service Developement
