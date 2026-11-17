@@ -131,6 +131,22 @@ func (ssh *SessionStopHandler) ServeHTTP(response http.ResponseWriter,request *h
 			response.Write(jsonStatus)
 			return 	
 		}
+		if sessionManagerError.Code == 4009 {
+			response.Header().Set("Content-Type","application/json")
+			response.Header().Set("X-Content-Type-Options","nosniff")
+			stopStatus := &models.StopStatus{Success:false}
+			jsonStatus,err := json.Marshal(stopStatus)
+			if err != nil{
+				http.Error(response,
+					   "Internal Server Error",
+					    http.StatusInternalServerError)
+				return
+			}
+			response.WriteHeader(http.StatusConflict)
+			response.Write(jsonStatus)
+			return
+	
+		}
 	}
 	response.Header().Set("Content-Type","application/json")
 	response.Header().Set("X-Conent-Type-Options","nosniff")

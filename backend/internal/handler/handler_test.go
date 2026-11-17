@@ -645,3 +645,54 @@ func TestSessionStopErrorNotInTable(t *testing.T){
 	}	
 
 }
+
+
+type SessionManagerStopSessionStopped struct{}
+		
+func (smsts *SessionManagerStopSessionStopped) StartSession(id string,
+							 filePath string)(*models.Session,error){
+
+	return nil,nil
+}
+
+func (smsts *SessionManagerStopSessionStopped) StopSession(id string)error{
+	return handler.NewSessionManagerError(4009,"session already stopped")		
+}
+
+func (smsts *SessionManagerStopSessionStopped) GetSessions()map[string]*models.Session{return nil}
+
+func NewSessionManagerStopSessionStopped()*SessionManagerStopSessionStopped{
+	smsts := &SessionManagerStopSessionStopped{}
+	return smsts	
+}
+
+func TestSessionStopErrorSessionAlreadyStopped(t *testing.T){
+
+	sessionManager := NewSessionManagerStopSessionStopped()
+	handler := handler.NewSessionStopHandler(sessionManager)
+	
+	request := httptest.NewRequest(http.MethodPost,"/logs/sessions/xyz/stop",nil)
+	request.SetPathValue("id","xyz")
+	response := httptest.NewRecorder()
+	handler.ServeHTTP(response,request)
+	
+	got,err := io.ReadAll(response.Body)
+	if err != nil {
+		t.Errorf("unexpected error reading body: %s",err.Error())
+	}
+	
+	if response.Code != http.StatusConflict {
+		t.Errorf("incorrect error expected:%d got:%d",http.StatusConflict,response.Code)
+	
+	}
+
+	var stopStatus models.StopStatus
+	err = json.Unmarshal(got,&stopStatus)
+	if err != nil {
+		t.Errorf("unexpected error unmarshaling response: %s",err.Error())
+	}
+	
+	if stopStatus.Success{
+		t.Error("expected false, got true")
+	}	
+}
