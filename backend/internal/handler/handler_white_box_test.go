@@ -525,7 +525,7 @@ func TestSessionStopHandlerIntegrationTestSuccess(t *testing.T){
 	} 	
 }
 
-func TestSesssionStopHandlerIntegrationTestNotInMap(t *testing.T){
+func TestSessionStopHandlerIntegrationTestNotInMap(t *testing.T){
 
 	writeDir := t.TempDir()
 	writePath := filepath.Join(writeDir,"write.gpx")
@@ -578,6 +578,63 @@ func TestSesssionStopHandlerIntegrationTestNotInMap(t *testing.T){
 	}
 	if stopStatus.Success {
 		t.Error("expected stopStatus false, got true")
+	}
+}
+
+func TestSessionStopHandlerIntegrationTestSessionAlreadyStopped(t *testing.T){
+	
+	writeDir := t.TempDir()
+	writePath := filepath.Join(writeDir,"write.gpx")
+	opener := file_operations.NewFileOpener()
+	writeFile, err := opener.Create(writePath)
+	if err != nil {
+		t.Errorf("unexpected error creating file: %s",err.Error())
+	}
+	
+	
+	context, cancel := context.WithCancel(context.Background())
+		
+	readPipe,writePipe := io.Pipe()
+	sessionManager := NewSessionManager(writeDir,writeDir,opener)
+	
+	go func() {
+		defer writePipe.Close()
+		validSentence := "$GPRMC,123519.50,A,4807.038,"+
+			 "N,01131.000,E,022.4,084.4,210926,003.1,W*40\r\n"
+		byteSentence := []byte(validSentence)
+		_,_ = writePipe.Write(byteSentence)
+	}()
+	
+	id := "xyz"
+	session := &models.Session{FileName:"write.gpx",Id:id,Active:false,Context:context,
+				   Cancel:cancel}
+	sessionManager.sessions[id] = session
+	go sessionManager.readNMEA(context,readPipe,writeFile)
+	
+	handler := NewSessionStopHandler(sessionManager)
+	
+	request := httptest.NewRequest(http.MethodPost,"/logs/sessions/xyz/stop",nil)
+	request.SetPathValue("id",id)
+	response := httptest.NewRecorder()
+	
+	handler.ServeHTTP(response,request)
+	
+	got, err := io.ReadAll(response.Body)
+	if err != nil {
+		t.Errorf("unexpected error reading body of response:%s",err.Error())
+	}
+	
+	if response.Code != http.StatusConflict{
+		t.Errorf("incorrect status code returned expected:%d got:%d",http.StatusConflict,
+										response.Code)
+	}
+	var stopStatus models.StopStatus
+	err = json.Unmarshal(got,&stopStatus)
+	if err != nil {
+		t.Errorf("unexpected unmarshal error: %s",err.Error())
+	}
+	if stopStatus.Success == true{
+		t.Error("expected stop status of false, got true")
 	}
 }
 	
