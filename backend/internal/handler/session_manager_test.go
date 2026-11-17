@@ -487,3 +487,52 @@ func TestStopSessionNotInMap(t *testing.T){
 		t.Errorf("expected error code: %d got: %d",4001,sessionError.Code)
 	}
 }
+
+func TestSessionManagerStopSessionSessionAlreadyStopped(t *testing.T){
+
+	writePath := t.TempDir()
+	readPath := t.TempDir() 
+	readPath = filepath.Join(readPath,"readfile")
+	
+	fileOpener := file_operations.NewFileOpener()
+	_,err := fileOpener.Create(readPath)
+	if err != nil {
+		t.Errorf("unexpected error creating file: %s",err.Error())
+	}
+	
+	sessionManager := handler.NewSessionManager(writePath,readPath,fileOpener)
+	
+	writeFile := "11_10_2026_03_14_00.gpx"
+	randomBytes := make([]byte,16)
+	_,err = rand.Read(randomBytes)
+	if err != nil {
+		t.Errorf("unexpected error reading random bytes:%s",err.Error())
+	}		
+	id := hex.EncodeToString(randomBytes)
+	
+	session,err := sessionManager.StartSession(id,writeFile)
+	if err != nil {
+	
+		t.Errorf("unexpected error starting session:%s",err.Error())
+	}
+	
+	err = sessionManager.StopSession(session.Id)
+	if err != nil{
+		var sessionError *handler.SessionManagerError
+		errors.As(err,&sessionError)
+		t.Errorf("unexpected error stopping session:%s",sessionError.Error())
+
+	}	
+	
+	err = sessionManager.StopSession(session.Id)
+	if err == nil {
+	
+		t.Error("error not thrown")	
+	}
+	
+	var sessionError *handler.SessionManagerError
+	errors.As(err,&sessionError)
+	if sessionError.Code != 4009 {
+		t.Errorf("incorrect error thrown expected: %d got: %d",4009 ,sessionError.Code)
+	}	
+}

@@ -98,6 +98,9 @@ func (sm *SessionManager) StopSession(id string)error{
 	if !exists {
 		return NewSessionManagerError(4001,"session not in table")	
 	}
+	if !session.Active{
+		return NewSessionManagerError(4009,"session already stopped")
+	}
 	session.Active = false
 	sm.mu.Unlock() 
 	session.Cancel()	

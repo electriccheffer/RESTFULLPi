@@ -1,4 +1,7 @@
 + Backend developement for POST /logs/sessions/{id}/stop
+	- SessionManager unit tests for StopSession
+		* Session already stopped case 
+	- SessionStopHandler unit test for session already stopped
 	- Handler integration tests for handler with SessionManager 
 + Frontend development for POST /logs/sessions/{id}/start
 	- Componenet Developement 
