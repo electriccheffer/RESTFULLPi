@@ -139,6 +139,23 @@ describe('SessionStop', () => {
     expect(status?.textContent)?.toContain('Session Stopped!');    
   });
 
+  it('Session inactive button render restart',() => {
+
+    fixture.componentRef.setInput('log',  {
+      id:"123",
+      name:"testfile",
+      active:false
+    });
+    fixture.detectChanges();
+    const stopStatus:StopStatus = {success:true}; 
+    service.setStopStatus(stopStatus); 
+    const compiled = fixture.nativeElement as HTMLElement; 
+    const button = compiled.querySelector('button'); 
+    expect(button).not.toBeNull(); 
+    expect(button?.textContent).toContain('Restart Session'); 
+    
+  }); 
+
 });
 
 
