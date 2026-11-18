@@ -29,5 +29,11 @@ export class SessionStop {
                         this.errorMessage = err.statusText;                           
                       }
                                   });
-  } 
+  }
+
+  startSession():void{
+
+
+      
+  }
 }

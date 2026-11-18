@@ -57,16 +57,15 @@ describe('SessionStop', () => {
 
   it('Session stop success',() => {
 
-    // get the button component
-    component.log = {
+    fixture.componentRef.setInput('log',{
       id:"123",
       name:"testfile",
       active:true
-
-    }
-    fixture.detectChanges();
+    }); 
     const stopStatus:StopStatus = {success:true}; 
-    service.setStopStatus(stopStatus); 
+    service.setStopStatus(stopStatus);
+
+    fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
     const button = compiled.querySelector('button'); 
     expect(button).not.toBeNull(); 
@@ -78,14 +77,14 @@ describe('SessionStop', () => {
   }); 
 
   it('Session stop failure false',() => {
-    component.log = {
+     fixture.componentRef.setInput('log',{
       id:"123",
       name:"testfile",
       active:true
-    }
-    fixture.detectChanges(); 
+    });
     const stopStatus:StopStatus = {success:false}; 
     service.setStopStatus(stopStatus); 
+    fixture.detectChanges(); 
     const compiled = fixture.nativeElement as HTMLElement; 
     const button = compiled.querySelector('button'); 
     expect(button).not.toBeNull();
@@ -97,16 +96,17 @@ describe('SessionStop', () => {
   }); 
 
   it('Sessions stop error',() => {
-    component.log = {
+    fixture.componentRef.setInput('log',{
       id:"123",
       name:"testfile",
       active:true
-    }
+    }); 
     let errorMessage = "Internal Server error"; 
-    fixture.detectChanges(); 
     const stopStatus:StopStatus = {success:false}; 
     service.setStopStatus(stopStatus);
     service.setError(errorMessage);  
+    fixture.detectChanges(); 
+
     const compiled = fixture.nativeElement as HTMLElement; 
     const button = compiled.querySelector('button'); 
     expect(button).not.toBeNull();
@@ -117,6 +117,28 @@ describe('SessionStop', () => {
     const errorReply = compiled.querySelector('.error-info p'); 
     expect(errorReply?.textContent)?.toContain(errorMessage);
   }); 
+
+  it('Session active button render stop',() => {
+
+    fixture.componentRef.setInput('log',  {
+      id:"123",
+      name:"testfile",
+      active:true
+    });
+    fixture.detectChanges();
+    const stopStatus:StopStatus = {success:true}; 
+    service.setStopStatus(stopStatus); 
+    const compiled = fixture.nativeElement as HTMLElement; 
+    const button = compiled.querySelector('button'); 
+    expect(button).not.toBeNull(); 
+    expect(button?.textContent).toContain('Stop Logging'); 
+    button?.click();
+    fixture.detectChanges(); 
+    const status = compiled.querySelector('.stop-status p'); 
+    expect(status).not.toBeNull(); 
+    expect(status?.textContent)?.toContain('Session Stopped!');    
+  });
+
 });
 
 
@@ -157,16 +179,12 @@ describe('SessionStopIntegrationTest',() => {
   });
 
   it('SessionStop component and service integration test success',() =>{
-
-      let log:Log = {
-        name:"file.gpx",
+    
+      let status:StopStatus = {success:true};       
+      fixture.componentRef.setInput('log',{name:"file.gpx",
         id: "xyz",
-        active:true}; 
-        
-      let status:StopStatus = {success:true}; 
-         
-      component.log = log; 
-      
+        active:true});
+      fixture.detectChanges();  
       const compiled = fixture.nativeElement as HTMLElement; 
       const button = compiled.querySelector('button'); 
       expect(button).not.toBeNull(); 
@@ -186,15 +204,13 @@ describe('SessionStopIntegrationTest',() => {
 
   it('SessionStop component and service integration test false case', ()=>{
 
-    let log:Log = {
-      name:"file.gpx",
+    fixture.componentRef.setInput('log',{name:"file.gpx",
       id: "xyz",
-      active:true}; 
-      
+      active:true});
+    fixture.detectChanges();  
+
     let status:StopStatus = {success:false}; 
-       
-    component.log = log; 
-    
+           
     const compiled = fixture.nativeElement as HTMLElement; 
     const button = compiled.querySelector('button'); 
     expect(button).not.toBeNull(); 
@@ -214,12 +230,10 @@ describe('SessionStopIntegrationTest',() => {
 
   it('SessionStop comoponent and service integration test error case',() => {
 
-    
-    let log:Log = {
-      name:"file.gpx",
+    fixture.componentRef.setInput('log',{name:"file.gpx",
       id: "xyz",
-      active:true}; 
-    component.log = log; 
+      active:true});
+    fixture.detectChanges();  
     
     const compiled = fixture.nativeElement as HTMLElement; 
     const button = compiled.querySelector('button'); 

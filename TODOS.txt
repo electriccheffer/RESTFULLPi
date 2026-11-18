@@ -1,19 +1,17 @@
-+ Backend developement for POST /logs/sessions/{id}/stop
-	- Handler integration tests for handler with SessionManager 
-		* Success case
-		* Session not in map 
-		* Session already stopped 
 + Frontend development for POST /logs/sessions/{id}/start
 	- Componenet Developement 
 	- Service Developement
+	- Service Component integration 
 + Backend developement for POST /logs/sessions/{id}/start
 + Frontend developement for GET /logs/{id}
 	- Componenet Developement 
 	- Service Developement
 + Backend developement for GET /logs/{id}
-+ Introduce error logging for uncaught errors
 + Frontend developement for DELETE /logs/{id}
 + Backend developement for DELETE /logs/{id}
++ Introduce error logging for uncaught errors
++ Stationary Test
++ Put into QGIS
 + Battery for pi 
 + Active logging test
 + Put into QGIS
