@@ -1,5 +1,4 @@
 + Frontend development for POST /logs/sessions/{id}/start
-	- Componenet Developement 
 	- Service Developement
 	- Service Component integration 
 + Backend developement for POST /logs/sessions/{id}/start
