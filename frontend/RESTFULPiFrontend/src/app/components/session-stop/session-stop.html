@@ -6,7 +6,7 @@
             <p>Session Stopped!</p>
         </div>
     }
-    @else if (status?.success == false && errorMessage === ''){
+    @else if (status?.success === false && errorMessage === ''){
     
         <div class="stop-status">
             <p>Session Already Stopped!</p>
@@ -22,4 +22,9 @@
 }
 @else if (log?.active === false) {
     <button (click)="startSession()">Restart Session</button>
+    @if(restartStatus?.success === true){
+        <div class="restart-status">
+            <p>Session Restarted</p>
+        </div>
+    }
 } 

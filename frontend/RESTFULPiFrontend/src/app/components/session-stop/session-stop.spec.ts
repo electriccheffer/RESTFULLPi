@@ -2,11 +2,43 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { SessionStop } from './session-stop';
 import { SessionStopService } from '../../services/session-stop';
 import { Observable,of, throwError } from 'rxjs';
-import { StopStatus } from '../../generated/models/stop-status';
-import { Injectable } from '@angular/core';
+import { RestartStatus, StopStatus } from '../../generated/models/stop-status';
+import { Injectable, Provider } from '@angular/core';
 import { Log } from '../../generated/models';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideHttpClient } from '@angular/common/http';
+import {RestartService} from '../../services/session-restart.service';
+
+@Injectable({
+  providedIn:"root"
+})
+class MockSessionRestartService implements RestartService{
+
+  private status:RestartStatus = {success:false}; 
+  private errorMessage:string = ''; 
+
+  setRestartStatus(status:RestartStatus){
+    this.status = status; 
+  }
+
+  restartSession(id:string):Observable<RestartStatus>{
+    if(this.errorMessage !== '' ){
+
+      return throwError(() => ({statusText:this.errorMessage}));
+
+    }
+    return of(this.status); 
+  }
+}
+
+export function provideMockSessionRestartService():Provider[]{
+
+  return[
+   MockSessionRestartService,{
+    provide: RestartService,useExisting:MockSessionRestartService
+   } 
+  ]
+}
 
 @Injectable()
 class MockSessionStopService extends SessionStopService{
@@ -36,18 +68,22 @@ describe('SessionStop', () => {
   let component: SessionStop;
   let fixture: ComponentFixture<SessionStop>;
   let service: MockSessionStopService;
+  let restartService: MockSessionRestartService; 
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [SessionStop],
       providers:[MockSessionStopService,
                 {provide:SessionStopService,
-                  useExisting:MockSessionStopService}
+                  useExisting:MockSessionStopService},
+                  ... provideMockSessionRestartService(),
       ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(SessionStop);
     component = fixture.componentInstance;
     service = TestBed.inject(MockSessionStopService);
+    restartService = TestBed.inject(MockSessionRestartService); 
     await fixture.whenStable();
   });
 
@@ -153,8 +189,30 @@ describe('SessionStop', () => {
     const button = compiled.querySelector('button'); 
     expect(button).not.toBeNull(); 
     expect(button?.textContent).toContain('Restart Session'); 
-    
   }); 
+
+  it('Session inactive button press success case',() => {
+
+    fixture.componentRef.setInput('log',  {
+      id:"123",
+      name:"testfile",
+      active:false
+    });
+    const restartStatus:RestartStatus = {success:true};
+    restartService.setRestartStatus(restartStatus); 
+    fixture.detectChanges();
+    service.setStopStatus(restartStatus); 
+    const compiled = fixture.nativeElement as HTMLElement; 
+    const button = compiled.querySelector('button'); 
+    expect(button).not.toBeNull(); 
+    expect(button?.textContent).toContain('Restart Session'); 
+    button?.click(); 
+    fixture.detectChanges();
+    const messageHtml = compiled.querySelector('.restart-status p'); 
+    expect(messageHtml)?.not.toBeNull(); 
+    const message = messageHtml?.textContent; 
+    expect(message)?.toContain('Session Restarted'); 
+  });
 
 });
 
@@ -174,7 +232,8 @@ describe('SessionStopIntegrationTest',() => {
         SessionStop,
         SessionStopService,
         provideHttpClient(),
-        provideHttpClientTesting()
+        provideHttpClientTesting(),
+        ... provideMockSessionRestartService(),
       ]
     });
 

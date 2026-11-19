@@ -14,6 +14,7 @@ import { MockSessionStartService } from '../session-start/session-start.spec';
 import { StartStatus } from '../../generated/models';
 import { StopStatus } from '../../generated/models/stop-status';
 import { SessionStopService } from '../../services/session-stop';
+import { provideMockSessionRestartService } from '../session-stop/session-stop.spec';
 
 describe('HomePage component level test', () => {
   let component: HomePage;
@@ -31,7 +32,8 @@ describe('HomePage component level test', () => {
         provideHttpClientTesting(),
         {provide:StatusService,useClass:MockStatusService},
         {provide:LogService,useClass:MockLogService},
-        {provide:SessionStartService,useClass:MockSessionStartService}
+        {provide:SessionStartService,useClass:MockSessionStartService},
+        ... provideMockSessionRestartService(), 
       ]
     }).compileComponents();
 
@@ -119,7 +121,8 @@ describe("HomePage Component Integration Test",() => {
       imports:[HomePage],
       providers:[
         provideHttpClient(),
-        provideHttpClientTesting()
+        provideHttpClientTesting(),
+        ... provideMockSessionRestartService(), 
       ]
 
     }).compileComponents();
@@ -291,6 +294,7 @@ describe("Homepage Integration test Logs, Session Stop",() => {
       providers:[
         provideHttpClient(),
         provideHttpClientTesting(),  
+        ... provideMockSessionRestartService(), 
       ]
 
     });

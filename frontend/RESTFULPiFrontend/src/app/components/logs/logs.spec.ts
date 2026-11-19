@@ -12,7 +12,7 @@ import { SessionStart } from '../session-start/session-start';
 import { StartStatus } from '../../generated/models';
 import { SessionStop } from '../session-stop/session-stop';
 import { By } from '@angular/platform-browser';
-
+import { provideMockSessionRestartService } from '../session-stop/session-stop.spec';
 @Injectable({
 
   providedIn:'root',
@@ -47,7 +47,7 @@ describe('Logs', () => {
         provide:LogService,
         useClass:MockLogService
 
-      }]
+      }, ... provideMockSessionRestartService(), ]
     }).compileComponents();
     mockLogService = TestBed.inject(LogService)as unknown as MockLogService;
     fixture = TestBed.createComponent(Logs);
@@ -119,7 +119,8 @@ describe("Logs Component LogService Integration test",() => {
       providers:[
         LogService,
         provideHttpClient(),
-        provideHttpClientTesting()
+        provideHttpClientTesting(),
+        ... provideMockSessionRestartService(), 
       ],
 
     }).compileComponents();
@@ -226,7 +227,8 @@ describe("Logs Session Service with Mock SesssionStartService",() =>{
         },{
         provide:SessionStartService,
         useClass:MockSessionStartService
-        }
+        },
+        ... provideMockSessionRestartService(), 
       ]
     }).compileComponents();
     mockLogService = TestBed.inject(LogService)as unknown as MockLogService;
@@ -275,7 +277,8 @@ describe("Integration Test with Logs and SessionStartService",()=>{
         provideHttpClient(),
         provideHttpClientTesting(),
         SessionStartService,
-        LogService
+        LogService,
+        ... provideMockSessionRestartService(), 
       ]
     }).compileComponents();
 
@@ -372,7 +375,8 @@ describe("Integration Test with Logs and SessionStartService",()=>{
           LogService,
           SessionStartService,
           provideHttpClient(),
-          provideHttpClientTesting()
+          provideHttpClientTesting(),
+          ... provideMockSessionRestartService(), 
         ]
       });
       fixture = TestBed.createComponent(Logs);
