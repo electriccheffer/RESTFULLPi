@@ -31,7 +31,11 @@
         <div class="restart-status">
                 <p>Session Already Running</p>
         </div>
-
+    }
+    @if (errorMessage !== '') {
+        <div class="error-info">
+            <p>Error Starting Log: {{errorMessage}}</p>
+        </div>
     }
 
 } 

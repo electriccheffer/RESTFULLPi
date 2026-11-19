@@ -20,6 +20,10 @@ class MockSessionRestartService implements RestartService{
   setRestartStatus(status:RestartStatus){
     this.status = status; 
   }
+  
+  setError(errorMessage:string){
+    this.errorMessage = errorMessage; 
+  }
 
   restartSession(id:string):Observable<RestartStatus>{
     if(this.errorMessage !== '' ){
@@ -237,6 +241,31 @@ describe('SessionStop', () => {
     const message = messageHtml?.textContent; 
     expect(message)?.toContain('Session Already Running'); 
   }); 
+
+  it('Session inactive button press failure case with error',() => {
+
+    fixture.componentRef.setInput('log',  {
+      id:"123",
+      name:"testfile",
+      active:false
+    });
+    const restartStatus:RestartStatus = {success:false};
+    restartService.setRestartStatus(restartStatus);
+    restartService.setError("Internal Server Error")
+    fixture.detectChanges();
+    service.setStopStatus(restartStatus); 
+    const compiled = fixture.nativeElement as HTMLElement; 
+    const button = compiled.querySelector('button'); 
+    expect(button).not.toBeNull(); 
+    expect(button?.textContent).toContain('Restart Session'); 
+    button?.click(); 
+    fixture.detectChanges();
+    const messageHtml = compiled.querySelector('.error-info p'); 
+    expect(messageHtml)?.not.toBeNull(); 
+    const message = messageHtml?.textContent; 
+    expect(message)?.toContain('Internal Server Error'); 
+  }); 
+
 });
 
 
