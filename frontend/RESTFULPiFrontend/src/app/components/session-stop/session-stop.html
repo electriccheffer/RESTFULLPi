@@ -27,4 +27,11 @@
             <p>Session Restarted</p>
         </div>
     }
+    @else if (restartStatus?.success === false && errorMessage === '' ) {
+        <div class="restart-status">
+                <p>Session Already Running</p>
+        </div>
+
+    }
+
 } 

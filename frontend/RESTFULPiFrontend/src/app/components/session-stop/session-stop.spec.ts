@@ -214,6 +214,29 @@ describe('SessionStop', () => {
     expect(message)?.toContain('Session Restarted'); 
   });
 
+
+  it('Session inactive button press failure case',() => {
+
+    fixture.componentRef.setInput('log',  {
+      id:"123",
+      name:"testfile",
+      active:false
+    });
+    const restartStatus:RestartStatus = {success:false};
+    restartService.setRestartStatus(restartStatus); 
+    fixture.detectChanges();
+    service.setStopStatus(restartStatus); 
+    const compiled = fixture.nativeElement as HTMLElement; 
+    const button = compiled.querySelector('button'); 
+    expect(button).not.toBeNull(); 
+    expect(button?.textContent).toContain('Restart Session'); 
+    button?.click(); 
+    fixture.detectChanges();
+    const messageHtml = compiled.querySelector('.restart-status p'); 
+    expect(messageHtml)?.not.toBeNull(); 
+    const message = messageHtml?.textContent; 
+    expect(message)?.toContain('Session Already Running'); 
+  }); 
 });
 
 
