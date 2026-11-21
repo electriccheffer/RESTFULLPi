@@ -1,7 +1,7 @@
-import { Observable } from "rxjs";
+import { catchError, Observable,throwError } from "rxjs";
 import { RestartStatus } from "../generated/models/stop-status";
 import { Injectable, InjectionToken } from "@angular/core";
-
+import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 
 export abstract class RestartService{
 
@@ -9,8 +9,20 @@ export abstract class RestartService{
 
 }
 
+@Injectable({
+    providedIn: 'root'
+})
+export class SessionRestartService extends RestartService{
+    
+    private url:string = "http://192.168.4.1:8080/logs/sessions/"
+    constructor(private http:HttpClient){super();}
 
-export class SessionRestartService{
-
-        
+    override restartSession(id: string): Observable<RestartStatus> {
+        let request:string = this.url + id + "/restart"; 
+        return this.http.post<RestartStatus>(request,{}).pipe(
+                catchError((error:HttpErrorResponse) => {
+                    return throwError(() => error); 
+                })
+            );
+    }
 }
