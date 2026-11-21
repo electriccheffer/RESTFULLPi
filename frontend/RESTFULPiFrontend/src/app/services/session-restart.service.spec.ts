@@ -51,4 +51,18 @@ describe("SessionRestartService",() => {
         request.flush(response); 
     }); 
 
+
+    it("Should return error 500 POST /logs/sessions/{id}/restart", () => {
+        
+        const id:string = "xyz"
+        service.restartSession(id).subscribe({
+            next: () => expect.fail('Expected bad response'),
+            error: (error) => {
+                expect(error.status).toBe(500); 
+                expect(error.statusText).toBe("Internal Server Error"); 
+            }
+        }); 
+        const request = httpMock.expectOne('http://192.168.4.1:8080/logs/sessions/xyz/restart'); 
+        request.flush('',{status:500,statusText:"Internal Server Error"}); 
+    }); 
 }); 
